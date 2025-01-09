@@ -1,17 +1,13 @@
 import React from "react";
 import Page from "./components/Page";
+import Explainations from "./components/Explanations/explanations";
 
 const App: React.FC = () => {
   return (
-    <div style={styles}>
+    <div>
       <Page />
     </div>
   );
-};
-
-const styles = {
-  margin: 0,
-  padding: 0,
 };
 
 export default App;
