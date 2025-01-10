@@ -1,6 +1,7 @@
 import HeroSection from "./Hero Section/HeroSection";
 import SecondSection from "./Second Section/SecondSection";
-import Explanations from "./Explanations/explanations";
+import Explanations from "./Explanations/Explanations";
+import FooterComp from "./Footer/FooterClient";
 
 const Page: React.FC = ({}) => {
   return (
@@ -25,6 +26,8 @@ const Page: React.FC = ({}) => {
         imageSource="src/assets/explainPicture.png"
         text="תהליך פשוט בשלושה שלבים בלבד! הירשם לפלטפורמה ומלא פרטים, קבל ועצב דף נחיתה מותאם אישית, נהל קמפיינים וצפה בתוצאות"
       />
+
+      <FooterComp />
     </div>
   );
 };

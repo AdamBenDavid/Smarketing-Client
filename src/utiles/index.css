@@ -1,9 +1,15 @@
+@import "flowbite";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 html,
 body {
   height: 100%;
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  background-color: #f0f3fa;
 }
 
 *,

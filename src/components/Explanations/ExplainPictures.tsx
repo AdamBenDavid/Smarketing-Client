@@ -1,5 +1,5 @@
 import React from "react";
-import Rectangle from "./rectangle";
+import Rectangle from "./Rectangle";
 
 interface ExplainPicturesProps {
   direction: "row" | "row-reverse"; //row= picture at the left side, row-reverse= picture at the right side

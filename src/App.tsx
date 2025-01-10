@@ -1,6 +1,6 @@
 import React from "react";
 import Page from "./components/Page";
-import Explainations from "./components/Explanations/explanations";
+import "./utiles/index.css";
 
 const App: React.FC = () => {
   return (
