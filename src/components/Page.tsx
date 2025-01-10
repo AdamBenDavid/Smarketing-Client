@@ -43,7 +43,7 @@ const styles = {
   display: "flex",
   flexDirection: "column" as const,
 
-  gap: "80px",
+  gap: "30px",
 };
 
 export default Page;

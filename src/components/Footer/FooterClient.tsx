@@ -28,8 +28,8 @@ export default function FooterComp() {
             <div>
               <Footer.Title title="אודות" />
               <Footer.LinkGroup col>
-                <Footer.Link href="#">Flowbite</Footer.Link>
-                <Footer.Link href="#">Tailwind CSS</Footer.Link>
+                <Footer.Link href="#">קרא עלינו</Footer.Link>
+                <Footer.Link href="#">הצוות שלנו</Footer.Link>
               </Footer.LinkGroup>
             </div>
 
@@ -65,6 +65,7 @@ export default function FooterComp() {
 
 const styles = {
   rtl: {
+    margin: "50px",
     direction: "rtl",
     textAlign: "right",
   },
