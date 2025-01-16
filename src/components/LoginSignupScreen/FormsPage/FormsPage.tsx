@@ -3,8 +3,6 @@ import LoginForm from "../LoginPage/LoginPage";
 import RegisterForm from "../RegisterPage/RegisterPage";
 import styles from "./FormsPage.module.css";
 
-//import { useNavigate } from "react-router-dom";
-
 const FormsPage: React.FC = () => {
   const [isRegister, setIsRegister] = useState(false);
   //const navigate = useNavigate();

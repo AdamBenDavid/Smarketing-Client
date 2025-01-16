@@ -1,11 +1,11 @@
 import React from "react";
 import "./utiles/index.css";
-import FormsPage from "./components/LoginSignupScreen/FormsPage/FormsPage.tsx";
+import RegisterBase from "./components/RegisterNexts/RegisterBase";
 
 const App: React.FC = () => {
   return (
     <div style={styles.main}>
-      <FormsPage />
+      <RegisterBase />
     </div>
   );
 };
