@@ -1,0 +1,99 @@
+.profileContainer {
+  max-width: 1200px;
+  margin: 0 auto; 
+  padding: 20px;
+  direction: rtl;
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  padding: 20px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.profilePicture {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.userDetails {
+  flex: 1;
+}
+
+.userDetails h2 {
+  margin: 0;
+  color: #001D3F;
+  font-size: 1.8em;
+}
+
+.chatButton {
+  margin-top: 15px;
+  padding: 10px 20px;
+  background-color: #001D3F;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.postsSection {
+  margin-top: 30px;
+}
+
+.postsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.postCard {
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.postImage {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.postContent {
+  padding: 10px 0;
+}
+
+.postDate {
+  color: #666;
+  font-size: 14px;
+}
+
+.role {
+  color: #666;
+  font-size: 1.1em;
+  margin: 5px 0;
+}
+
+.expertise {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 10px 0;
+}
+
+.expertiseTag {
+  background-color: #e8f0fe;
+  color: #001D3F;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.9em;
+} 
