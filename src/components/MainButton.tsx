@@ -25,17 +25,6 @@ const styles = {
     margin: "0px 0px",
     gap: "0px",
   },
-
-  //on button hover:
 };
 
 export default MainButton;
-
-// .button:hover {
-//     text-decoration: none; /* הקו נעלם כשמעבירים עכבר */
-//     color: #007BFF; /* שינוי צבע הטקסט בזמן hover */
-//   }
-
-//   .button:focus {
-//     outline: none; /* הסרת מסגרת ברירת מחדל */
-//   }

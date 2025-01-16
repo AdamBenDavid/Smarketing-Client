@@ -17,14 +17,14 @@ const styles = {
     width: "132px",
     height: "48px",
     borderRadius: "8px",
-    backgroundColor: "transparent", // רקע שקוף
-    color: "#001D3F", // צבע הטקסט
+    backgroundColor: "transparent",
+    color: "#001D3F",
     fontFamily: "Assistant",
     fontSize: "16px",
-    border: "2px solid #001D3F", // מסגרת כחולה
+    border: "2px solid #001D3F",
     margin: "0px 0px",
     cursor: "pointer",
-    transition: "all 0.3s ease", // אפקט מעבר חלק
+    transition: "all 0.3s ease",
   },
 };
 

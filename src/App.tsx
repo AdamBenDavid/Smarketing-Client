@@ -1,17 +1,19 @@
 import React from "react";
-import Page from "./components/Page";
+import "./utiles/index.css";
+import RegisterBase from "./components/RegisterNexts/RegisterBase";
 
 const App: React.FC = () => {
   return (
-    <div style={styles}>
-      <Page />
+    <div style={styles.main}>
+      <RegisterBase />
     </div>
   );
 };
 
 const styles = {
-  margin: 0,
-  padding: 0,
+  main: {
+    alignItems: "center",
+  },
 };
 
 export default App;
