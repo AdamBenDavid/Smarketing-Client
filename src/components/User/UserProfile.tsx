@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Box, Typography, Card } from '@mui/material';
 import styles from './UserProfile.module.css'
+import { CreatePostModal } from './CreatePostModal';
+import { ChatModal } from '../Chat/ChatModal';
 
 interface Post {
   _id: string;
@@ -21,6 +23,14 @@ interface User {
 export const UserProfile = () => {
   const [user, setUser] = useState<User | null>(null);
   const [posts, setPosts] = useState<Post[]>([]);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [selectedChatUser, setSelectedChatUser] = useState<ChatUser | null>(null);
+
+  const currentUser = {
+    _id: 'current123',
+    fullName: 'דן כהן'
+  };
 
   useEffect(() => {
     // TODO: Replace with actual API calls
@@ -75,6 +85,21 @@ export const UserProfile = () => {
     setPosts(mockPosts);
   }, []);
 
+  const handleCreatePost = async (postData: string, image?: File) => {
+    // TODO: Implement API call to create post
+    console.log('Creating post:', { postData, image });
+    
+    // For now, just add to local state
+    const newPost = {
+      _id: Date.now().toString(),
+      postData,
+      imageUrl: image ? URL.createObjectURL(image) : undefined,
+      createdAt: new Date().toISOString()
+    };
+    
+    setPosts([newPost, ...posts]);
+  };
+
   if (!user) {
     return <Typography>טוען...</Typography>;
   }
@@ -98,10 +123,16 @@ export const UserProfile = () => {
             ))}
           </div>
           <div className={styles.buttonGroup}>
-            <button className={styles.chatButton}>
+            <button 
+              className={styles.chatButton}
+              onClick={() => setIsChatOpen(true)}
+            >
               התחל צ'אט
             </button>
-            <button className={styles.createPostButton}>
+            <button 
+              className={styles.createPostButton}
+              onClick={() => setIsCreateModalOpen(true)}
+            >
               צור פוסט
             </button>
           </div>
@@ -130,6 +161,26 @@ export const UserProfile = () => {
           ))}
         </div>
       </div>
+
+      <CreatePostModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        onSubmit={handleCreatePost}
+      />
+
+      <ChatModal
+        isOpen={isChatOpen}
+        onClose={() => {
+          setIsChatOpen(false);
+          setSelectedChatUser(null);
+        }}
+        showUserList={!selectedChatUser}
+        onSelectUser={(user) => setSelectedChatUser(user)}
+        recipientId={selectedChatUser?._id || ''}
+        recipientName={selectedChatUser?.fullName || ''}
+        currentUserId={currentUser._id}
+        currentUserName={currentUser.fullName}
+      />
     </div>
   );
 }; 

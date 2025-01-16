@@ -4,6 +4,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import "boxicons/css/boxicons.min.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import axios from 'axios';
 
 type LoginInputs = {
   email: string;
@@ -18,7 +19,26 @@ const LoginForm: React.FC = () => {
   } = useForm<LoginInputs>();
 
   const onSubmit: SubmitHandler<LoginInputs> = async (data) => {
-    console.log("Submitted data:", data);
+    try {
+      // TODO: Replace with actual API endpoint
+      const response = await axios.post('/api/auth/login', data);
+      console.log("Login successful:", response.data);
+      // TODO: Handle successful login (store token, redirect, etc.)
+    } catch (error) {
+      console.error("Login failed:", error);
+      toast.error("ההתחברות נכשלה. אנא נסה שוב.");
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    try {
+      // TODO: Replace with actual Google auth endpoint
+      const response = await axios.get('/api/auth/google');
+      window.location.href = response.data.authUrl;
+    } catch (error) {
+      console.error("Google login failed:", error);
+      toast.error("ההתחברות עם Google נכשלה. אנא נסה שוב.");
+    }
   };
 
   const handleErrors = () => {
@@ -46,6 +66,19 @@ const LoginForm: React.FC = () => {
     >
       <ToastContainer />
       <h1>היכנס עכשיו</h1>
+
+      <button 
+        type="button" 
+        className={styles.googleButton}
+        onClick={handleGoogleLogin}
+      >
+        <img src="/google-icon.svg" alt="Google" />
+        התחבר עם Google
+      </button>
+
+      <div className={styles.divider}>
+        <span>או</span>
+      </div>
 
       {/* Email */}
       <div className={styles.inputBox}>
