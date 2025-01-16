@@ -32,17 +32,6 @@
   font-size: 1.8em;
 }
 
-.chatButton {
-  margin-top: 15px;
-  padding: 10px 20px;
-  background-color: #001D3F;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 16px;
-}
-
 .postsSection {
   margin-top: 30px;
 }
@@ -96,4 +85,92 @@
   padding: 5px 12px;
   border-radius: 20px;
   font-size: 0.9em;
+}
+
+.buttonGroup {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.chatButton, .createPostButton {
+  height: 45px;
+  padding: 0 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: transform 0.2s, opacity 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 120px;
+}
+
+.chatButton {
+  background-color: #001D3F;
+  color: white;
+}
+
+.createPostButton {
+  background-color: #3a86ff;
+  color: white;
+}
+
+.chatButton:hover, .createPostButton:hover {
+  transform: translateY(-2px);
+  opacity: 0.9;
+}
+
+.chatButton:active, .createPostButton:active {
+  transform: translateY(0);
+}
+
+/* Add media queries for responsiveness */
+@media screen and (max-width: 768px) {
+  .userInfo {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .userDetails {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .expertise {
+    justify-content: center;
+  }
+
+  .buttonGroup {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .buttonGroup {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .chatButton, .createPostButton {
+    width: 100%;
+    min-width: unset;
+  }
+
+  .postsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .profilePicture {
+    width: 120px;
+    height: 120px;
+  }
+
+  .userDetails h2 {
+    font-size: 1.5em;
+  }
 } 

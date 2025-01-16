@@ -97,9 +97,14 @@ export const UserProfile = () => {
               </span>
             ))}
           </div>
-          <button className={styles.chatButton}>
-            התחל צ'אט
-          </button>
+          <div className={styles.buttonGroup}>
+            <button className={styles.chatButton}>
+              התחל צ'אט
+            </button>
+            <button className={styles.createPostButton}>
+              צור פוסט
+            </button>
+          </div>
         </div>
       </div>
 
