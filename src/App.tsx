@@ -1,23 +1,34 @@
 import React from "react";
-import "./utiles/index.css";
-import Page from "./components/Page";
-import { UserProfile } from "./components/User/UserProfile";
-import LoginForm from "./components/LoginSignupScreen/LoginPage/LoginPage";
+import { BrowserRouter } from "react-router-dom";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { CacheProvider } from "@emotion/react";
+import createCache from "@emotion/cache";
+import { prefixer } from "stylis";
+import rtlPlugin from "stylis-plugin-rtl";
+import AppRoutes from "./navigation/Routes";
+
+// modify the theme to support RTL DO NOT REMOVE
+const rtlCache = createCache({
+  key: "muirtl",
+  stylisPlugins: [prefixer, rtlPlugin],
+});
+
+const rtlTheme = createTheme({
+  direction: "rtl",
+});
 
 const App: React.FC = () => {
   return (
-    <div style={styles.main}>
-      {/* <Page/> */}
-      <UserProfile />
-      {/* <LoginForm/> */}
-    </div>
+    <CacheProvider value={rtlCache}>
+      <ThemeProvider theme={rtlTheme}>
+        <div dir="rtl">
+          <BrowserRouter>
+            <AppRoutes />
+          </BrowserRouter>
+        </div>
+      </ThemeProvider>
+    </CacheProvider>
   );
-};
-
-const styles = {
-  main: {
-    alignItems: "center",
-  },
 };
 
 export default App;

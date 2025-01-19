@@ -1,5 +1,5 @@
 import Lottie from "lottie-react";
-import animationData from "../../assets/Animation.json";
+import animationData from "../../../assets/Animation.json";
 
 const MainAnimation: React.FC = ({}) => {
   return (

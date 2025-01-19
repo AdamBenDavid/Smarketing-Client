@@ -1,4 +1,4 @@
-import profileIcon from "../../assets/profile.svg";
+import profileIcon from "../../../assets/profile.svg";
 
 const ProfileIcon: React.FC = () => {
   return (

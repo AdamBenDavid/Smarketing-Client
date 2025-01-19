@@ -1,9 +1,9 @@
 import HeroSection from "./Hero Section/HeroSection";
 import SecondSection from "./Second Section/SecondSection";
 import Explanations from "./Explanations/Explanations";
-import FooterComp from "./Footer/FooterClient";
+import FooterComp from "./components/Footer/FooterClient";
 
-const Page: React.FC = ({}) => {
+const LandingPage: React.FC = ({}) => {
   return (
     <div style={styles} className="page">
       <HeroSection />
@@ -46,4 +46,4 @@ const styles = {
   gap: "30px",
 };
 
-export default Page;
+export default LandingPage;

@@ -1,5 +1,5 @@
-import MainButton from "../MainButton";
-import SeconderyButton from "../SeconderyButton";
+import MainButton from "../../../components/UI/MainButton";
+import SeconderyButton from "../../../components/UI/SeconderyButton";
 import MainAnimation from "./MainAnimation";
 import MainSentence from "./MainSentence";
 
