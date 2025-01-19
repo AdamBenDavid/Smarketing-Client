@@ -65,6 +65,10 @@
   background-color: #d0e3fd;
 }
 
+ /* submit button to be bg #3a86ff */
+.submitButton {
+  background-color: #3a86ff !important;
+}
 .imagePreview {
   margin: 15px 0;
   text-align: center;
@@ -79,7 +83,7 @@
 .submitButton {
   width: 100%;
   padding: 12px;
-  background-color: #3a86ff;
+  background-color: #3a86ff !important;
   color: white;
   border: none;
   border-radius: 8px;

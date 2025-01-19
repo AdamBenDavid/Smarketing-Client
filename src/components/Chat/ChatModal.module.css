@@ -59,7 +59,7 @@
 
 .sent {
   align-self: flex-start;
-  background-color: #3a86ff;
+  background-color: #3a86ff !important;
   color: white;
   border-bottom-left-radius: 5px;
 }
@@ -91,12 +91,12 @@
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 20px;
-  font-family: inherit;
+  font-family: inherit; 
 }
 
 .sendButton {
   padding: 10px 20px;
-  background-color: #3a86ff;
+  background-color: #3a86ff !important;
   color: white;
   border: none;
   border-radius: 20px;
