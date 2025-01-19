@@ -113,7 +113,7 @@
 }
 
 .createPostButton {
-  background-color: #3a86ff;
+  background-color: #3a86ff !important;
   color: white;
 }
 
