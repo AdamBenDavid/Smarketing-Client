@@ -1,5 +1,4 @@
-import Logo from "../Logo";
-import HeaderMenu from "./HeaderMenu";
+import Logo from "../../../components/UI/Logo";
 import ProfileIcon from "./ProfileIcon";
 
 const HeroSection: React.FC = () => {
@@ -7,11 +6,6 @@ const HeroSection: React.FC = () => {
     <div style={styles.container} className="hero-section">
       {/* לוגו בצד ימין */}
       <Logo size="300px" />
-
-      {/* תפריט במרכז */}
-      <div style={styles.headerMenuWrapper}>
-        <HeaderMenu />
-      </div>
 
       {/* אייקון פרופיל בצד שמאל */}
       <ProfileIcon />

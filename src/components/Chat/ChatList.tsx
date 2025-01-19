@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import styles from './ChatList.module.css';
+import { useState } from "react";
+import styles from "./ChatList.module.css";
 
-interface ChatUser {
+export interface ChatUser {
   _id: string;
   fullName: string;
   profilePicture: string;
@@ -19,29 +19,29 @@ export const ChatList = ({ onSelectUser, currentUserId }: ChatListProps) => {
   // Mock data for available users
   const mockUsers: ChatUser[] = [
     {
-      _id: 'user1',
-      fullName: 'רון לוי',
-      profilePicture: 'https://placehold.co/50x50',
-      role: 'מנהל קמפיינים',
-      lastMessage: 'תודה רבה על העזרה!',
-      lastMessageTime: '10:30'
+      _id: "user1",
+      fullName: "רון לוי",
+      profilePicture: "https://placehold.co/50x50",
+      role: "מנהל קמפיינים",
+      lastMessage: "תודה רבה על העזרה!",
+      lastMessageTime: "10:30",
     },
     {
-      _id: 'user2',
-      fullName: 'מיכל כהן',
-      profilePicture: 'https://placehold.co/50x50',
-      role: 'יועצת שיווק דיגיטלי',
-      lastMessage: 'אשמח לקבוע פגישת ייעוץ',
-      lastMessageTime: '09:15'
+      _id: "user2",
+      fullName: "מיכל כהן",
+      profilePicture: "https://placehold.co/50x50",
+      role: "יועצת שיווק דיגיטלי",
+      lastMessage: "אשמח לקבוע פגישת ייעוץ",
+      lastMessageTime: "09:15",
     },
     {
-      _id: 'user3',
-      fullName: 'אבי ישראלי',
-      profilePicture: 'https://placehold.co/50x50',
-      role: 'מומחה SEO',
-      lastMessage: 'בוא נדבר על אסטרטגיית התוכן',
-      lastMessageTime: 'אתמול'
-    }
+      _id: "user3",
+      fullName: "אבי ישראלי",
+      profilePicture: "https://placehold.co/50x50",
+      role: "מומחה SEO",
+      lastMessage: "בוא נדבר על אסטרטגיית התוכן",
+      lastMessageTime: "אתמול",
+    },
   ];
 
   return (
@@ -50,15 +50,15 @@ export const ChatList = ({ onSelectUser, currentUserId }: ChatListProps) => {
         <h2>צ'אטים</h2>
       </div>
       <div className={styles.userList}>
-        {mockUsers.map(user => (
-          <div 
+        {mockUsers.map((user) => (
+          <div
             key={user._id}
             className={styles.userItem}
             onClick={() => onSelectUser(user)}
           >
-            <img 
-              src={user.profilePicture} 
-              alt={user.fullName} 
+            <img
+              src={user.profilePicture}
+              alt={user.fullName}
               className={styles.userAvatar}
             />
             <div className={styles.userInfo}>
@@ -67,7 +67,9 @@ export const ChatList = ({ onSelectUser, currentUserId }: ChatListProps) => {
               {user.lastMessage && (
                 <p className={styles.lastMessage}>
                   {user.lastMessage}
-                  <span className={styles.messageTime}>{user.lastMessageTime}</span>
+                  <span className={styles.messageTime}>
+                    {user.lastMessageTime}
+                  </span>
                 </p>
               )}
             </div>
@@ -76,4 +78,4 @@ export const ChatList = ({ onSelectUser, currentUserId }: ChatListProps) => {
       </div>
     </div>
   );
-}; 
+};
