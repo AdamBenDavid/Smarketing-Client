@@ -1,6 +1,6 @@
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
-import DashboardLayoutBasic from "../components/UI/sideDrawer/SideDrawer";
+import DashboardLayoutBasic from "../components/sideDrawer/SideDrawer";
 import LandingPage from "../pages/landingPageScreen/LandingPage";
 
 const AppRouter: React.FC = () => {
