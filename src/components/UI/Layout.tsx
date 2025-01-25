@@ -1,5 +1,5 @@
 import React from "react";
-import DashboardLayoutBasic from "../UI/sideDrawer/SideDrawer";
+import DashboardLayoutBasic from "../sideDrawer/SideDrawer";
 import { Outlet } from "react-router-dom";
 
 const Layout: React.FC = () => {
