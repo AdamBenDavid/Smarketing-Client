@@ -1,9 +1,15 @@
 import React, { useState } from "react";
-import LoginForm from "../LoginPage/LoginPage";
-import RegisterForm from "../RegisterPage/RegisterPage";
-import styles from "./FormsPage.module.css";
+import LoginForm from "../LoginForm/Login";
+import RegisterForm from "../RegisterForm/Register";
+import styles from "./LoginSignupPage.module.css";
+import { useNavigate } from "react-router-dom";
 
 const FormsPage: React.FC = () => {
+  const navigate = useNavigate();
+  const handleHomeClick = () => {
+    navigate("/");
+  };
+
   const [isRegister, setIsRegister] = useState(false);
   //const navigate = useNavigate();
 
@@ -13,7 +19,7 @@ const FormsPage: React.FC = () => {
 
   return (
     <div className={styles.formsPageWrapper}>
-      <button className={styles.backButton} onClick={() => {}}>
+      <button className={styles.backButton} onClick={handleHomeClick}>
         &larr; חזרה לדף הבית
       </button>
       {/* <button className={styles.backButton} onClick={() => navigate("/")}>
@@ -39,8 +45,8 @@ const FormsPage: React.FC = () => {
         {/* The big toggler box with panels */}
         <div className={styles.toggleBox}>
           <div className={`${styles.togglePanel} ${styles.toggleLeft}`}>
-            <h1>!איזה כיף שחזרת</h1>
-            <p>?אין עדיין משתמש</p>
+            <h1>איזה כיף שחזרת!</h1>
+            <p>אין עדיין משתמש?</p>
             <button
               className={`btn ${styles.btn} registerBtn`}
               onClick={() => toggleForm(true)}
@@ -49,8 +55,8 @@ const FormsPage: React.FC = () => {
             </button>
           </div>
           <div className={`${styles.togglePanel} ${styles.toggleRight}`}>
-            <h1>!הצטרף אלינו</h1>
-            <p>?יש כבר משתמש</p>
+            <h1>הצטרף אלינו!</h1>
+            <p>יש כבר משתמש?</p>
             <button
               className={`btn ${styles.btn} loginBtn`}
               onClick={() => toggleForm(false)}

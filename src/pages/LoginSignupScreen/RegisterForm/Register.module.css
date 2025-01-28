@@ -28,7 +28,7 @@
   color: #888;
 }
 
-.btn {
+form .btn {
   padding: 10px 20px;
   background: linear-gradient(90deg, var(--dark-blue), var(--dark-blue));
   color: white;
