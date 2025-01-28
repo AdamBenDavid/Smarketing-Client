@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "./RegisterPage.module.css";
+import styles from "./Register.module.css";
 import { useForm, SubmitHandler } from "react-hook-form";
 import "boxicons/css/boxicons.min.css";
 import { ToastContainer, toast } from "react-toastify";

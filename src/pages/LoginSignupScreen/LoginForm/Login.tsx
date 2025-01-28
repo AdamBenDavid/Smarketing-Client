@@ -1,10 +1,10 @@
 import React from "react";
-import styles from "./LoginPage.module.css";
+import styles from "./Login.module.css";
 import { useForm, SubmitHandler } from "react-hook-form";
 import "boxicons/css/boxicons.min.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import axios from 'axios';
+import axios from "axios";
 
 type LoginInputs = {
   email: string;
@@ -21,23 +21,23 @@ const LoginForm: React.FC = () => {
   const onSubmit: SubmitHandler<LoginInputs> = async (data) => {
     try {
       // TODO: Replace with actual API endpoint
-      const response = await axios.post('/api/auth/login', data);
+      const response = await axios.post("/api/auth/login", data);
       console.log("Login successful:", response.data);
       // TODO: Handle successful login (store token, redirect, etc.)
     } catch (error) {
       console.error("Login failed:", error);
-      toast.error("ההתחברות נכשלה. אנא נסה שוב.");
+      toast.error("ההתחברות נכשלה. אנא נסה שוב");
     }
   };
 
   const handleGoogleLogin = async () => {
     try {
       // TODO: Replace with actual Google auth endpoint
-      const response = await axios.get('/api/auth/google');
+      const response = await axios.get("/api/auth/google");
       window.location.href = response.data.authUrl;
     } catch (error) {
       console.error("Google login failed:", error);
-      toast.error("ההתחברות עם Google נכשלה. אנא נסה שוב.");
+      toast.error("ההתחברות עם Google נכשלה. אנא נסה שוב");
     }
   };
 
@@ -67,8 +67,8 @@ const LoginForm: React.FC = () => {
       <ToastContainer />
       <h1>היכנס עכשיו</h1>
 
-      <button 
-        type="button" 
+      <button
+        type="button"
         className={styles.googleButton}
         onClick={handleGoogleLogin}
       >
@@ -108,15 +108,17 @@ const LoginForm: React.FC = () => {
               message: "הסיסמה חייבת להכיל לפחות 6 תווים",
             },
             pattern: {
-              value: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/,
-              message: "הסיסמה חייבת להכיל לפחות אות אחת וספרה אחת",
+              value:
+                /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/,
+              message:
+                "הסיסמה חייבת להכיל לפחות אות גדולה, אות קטנה, מספר ותו מיוחד",
             },
           })}
         />
         <i className="bx bxs-lock-alt"></i>
       </div>
 
-      <button type="submit" className={styles.btn}>
+      <button type="submit" className={`${styles.btn} btn`}>
         התחברות
       </button>
     </form>

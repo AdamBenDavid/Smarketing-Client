@@ -19,9 +19,13 @@
   width: 100%;
 }
 
-.btn {
+form .btn {
+  background-color: #001d3f;
+  color: #ffffff;
+  border-color: #001d3f;
+
   padding: 10px 20px;
-  background: linear-gradient(90deg, var(--dark-blue), var(--dark-blue));
+  /* background: linear-gradient(90deg, var(--dark-blue), var(--dark-blue)); */
   color: white;
   border: none;
   border-radius: 8px;

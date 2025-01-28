@@ -6,7 +6,6 @@ import MainSentence from "./MainSentence";
 const SecondSection: React.FC = () => {
   return (
     <div className="second-section" style={styles.section}>
-      {/* צד ימין */}
       <div style={styles.rightSection}>
         <div style={styles.buttonsContainer}>
           <MainButton text="התחל עכשיו" />
@@ -15,7 +14,6 @@ const SecondSection: React.FC = () => {
         <MainSentence />
       </div>
 
-      {/* צד שמאל */}
       <div style={styles.leftSection}>
         <MainAnimation />
       </div>
