@@ -17,7 +17,7 @@ const PostCard: React.FC<{ post: Post }> = ({ post }) => {
       text,
       user: "You",
     };
-
+    //fix the user type
     setComments((prevComments) => [...prevComments, newComment]);
   };
 
