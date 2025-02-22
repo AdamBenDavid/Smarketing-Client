@@ -1,22 +1,21 @@
 .post-actions {
-  display: flex; /* Arrange items in a row */
-  justify-content: space-around; /* Distribute buttons evenly */
-  padding: 0.5rem 0;
-  border-top: 1px solid #eee;
-  gap: 1rem; /* Adds spacing between buttons */
+  display: flex;
+  gap: 10px;
+  align-items: center;
 }
 
-.post-actions button {
+button {
   background: none;
   border: none;
-  font-size: 1rem;
-  color: #007bff;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem; /* Space between icon and text */
   cursor: pointer;
+  font-size: 18px;
+  transition: transform 0.2s ease-in-out;
 }
 
-.post-actions button:hover {
-  color: #0056b3;
+.like-button.liked {
+  color: red;
+}
+
+button:hover {
+  transform: scale(1.1);
 }
