@@ -4,20 +4,17 @@ import AddComment from "../addComment/AddComment";
 import { CommentType } from "../../feed/types";
 import "./CommentSection.css";
 
-const CommentSection: React.FC<{ comments: CommentType[]; postId: string }> = ({
-  comments,
-  postId,
-}) => {
-  const handleAddComment = (comment: string) => {
-    // Logic to add a new comment
-  };
-
+const CommentSection: React.FC<{
+  comments: CommentType[];
+  postId: string;
+  onAddComment: (text: string) => void;
+}> = ({ comments, postId, onAddComment }) => {
   return (
     <div className="comment-section">
       {comments.map((comment) => (
         <Comment key={comment.id} comment={comment} />
       ))}
-      <AddComment onAddComment={handleAddComment} />
+      <AddComment onAddComment={onAddComment} />
     </div>
   );
 };

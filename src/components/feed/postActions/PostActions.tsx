@@ -1,20 +1,27 @@
-import React from "react";
+import React, { useState } from "react";
 import "./PostActions.css";
 
-const PostActions: React.FC<{ postId: string }> = ({ postId }) => {
-  const handleLike = () => {
-    // Logic for liking the post
-  };
+const PostActions: React.FC<{ postId: string; commentCount: number }> = ({
+  postId,
+  commentCount,
+}) => {
+  const [liked, setLiked] = useState(false);
+  const [likes, setLikes] = useState(0);
 
-  const handleShare = () => {
-    // Logic for sharing the post
+  const handleLike = () => {
+    setLiked(!liked);
+    setLikes((prev) => (liked ? prev - 1 : prev + 1));
   };
 
   return (
     <div className="post-actions">
-      <button onClick={handleLike}>Like</button>
-      <button>Comment</button>
-      <button onClick={handleShare}>Share</button>
+      <button
+        className={`like-button ${liked ? "liked" : ""}`}
+        onClick={handleLike}
+      >
+        {liked ? "❤️" : "🤍"} {likes}
+      </button>
+      <button>💬 {commentCount}</button>
     </div>
   );
 };
