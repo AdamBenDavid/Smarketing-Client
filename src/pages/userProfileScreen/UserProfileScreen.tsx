@@ -4,9 +4,11 @@ import styles from "./UserProfile.module.css";
 import { CreatePostModal } from "./CreatePostModal";
 import { ChatModal } from "../../components/Chat/ChatModal";
 import { ChatUser } from "../../components/Chat/ChatList";
-import { Post, postsService } from "../../services/posts.service";
+import { postsService } from "../../services/posts.service";
 import { EditProfileModal } from "./EditProfileModal";
 import { usersService } from '../../services/users.service';
+import FeedPage from "../feedPage/Feed";
+import { mockPosts } from "../../mockData/mockPost";
 
 interface User {
   _id: string;
@@ -19,13 +21,11 @@ interface User {
 
 export const UserProfileScreen = () => {
   const [user, setUser] = useState<User | null>(null);
-  const [posts, setPosts] = useState<Post[]>([]);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [selectedChatUser, setSelectedChatUser] = useState<ChatUser | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const currentUser = {
     _id: "current123",
@@ -43,41 +43,15 @@ export const UserProfileScreen = () => {
       profilePicture: "https://placehold.co/150x150",
     };
     setUser(mockUser);
-
-    // Fetch real posts from the backend
-    const fetchPosts = async () => {
-      try {
-        setLoading(true);
-        const userPosts = await postsService.getPostsBySenderId(mockUser._id);
-        console.log("userPosts", userPosts);
-        console.log("mockUser", mockUser._id);
-        setPosts(userPosts);
-      } catch (err) {
-        console.error('Error fetching posts:', err);
-        setError('Failed to load posts');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPosts();
   }, [currentUser._id]);
 
   const handleCreatePost = async (postData: string, image?: File) => {
     if (!user) return;
     
     try {
-      // Create the post
       const newPost = await postsService.createPost(postData, user._id);
       console.log('Created post:', newPost);
-      
-      // Update local state with the new post
-      setPosts(prevPosts => [newPost, ...prevPosts]);
-      
-      // Close the modal
       setIsCreateModalOpen(false);
-      
-      // Optional: Show success message
       setError(null);
     } catch (err) {
       console.error('Error creating post:', err);
@@ -152,25 +126,7 @@ export const UserProfileScreen = () => {
 
       <div className={styles.postsSection}>
         <h3>הפוסטים שלי</h3>
-        <div className={styles.postsGrid}>
-          {posts.map((post) => (
-            <Card key={post._id} className={styles.postCard}>
-              {post.imageUrl && (
-                <img
-                  src={post.imageUrl}
-                  alt="Post"
-                  className={styles.postImage}
-                />
-              )}
-              <div className={styles.postContent}>
-                <p>{post.postData}</p>
-                <span className={styles.postDate}>
-                  {new Date(post.createdAt).toLocaleDateString("he-IL")}
-                </span>
-              </div>
-            </Card>
-          ))}
-        </div>
+        <FeedPage posts={mockPosts} className={styles.feed} />
       </div>
 
       <CreatePostModal
