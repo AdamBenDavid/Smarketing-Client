@@ -1,8 +1,5 @@
-export interface User {
-  id: string;
-  name: string;
-  profilePicture: string;
-}
+import { User } from '../../types/user';
+export { User };
 
 export interface CommentType {
   id: string;

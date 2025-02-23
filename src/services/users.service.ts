@@ -1,16 +1,8 @@
 import axios from 'axios';
 import { config } from '../config';
+import { User } from '../types/user';
 
 const API_URL = config.apiUrl;
-
-export interface User {
-  _id: string;
-  email: string;
-  fullName: string;
-  role: string;
-  expertise: string[];
-  profilePicture?: string;
-}
 
 export interface UpdateProfileData {
   fullName: string;
