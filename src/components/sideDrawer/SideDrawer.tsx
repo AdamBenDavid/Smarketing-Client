@@ -20,6 +20,8 @@ import logo from "../../assets/Smarketing.png";
 import Dashboard from "../../pages/dashboard/dashboard";
 import FeedPage from "../../pages/feedPage/Feed";
 import { mockPosts } from "../../mockData/mockPost";
+import { MyPosts } from "../../pages/userProfileScreen/MyPosts";
+import { AccountSettings } from "../../pages/userProfileScreen/AccountSettings";
 
 const NAVIGATION: Navigation = [
   {
@@ -81,12 +83,12 @@ const NAVIGATION: Navigation = [
     icon: <MenuOutlinedIcon />,
     children: [
       {
-        segment: "profile",
-        title: "פרופיל אישי",
+        segment: "my-posts",
+        title: "הפוסטים שלי",
         icon: <PersonOutlinedIcon />,
       },
       {
-        segment: "userSettings",
+        segment: "account",
         title: "הגדרות חשבון",
         icon: <ContactsOutlinedIcon />,
       },
@@ -129,11 +131,12 @@ export default function DashboardLayoutBasic(props: any) {
 
   const demoWindow = window ? window() : undefined;
 
-  // Define a mapping between routes and components
+  // Update the route mapping
   const routeComponents: { [key: string]: React.ReactNode } = {
-    "/settings/profile": <UserProfileScreen />,
+    "/settings/my-posts": <MyPosts />,
+    "/settings/account": <AccountSettings />,
     "/feed": <FeedPage posts={mockPosts} />,
-    "/chats": <ChatList currentUserId="Adam" onSelectUser={() => {}} />, //fix the chat list
+    "/chats": <ChatList currentUserId="Adam" onSelectUser={() => {}} />,
     "/landingPage": <LandingPage />,
     "/campaign": <div>Campaign Page Content</div>,
     "/details": <div>Business Details Content</div>,
