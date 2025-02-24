@@ -6,6 +6,7 @@ import createCache from "@emotion/cache";
 import { prefixer } from "stylis";
 import rtlPlugin from "stylis-plugin-rtl";
 import AppRoutes from "./navigation/Routes";
+import { AuthProvider } from './context/AuthContext';
 
 // modify the theme to support RTL DO NOT REMOVE
 const rtlCache = createCache({
@@ -19,15 +20,17 @@ const rtlTheme = createTheme({
 
 const App: React.FC = () => {
   return (
-    <CacheProvider value={rtlCache}>
-      <ThemeProvider theme={rtlTheme}>
-        <div dir="rtl">
-          <BrowserRouter>
-            <AppRoutes />
-          </BrowserRouter>
-        </div>
-      </ThemeProvider>
-    </CacheProvider>
+    <AuthProvider>
+      <CacheProvider value={rtlCache}>
+        <ThemeProvider theme={rtlTheme}>
+          <div dir="rtl">
+            <BrowserRouter>
+              <AppRoutes />
+            </BrowserRouter>
+          </div>
+        </ThemeProvider>
+      </CacheProvider>
+    </AuthProvider>
   );
 };
 
