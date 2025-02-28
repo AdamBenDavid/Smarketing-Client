@@ -5,8 +5,8 @@ import "boxicons/css/boxicons.min.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
-import { authService } from '../../../services/auth.service';
 import { useNavigate } from "react-router-dom";
+import { loginUser } from "../api";
 
 type LoginInputs = {
   email: string;
@@ -23,18 +23,19 @@ const LoginForm: React.FC = () => {
 
   const onSubmit: SubmitHandler<LoginInputs> = async (data) => {
     try {
-      const response = await authService.login(data.email, data.password);
-      // Store auth data
-      localStorage.setItem('accessToken', response.token);
-      localStorage.setItem('refreshToken', response.refreshToken);
-      localStorage.setItem('userId', response._id);
-      toast.success("התחברות בוצעה בהצלחה");
+      const userData = await loginUser(data.email, data.password);
+      console.log("User Logged In:", userData);
 
-      // Redirect to dashboard or profile
-      navigate('/profile');
+      toast.success("ברוך הבא!");
+      console.log("toast.success");
+
+      navigate("/profile");
+      console.log("redirected to /profile");
     } catch (error) {
-      console.error("Login failed:", error);
-      toast.error(error.response.data);
+      console.error("Login Error:", error);
+      toast.error(
+        error instanceof Error ? error.message : "שם משתמש או סיסמה שגויים"
+      );
     }
   };
 
@@ -114,7 +115,7 @@ const LoginForm: React.FC = () => {
             minLength: {
               value: 6,
               message: "הסיסמה חייבת להכיל לפחות 6 תווים",
-            }
+            },
           })}
         />
         <i className="bx bxs-lock-alt"></i>

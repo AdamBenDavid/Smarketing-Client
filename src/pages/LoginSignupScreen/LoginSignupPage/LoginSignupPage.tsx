@@ -6,12 +6,12 @@ import { useNavigate } from "react-router-dom";
 
 const FormsPage: React.FC = () => {
   const navigate = useNavigate();
+
   const handleHomeClick = () => {
     navigate("/");
   };
 
   const [isRegister, setIsRegister] = useState(false);
-  //const navigate = useNavigate();
 
   const toggleForm = (registerMode: boolean) => {
     setIsRegister(registerMode);
