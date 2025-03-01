@@ -17,11 +17,11 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   }, [loading, isAuthenticated, navigate]);
 
   if (loading) {
-    return <div>Loading...</div>; // Prevent redirect before checking auth
+    return <div>Loading...</div>;
   }
 
   if (!isAuthenticated) {
-    return null; // Prevent rendering if redirecting
+    return null;
   }
 
   return <>{children}</>;

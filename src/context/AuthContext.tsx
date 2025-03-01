@@ -35,7 +35,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     setLoading(false);
   }, []);
 
-  // ✅ Login function to update context
   const login = (userData: User, token: string) => {
     localStorage.setItem("token", token);
     localStorage.setItem("userId", userData._id);
@@ -44,7 +43,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
     setUser(userData);
     setIsAuthenticated(true);
-    setLoading(false); // Make sure loading is updated
+    setLoading(false);
   };
 
   return (
