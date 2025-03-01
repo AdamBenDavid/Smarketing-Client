@@ -7,10 +7,10 @@ const PostHeader: React.FC<{ user: User }> = ({ user }) => {
     <div className="post-header">
       <img
         src={user.profilePicture}
-        alt={user.name}
+        alt={user.fullName}
         className="profile-picture"
       />
-      <span className="user-name">{user.name}</span>
+      <span className="user-name">{user.fullName}</span>
     </div>
   );
 };

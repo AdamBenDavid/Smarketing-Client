@@ -7,6 +7,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   loading: boolean;
   login: (userData: User, token: string) => void;
+  logout: () => void; // ✅ Add logout function to context
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -46,9 +47,42 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     setLoading(false);
   };
 
+  const logout = async () => {
+    const refreshToken = localStorage.getItem("refreshToken");
+
+    if (refreshToken) {
+      try {
+        await fetch("http://localhost:3000/logout", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ refreshToken }),
+        });
+      } catch (error) {
+        console.error("Logout request failed", error);
+      }
+    }
+
+    // ✅ Clear local storage
+    localStorage.removeItem("token");
+    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("userId");
+    localStorage.removeItem("userEmail");
+    localStorage.removeItem("userFullName");
+
+    // ✅ Update React state
+    setUser(null);
+    setIsAuthenticated(false);
+    setLoading(false);
+
+    // ✅ Redirect to login page
+    window.location.href = "/forms";
+  };
+
   return (
     <AuthContext.Provider
-      value={{ user, setUser, isAuthenticated, loading, login }}
+      value={{ user, setUser, isAuthenticated, loading, login, logout }}
     >
       {children}
     </AuthContext.Provider>

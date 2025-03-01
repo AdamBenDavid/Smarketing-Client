@@ -1,11 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { extendTheme } from "@mui/material/styles";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { AppProvider, Navigation, Router } from "@toolpad/core/AppProvider";
 import { DashboardLayout } from "@toolpad/core/DashboardLayout";
 import { PageContainer } from "@toolpad/core/PageContainer";
-import { UserProfileScreen } from "../../pages/userProfileScreen/UserProfileScreen"; // Import your profile component
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import ReceiptOutlinedIcon from "@mui/icons-material/ReceiptOutlined";
@@ -22,114 +21,131 @@ import FeedPage from "../../pages/feedPage/Feed";
 import { mockPosts } from "../../mockData/mockPost";
 import { MyPosts } from "../../pages/userProfileScreen/MyPosts";
 import { AccountSettings } from "../../pages/userProfileScreen/AccountSettings";
-
-const NAVIGATION: Navigation = [
-  {
-    kind: "header",
-    title: "Blog",
-  },
-  {
-    segment: "feed",
-    title: "תוכן",
-    icon: <HomeOutlinedIcon />,
-  },
-  {
-    segment: "chats",
-    title: "צאטים",
-    icon: <CalendarTodayOutlinedIcon />,
-  },
-  {
-    kind: "divider",
-  },
-  {
-    kind: "header",
-    title: "Smarketing",
-  },
-  {
-    segment: "landingPage",
-    title: "דף הנחיתה שלי",
-    icon: <ReceiptOutlinedIcon />,
-  },
-  {
-    segment: "campaign",
-    title: "קמפיינים",
-    icon: <TimelineOutlinedIcon />,
-  },
-  {
-    segment: "details",
-    title: "פרטי העסק",
-    icon: <DashboardIcon />,
-  },
-  {
-    segment: "analytics",
-    title: "נתונים וניתוחים",
-    icon: <PieChartOutlineOutlinedIcon />,
-  },
-  {
-    segment: "marketingPlan",
-    title: "תוכנית שיווק",
-    icon: <ShoppingCartIcon />,
-  },
-  {
-    kind: "divider",
-  },
-  {
-    kind: "header",
-    title: "Settings",
-  },
-  {
-    segment: "settings",
-    title: "הגדרות",
-    icon: <MenuOutlinedIcon />,
-    children: [
-      {
-        segment: "my-posts",
-        title: "הפוסטים שלי",
-        icon: <PersonOutlinedIcon />,
-      },
-      {
-        segment: "account",
-        title: "הגדרות חשבון",
-        icon: <ContactsOutlinedIcon />,
-      },
-    ],
-  },
-];
-
-const demoTheme = extendTheme({
-  colorSchemes: { light: true, dark: true },
-  colorSchemeSelector: "class",
-  breakpoints: {
-    values: {
-      xs: 0,
-      sm: 600,
-      md: 600,
-      lg: 1200,
-      xl: 1536,
-    },
-  },
-});
-
-function useDemoRouter(initialPath: string): Router {
-  const [pathname, setPathname] = React.useState(initialPath);
-
-  const router = React.useMemo(() => {
-    return {
-      pathname,
-      searchParams: new URLSearchParams(),
-      navigate: (path: string | URL) => setPathname(String(path)),
-    };
-  }, [pathname]);
-
-  return router;
-}
+import LogoutIcon from "@mui/icons-material/Logout";
+import { useAuth } from "../../context/AuthContext";
 
 export default function DashboardLayoutBasic(props: any) {
   const { window } = props;
-
   const router = useDemoRouter("/dashboard");
-
   const demoWindow = window ? window() : undefined;
+  const { logout } = useAuth(); // ✅ Get logout function
+
+  // ✅ Handle logout when navigating to "/logout"
+  useEffect(() => {
+    if (router.pathname === "/logout") {
+      logout();
+    }
+  }, [router.pathname, logout]);
+
+  // ✅ Updated NAVIGATION with a "Logout" Item
+  const NAVIGATION: Navigation = [
+    {
+      kind: "header",
+      title: "Blog",
+    },
+    {
+      segment: "feed",
+      title: "תוכן",
+      icon: <HomeOutlinedIcon />,
+    },
+    {
+      segment: "chats",
+      title: "צאטים",
+      icon: <CalendarTodayOutlinedIcon />,
+    },
+    {
+      kind: "divider",
+    },
+    {
+      kind: "header",
+      title: "Smarketing",
+    },
+    {
+      segment: "landingPage",
+      title: "דף הנחיתה שלי",
+      icon: <ReceiptOutlinedIcon />,
+    },
+    {
+      segment: "campaign",
+      title: "קמפיינים",
+      icon: <TimelineOutlinedIcon />,
+    },
+    {
+      segment: "details",
+      title: "פרטי העסק",
+      icon: <DashboardIcon />,
+    },
+    {
+      segment: "analytics",
+      title: "נתונים וניתוחים",
+      icon: <PieChartOutlineOutlinedIcon />,
+    },
+    {
+      segment: "marketingPlan",
+      title: "תוכנית שיווק",
+      icon: <ShoppingCartIcon />,
+    },
+    {
+      kind: "divider",
+    },
+    {
+      kind: "header",
+      title: "Settings",
+    },
+    {
+      segment: "settings",
+      title: "הגדרות",
+      icon: <MenuOutlinedIcon />,
+      children: [
+        {
+          segment: "my-posts",
+          title: "הפוסטים שלי",
+          icon: <PersonOutlinedIcon />,
+        },
+        {
+          segment: "account",
+          title: "הגדרות חשבון",
+          icon: <ContactsOutlinedIcon />,
+        },
+      ],
+    },
+    {
+      kind: "divider",
+    },
+    {
+      segment: "logout", // ✅ Special logout segment
+      title: "התנתקות",
+      icon: <LogoutIcon />,
+    },
+  ];
+
+  const demoTheme = extendTheme({
+    colorSchemes: { light: true, dark: true },
+    colorSchemeSelector: "class",
+    breakpoints: {
+      values: {
+        xs: 0,
+        sm: 600,
+        md: 600,
+        lg: 1200,
+        xl: 1536,
+      },
+    },
+  });
+
+  function useDemoRouter(initialPath: string): Router {
+    const [pathname, setPathname] = React.useState(initialPath);
+
+    const router = React.useMemo(() => {
+      return {
+        pathname,
+        searchParams: new URLSearchParams(),
+        navigate: (path: string | URL) => setPathname(String(path)),
+      };
+    }, [pathname]);
+
+    return router;
+  }
 
   // Update the route mapping
   const routeComponents: { [key: string]: React.ReactNode } = {

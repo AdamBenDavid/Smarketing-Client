@@ -16,6 +16,13 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     }
   }, [loading, isAuthenticated, navigate]);
 
+  console.log(
+    "ProtectedRoute - isAuthenticated:",
+    isAuthenticated,
+    "loading:",
+    loading
+  );
+
   if (loading) {
     return <div>Loading...</div>;
   }

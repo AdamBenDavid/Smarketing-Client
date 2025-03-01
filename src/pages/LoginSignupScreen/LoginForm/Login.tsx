@@ -15,7 +15,7 @@ type LoginInputs = {
 };
 
 const LoginForm: React.FC = () => {
-  const { login } = useAuth(); // ✅ Get login function from context
+  const { login } = useAuth();
   const {
     register,
     handleSubmit,
