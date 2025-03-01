@@ -5,6 +5,8 @@ interface AuthContextType {
   user: User | null;
   setUser: (user: User | null) => void;
   isAuthenticated: boolean;
+  loading: boolean;
+  login: (userData: User, token: string) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -14,25 +16,41 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check for existing auth on load
     const token = localStorage.getItem("token");
     const userId = localStorage.getItem("userId");
+
     if (token && userId) {
       setUser({
         _id: userId,
         email: localStorage.getItem("userEmail") || "",
         fullName: localStorage.getItem("userFullName") || "",
-        role: "user", // You might want to store this in localStorage too
+        role: "user",
         expertise: [],
       });
       setIsAuthenticated(true);
     }
+    setLoading(false);
   }, []);
 
+  // ✅ Login function to update context
+  const login = (userData: User, token: string) => {
+    localStorage.setItem("token", token);
+    localStorage.setItem("userId", userData._id);
+    localStorage.setItem("userEmail", userData.email);
+    localStorage.setItem("userFullName", userData.fullName);
+
+    setUser(userData);
+    setIsAuthenticated(true);
+    setLoading(false); // Make sure loading is updated
+  };
+
   return (
-    <AuthContext.Provider value={{ user, setUser, isAuthenticated }}>
+    <AuthContext.Provider
+      value={{ user, setUser, isAuthenticated, loading, login }}
+    >
       {children}
     </AuthContext.Provider>
   );
@@ -40,7 +58,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;

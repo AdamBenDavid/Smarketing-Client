@@ -7,6 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { loginUser } from "../api";
+import { useAuth } from "../../../context/AuthContext";
 
 type LoginInputs = {
   email: string;
@@ -14,6 +15,7 @@ type LoginInputs = {
 };
 
 const LoginForm: React.FC = () => {
+  const { login } = useAuth(); // ✅ Get login function from context
   const {
     register,
     handleSubmit,
@@ -26,10 +28,21 @@ const LoginForm: React.FC = () => {
       const userData = await loginUser(data.email, data.password);
       console.log("User Logged In:", userData);
 
+      login(
+        {
+          _id: userData._id,
+          email: data.email,
+          fullName: "User Name",
+          role: "user",
+          expertise: [],
+        },
+        userData.accessToken
+      );
+
       toast.success("ברוך הבא!");
       console.log("toast.success");
 
-      navigate("/profile");
+      navigate("/profile", { replace: true });
       console.log("redirected to /profile");
     } catch (error) {
       console.error("Login Error:", error);
