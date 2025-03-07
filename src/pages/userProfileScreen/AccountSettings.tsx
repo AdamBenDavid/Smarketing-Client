@@ -5,8 +5,6 @@ import { ChatModal } from "../../components/Chat/ChatModal";
 import { ChatUser } from "../../components/Chat/ChatList";
 import { EditProfileModal } from "./EditProfileModal";
 import { usersService } from "../../services/api";
-import { useAuth } from "../../context/AuthContext"; // ✅ Use AuthContext to manage user state
-import { toast } from "react-toastify";
 
 interface User {
   _id: string;
@@ -18,78 +16,58 @@ interface User {
 }
 
 export const AccountSettings = () => {
-  const { user, setUser } = useAuth(); // ✅ Get user from context
+  const [user, setUser] = useState<User | null>(null);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [selectedChatUser, setSelectedChatUser] = useState<ChatUser | null>(
     null
   );
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // ✅ Fetch user details from backend on mount
+  const currentUser = {
+    _id: "current123",
+    fullName: "דן כהן",
+  };
+
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const fetchedUser = await usersService.getUserProfile();
-        setUser(fetchedUser);
-      } catch (err) {
-        console.error("❌ Error fetching user:", err);
-        setError("Failed to load user data");
-      } finally {
-        setLoading(false);
-      }
+    const mockUser = {
+      _id: currentUser._id,
+      email: "marketer@example.com",
+      fullName: currentUser.fullName,
+      role: "מנהל שיווק דיגיטלי",
+      expertise: ["קמפיינים דיגיטליים", "SEO", "תוכן שיווקי", "מדיה חברתית"],
+      profilePicture: "https://placehold.co/150x150",
     };
+    setUser(mockUser);
+  }, [currentUser._id]);
 
-    if (!user) {
-      fetchUser();
-    }
-  }, [user, setUser]);
-
-  // ✅ Handle profile updates
-  const handleEditProfile = async (
-    fullName: string,
-    image?: File
-  ): Promise<void> => {
+  const handleEditProfile = async (fullName: string, image?: File) => {
     if (!user) return;
 
     try {
-      const formData = new FormData();
-      formData.append("fullName", fullName);
-      if (image) {
-        formData.append("profilePicture", image);
-      }
+      const updatedUser = await usersService.updateProfile(user._id, {
+        fullName,
+        profilePicture: image,
+      });
 
-      const updatedUser = await usersService.updateProfile(
-        user._id || "",
-        formData
-      );
-      setUser(updatedUser.user); // ✅ Update user state in context
+      setUser(updatedUser);
       setIsEditModalOpen(false);
-      toast.success("פרופיל עודכן בהצלחה!");
+      setError(null);
     } catch (err) {
-      console.error("❌ Error updating profile:", err);
-      toast.error("שגיאה בעדכון הפרופיל");
+      console.error("Error updating profile:", err);
+      setError("Failed to update profile");
     }
   };
 
-  if (loading) {
-    return <Typography>טוען...</Typography>;
-  }
-
   if (!user) {
-    return <Typography color="error">שגיאה בטעינת הנתונים</Typography>;
+    return <Typography>טוען...</Typography>;
   }
 
   return (
     <div className={styles.profileContainer}>
       <div className={styles.userInfo}>
         <img
-          src={
-            user.profilePicture
-              ? `http://localhost:3000/${user.profilePicture}`
-              : "https://placehold.co/150x150"
-          }
+          src={user.profilePicture}
           alt="Profile"
           className={styles.profilePicture}
         />
@@ -104,6 +82,13 @@ export const AccountSettings = () => {
             </button>
           </div>
           <p className={styles.role}>{user.role}</p>
+          <div className={styles.expertise}>
+            {user.expertise.map((exp, index) => (
+              <span key={index} className={styles.expertiseTag}>
+                {exp}
+              </span>
+            ))}
+          </div>
           <div className={styles.buttonGroup}>
             <button
               className={styles.chatButton}
@@ -115,7 +100,6 @@ export const AccountSettings = () => {
         </div>
       </div>
 
-      {/* ✅ Chat Modal */}
       <ChatModal
         isOpen={isChatOpen}
         onClose={() => {
@@ -126,15 +110,14 @@ export const AccountSettings = () => {
         onSelectUser={(user) => setSelectedChatUser(user)}
         recipientId={selectedChatUser?._id || ""}
         recipientName={selectedChatUser?.fullName || ""}
-        currentUserId={user._id || ""}
-        currentUserName={user.fullName}
+        currentUserId={currentUser._id}
+        currentUserName={currentUser.fullName}
       />
 
-      {/* ✅ Edit Profile Modal */}
       <EditProfileModal
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
-        onSubmit={handleEditProfile} // ✅ Now correctly typed
+        onSubmit={handleEditProfile}
         currentName={user.fullName}
       />
     </div>
