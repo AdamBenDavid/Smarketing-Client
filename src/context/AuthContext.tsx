@@ -42,7 +42,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const login = (userData: User, token: string) => {
     localStorage.setItem("token", token);
     localStorage.setItem("userId", userData._id || "");
-    localStorage.setItem("userEmail", userData.email);
+    localStorage.setItem("userEmail", userData.email || "");
     localStorage.setItem("userFullName", userData.fullName);
 
     setUser(userData);

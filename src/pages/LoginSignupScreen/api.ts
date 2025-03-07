@@ -1,6 +1,7 @@
 import axios from "axios";
 import { User } from "../../types/user";
 import { CredentialResponse } from "@react-oauth/google";
+import { AuthResponse } from "../../types/user";
 
 const API_BASE_URL = "http://localhost:3000";
 
@@ -28,20 +29,21 @@ export const loginUser = async (email: string, password: string) => {
   }
 };
 
-export const googleSignin = async (credentialResponse: CredentialResponse) => {
-  return new Promise<User>((resolve, reject) => {
-    console.log("googleSignin...");
-    api
-      .post("/auth/google", credentialResponse)
-      .then((response: any) => {
-        console.log("googleSignin response:", response);
-        resolve(response.data);
-      })
-      .catch((error: any) => {
-        console.error("googleSignin error:", error);
-        reject(error);
-      });
-  });
-};
+export const googleSignin = async (
+  credentialResponse: CredentialResponse
+): Promise<AuthResponse> => {
+  console.log("googleSignin...");
 
+  try {
+    const response = await api.post<AuthResponse>(
+      "/auth/google",
+      credentialResponse
+    );
+    console.log("googleSignin response:", response.data);
+    return response.data;
+  } catch (error: any) {
+    console.error("googleSignin error:", error);
+    throw error;
+  }
+};
 export default api;

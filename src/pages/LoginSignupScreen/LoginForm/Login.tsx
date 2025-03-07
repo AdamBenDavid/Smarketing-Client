@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { loginUser, googleSignin } from "../api";
 import { useAuth } from "../../../context/AuthContext";
 import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
+import { AuthResponse } from "../../../types/user";
 
 type LoginInputs = {
   email: string;
@@ -74,12 +75,23 @@ const LoginForm: React.FC = () => {
   const googleResponseMessage = async (
     credentialResponse: CredentialResponse
   ) => {
-    console.log({ credentialResponse });
+    console.log("🔹 Google Credential Response:", credentialResponse);
+
     try {
-      const res = await googleSignin(credentialResponse);
-      navigate("/profile", { replace: true });
+      const res: AuthResponse = await googleSignin(credentialResponse);
+      console.log("🔹 Google Sign-In Response from Backend:", res);
+
+      if (res.accessToken) {
+        localStorage.setItem("token", res.accessToken); // ✅ Store token
+        console.log("🔹 Token stored in localStorage:", res.accessToken);
+
+        login(res.user, res.accessToken); // ✅ Update authentication state
+        navigate("/profile", { replace: true });
+      } else {
+        console.error("❌ No accessToken received from backend");
+      }
     } catch (err) {
-      console.log(err);
+      console.error("❌ Google Sign-in Error:", err);
     }
   };
 
