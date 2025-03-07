@@ -5,7 +5,7 @@ import "boxicons/css/boxicons.min.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
-import { registerUser } from "../api";
+import { registerUser } from "../../../services/api";
 
 type FormInputs = {
   username: string;

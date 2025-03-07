@@ -1,7 +1,7 @@
 import axios from "axios";
-import { User } from "../../types/user";
+import { User } from "../types/user";
 import { CredentialResponse } from "@react-oauth/google";
-import { AuthResponse } from "../../types/user";
+import { AuthResponse } from "../types/user";
 
 const API_BASE_URL = "http://localhost:3000";
 
@@ -46,4 +46,38 @@ export const googleSignin = async (
     throw error;
   }
 };
+
+export const updateProfile = async (userId: string, formData: FormData) => {
+  try {
+    const response = await api.put(`/auth/profile/${userId}`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    return response.data;
+  } catch (error: any) {
+    throw error.response?.data || "Failed to update profile";
+  }
+};
+
+export const usersService = {
+  getUserProfile: async () => {
+    try {
+      const response = await api.get("/auth/me");
+      return response.data;
+    } catch (error: any) {
+      throw error.response?.data || "Failed to fetch user profile";
+    }
+  },
+
+  updateProfile: async (userId: string, formData: FormData) => {
+    try {
+      const response = await api.put(`/auth/profile/${userId}`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      return response.data;
+    } catch (error: any) {
+      throw error.response?.data || "Failed to update profile";
+    }
+  },
+};
+
 export default api;
