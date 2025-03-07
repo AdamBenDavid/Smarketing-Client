@@ -1,6 +1,4 @@
-import { User } from '../../types/user';
-export { User };
-
+import { User } from "../../types/user";
 export interface CommentType {
   id: string;
   text: string;
@@ -10,6 +8,7 @@ export interface CommentType {
 export interface Post {
   id: string;
   user: User;
+  postData: string;
   image: string;
   comments: CommentType[];
 }

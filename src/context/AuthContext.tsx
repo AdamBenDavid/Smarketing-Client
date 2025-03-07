@@ -7,7 +7,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   loading: boolean;
   login: (userData: User, token: string) => void;
-  logout: () => void; // ✅ Add logout function to context
+  logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -30,6 +30,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         fullName: localStorage.getItem("userFullName") || "",
         role: "user",
         expertise: [],
+        profilePicture:
+          localStorage.getItem("profilePicture") ||
+          "https://placehold.co/150x150", // here I will ensure that the profile picture is always available
       });
       setIsAuthenticated(true);
     }
@@ -38,7 +41,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const login = (userData: User, token: string) => {
     localStorage.setItem("token", token);
-    localStorage.setItem("userId", userData._id);
+    localStorage.setItem("userId", userData._id || "");
     localStorage.setItem("userEmail", userData.email);
     localStorage.setItem("userFullName", userData.fullName);
 
@@ -64,19 +67,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       }
     }
 
-    // ✅ Clear local storage
     localStorage.removeItem("token");
     localStorage.removeItem("refreshToken");
     localStorage.removeItem("userId");
     localStorage.removeItem("userEmail");
     localStorage.removeItem("userFullName");
 
-    // ✅ Update React state
     setUser(null);
     setIsAuthenticated(false);
     setLoading(false);
 
-    // ✅ Redirect to login page
     window.location.href = "/forms";
   };
 

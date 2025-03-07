@@ -1,52 +1,79 @@
 import { useEffect, useState } from "react";
-import { Typography } from "@mui/material";
 import styles from "./UserProfile.module.css";
 import { CreatePostModal } from "./CreatePostModal";
 import FeedPage from "../feedPage/Feed";
-import { mockPosts as initialMockPosts } from "../../mockData/mockPost";
-import { Post, User } from "../../components/feed/types";
+import { Post } from "../../components/feed/types";
+import { useAuth } from "../../context/AuthContext";
+import { User } from "../../types/user";
 
 export const MyPosts = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [initialized, setInitialized] = useState(false);
   const [localPosts, setLocalPosts] = useState<Post[]>([]);
+  const { user } = useAuth();
 
   const currentUser: User = {
-    id: "current123",
-    name: "דן כהן",
+    email: user?.email || "אימייל לא ידוע",
+    fullName: user?.fullName || "משתמש אנונימי",
     profilePicture: "https://placehold.co/150x150",
   };
 
   useEffect(() => {
-    if (!initialized) {
-      setLocalPosts(initialMockPosts);
-      setInitialized(true);
-    }
-  }, [initialized]);
+    const fetchUserPosts = async () => {
+      if (!user?._id) return;
 
-  const handleCreatePost = (
-    postData: string,
-    image?: File,
-    userName?: string
-  ) => {
-    const newPost: Post = {
-      id: `post-${Date.now()}`,
-      user: {
-        id: `user-${Date.now()}`,
-        name: userName || "משתמש אנונימי",
-        profilePicture: "https://placehold.co/150x150",
-      },
-      image: image
-        ? URL.createObjectURL(image)
-        : "https://picsum.photos/400/300",
-      comments: [],
+      try {
+        const response = await fetch(
+          `http://localhost:3000/posts/user/${user._id}`
+        );
+        if (!response.ok) throw new Error("Failed to fetch posts");
+
+        const userPosts = await response.json();
+        setLocalPosts(userPosts);
+      } catch (error) {
+        console.error(" Error fetching user posts:", error);
+      }
     };
 
-    setLocalPosts((prevPosts) => {
-      console.log("Previous posts:", prevPosts);
-      return [newPost, ...prevPosts];
-    });
-    setIsCreateModalOpen(false);
+    fetchUserPosts();
+  }, [user?._id]);
+
+  const handleCreatePost = async (postData: string, image?: File) => {
+    try {
+      const formData = new FormData();
+      formData.append("postData", postData);
+      formData.append("senderId", user?._id || "");
+      if (image) {
+        formData.append("image", image);
+      }
+
+      const response = await fetch("http://localhost:3000/posts", {
+        method: "POST",
+        body: formData,
+        credentials: "include",
+      });
+
+      if (!response.ok) throw new Error("Failed to create post");
+
+      const newPost = await response.json();
+
+      const postToAdd: Post = {
+        id: newPost._id,
+        postData: newPost.postData,
+        user: {
+          _id: user?._id || "unknown-user",
+          fullName: user?.fullName || "משתמש אנונימי",
+          profilePicture:
+            user?.profilePicture || "https://placehold.co/150x150",
+        },
+        image: newPost.image ? `http://localhost:3000${newPost.image}` : "",
+        comments: newPost.comments || [],
+      };
+
+      setLocalPosts((prevPosts) => [postToAdd, ...prevPosts]);
+      setIsCreateModalOpen(false);
+    } catch (error) {
+      console.error("Error creating post:", error);
+    }
   };
 
   return (
@@ -58,7 +85,7 @@ export const MyPosts = () => {
             className={styles.createPostButton}
             onClick={() => setIsCreateModalOpen(true)}
           >
-            צור פוטס
+            צור פוסט
           </button>
         </div>
         <FeedPage posts={localPosts} className={styles.feed} />
