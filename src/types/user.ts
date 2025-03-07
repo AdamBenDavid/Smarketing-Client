@@ -1,5 +1,5 @@
 export interface User {
-  email: string;
+  email?: string;
   fullName: string; // Use fullName consistently instead of name
 
   _id?: string; // Consistent ID field

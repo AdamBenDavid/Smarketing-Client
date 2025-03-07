@@ -1,5 +1,8 @@
 import { useState } from "react";
 import styles from "./CreatePostModal.module.css";
+import { create } from "@mui/material/styles/createTransitions";
+import { useAuth } from "../../context/AuthContext";
+import { User } from "../../types/user";
 
 interface CreatePostModalProps {
   isOpen: boolean;
@@ -15,6 +18,7 @@ export const CreatePostModal = ({
   const [postContent, setPostContent] = useState("");
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const { user } = useAuth();
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -28,14 +32,51 @@ export const CreatePostModal = ({
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (postContent.trim()) {
-      onSubmit(postContent, selectedImage || undefined);
-      setPostContent("");
+
+    if (!postContent.trim()) return; // Prevent empty posts
+
+    try {
+      await createPost(postContent, selectedImage || undefined); // Pass parameters
+      setPostContent(""); // Clear the input
       setSelectedImage(null);
       setImagePreview(null);
-      onClose();
+      onClose(); // Close modal after successful submission
+    } catch (error) {
+      console.error("Error submitting post:", error);
+    }
+  };
+
+  const createPost = async (postData: string, image?: File) => {
+    try {
+      const formData = new FormData();
+      formData.append("postData", postData);
+
+      if (user?._id) {
+        formData.append("senderId", user._id); // Dynamically append user ID
+      } else {
+        throw new Error("User ID is missing");
+      }
+
+      if (image) {
+        formData.append("image", image);
+      }
+
+      const response = await fetch("http://localhost:3000/posts", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to create post");
+      }
+
+      const data = await response.json();
+      console.log("Post created successfully:", data);
+      return data;
+    } catch (error) {
+      console.error("Error creating post:", error);
     }
   };
 

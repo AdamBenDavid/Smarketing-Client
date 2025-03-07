@@ -1,16 +1,27 @@
 import React from "react";
-import { User } from "../../feed/types";
+import { useAuth } from "../../../context/AuthContext";
 import "./PostHeader.css";
 
-const PostHeader: React.FC<{ user: User }> = ({ user }) => {
+const PostHeader: React.FC<{
+  user?: { fullName?: string; profilePicture?: string };
+}> = ({ user }) => {
+  const { user: loggedInUser } = useAuth();
+
+  // ✅ Ensure user is always defined
+  const displayUser = user ||
+    loggedInUser || {
+      fullName: "משתמש אנונימי",
+      profilePicture: "https://placehold.co/150x150",
+    };
+
   return (
     <div className="post-header">
       <img
-        src={user.profilePicture}
-        alt={user.fullName}
+        src={displayUser.profilePicture || "https://placehold.co/150x150"}
+        alt="Profile"
         className="profile-picture"
       />
-      <span className="user-name">{user.fullName}</span>
+      <span className="username">{displayUser.fullName}</span>
     </div>
   );
 };

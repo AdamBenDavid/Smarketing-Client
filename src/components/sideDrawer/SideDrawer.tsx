@@ -18,7 +18,6 @@ import { ChatList } from "../Chat/ChatList";
 import logo from "../../assets/Smarketing.png";
 import Dashboard from "../../pages/dashboard/dashboard";
 import FeedPage from "../../pages/feedPage/Feed";
-import { mockPosts } from "../../mockData/mockPost";
 import { MyPosts } from "../../pages/userProfileScreen/MyPosts";
 import { AccountSettings } from "../../pages/userProfileScreen/AccountSettings";
 import LogoutIcon from "@mui/icons-material/Logout";
@@ -149,7 +148,7 @@ export default function DashboardLayoutBasic(props: any) {
   const routeComponents: { [key: string]: React.ReactNode } = {
     "/settings/my-posts": <MyPosts />,
     "/settings/account": <AccountSettings />,
-    "/feed": <FeedPage posts={mockPosts} />,
+    "/feed": <FeedPage posts={[]} />,
     "/chats": <ChatList currentUserId="Adam" onSelectUser={() => {}} />,
     "/landingPage": <LandingPage />,
     "/campaign": <div>Campaign Page Content</div>,
