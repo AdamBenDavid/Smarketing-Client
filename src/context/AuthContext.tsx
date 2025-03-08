@@ -1,92 +1,93 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
+import axios from "axios";
 import { User } from "../types/user";
 
 interface AuthContextType {
   user: User | null;
-  setUser: (user: User | null) => void;
-  isAuthenticated: boolean;
-  loading: boolean;
-  login: (userData: User, token: string) => void;
+  token: string | null;
+  login: (email: string, password: string) => Promise<void>;
   logout: () => void;
+  isAuthenticated: boolean;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    const userId = localStorage.getItem("userId");
-
-    if (token && userId) {
-      setUser({
-        _id: userId,
-        email: localStorage.getItem("userEmail") || "",
-        fullName: localStorage.getItem("userFullName") || "",
-        role: "user",
-        expertise: [],
-        profilePicture:
-          localStorage.getItem("profilePicture") ||
-          "https://placehold.co/150x150", // here I will ensure that the profile picture is always available
-      });
-      setIsAuthenticated(true);
-    }
-    setLoading(false);
-  }, []);
-
-  const login = (userData: User, token: string) => {
-    localStorage.setItem("token", token);
-    localStorage.setItem("userId", userData._id || "");
-    localStorage.setItem("userEmail", userData.email);
-    localStorage.setItem("userFullName", userData.fullName);
-
-    setUser(userData);
-    setIsAuthenticated(true);
-    setLoading(false);
-  };
-
-  const logout = async () => {
-    const refreshToken = localStorage.getItem("refreshToken");
-
-    if (refreshToken) {
-      try {
-        await fetch("http://localhost:3000/logout", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ refreshToken }),
-        });
-      } catch (error) {
-        console.error("Logout request failed", error);
+    // Check for saved token and user data in localStorage
+    const savedToken = localStorage.getItem("token");
+    const savedUserData = localStorage.getItem("user");
+    
+    if (savedToken) {
+      setToken(savedToken);
+      
+      // Only try to parse user data if it exists and isn't "undefined"
+      if (savedUserData && savedUserData !== "undefined") {
+        try {
+          const parsedUser = JSON.parse(savedUserData);
+          setUser(parsedUser);
+        } catch (error) {
+          console.error("Error parsing saved user:", error);
+          // Clear invalid data
+          localStorage.removeItem("user");
+        }
       }
     }
+  }, []);
 
-    localStorage.removeItem("token");
-    localStorage.removeItem("refreshToken");
-    localStorage.removeItem("userId");
-    localStorage.removeItem("userEmail");
-    localStorage.removeItem("userFullName");
+  const login = async (email: string, password: string) => {
+    try {
+      const response = await axios.post("http://localhost:3000/auth/login", {
+        email,
+        password,
+      });
 
-    setUser(null);
-    setIsAuthenticated(false);
-    setLoading(false);
-
-    window.location.href = "/forms";
+      const { accessToken, _id } = response.data;
+      
+      // Create user object from response
+      const userData = {
+        _id,
+        email,
+        fullName: email // Using email as fullName temporarily since backend doesn't return it
+      };
+      
+      // Save to state
+      setToken(accessToken);
+      setUser(userData);
+      
+      // Save to localStorage
+      localStorage.setItem("token", accessToken);
+      localStorage.setItem("user", JSON.stringify(userData));
+      
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw new Error(error.response?.data || "Login failed");
+      }
+      throw error;
+    }
   };
 
-  return (
-    <AuthContext.Provider
-      value={{ user, setUser, isAuthenticated, loading, login, logout }}
-    >
-      {children}
-    </AuthContext.Provider>
-  );
+  const logout = () => {
+    setUser(null);
+    setToken(null);
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+  };
+
+  const value = {
+    user,
+    token,
+    login,
+    logout,
+    isAuthenticated: !!token
+  };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => {

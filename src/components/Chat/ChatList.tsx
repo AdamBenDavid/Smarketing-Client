@@ -1,46 +1,44 @@
 import { useState } from "react";
 import styles from "./ChatList.module.css";
-
-export interface ChatUser {
-  _id: string;
-  fullName: string;
-  profilePicture: string;
-  role: string;
-  lastMessage?: string;
-  lastMessageTime?: string;
-}
+import { User } from "../../types/user";
 
 interface ChatListProps {
-  onSelectUser: (user: ChatUser) => void;
+  onSelectUser: (user: User) => void;
   currentUserId: string;
 }
 
 export const ChatList = ({ onSelectUser, currentUserId }: ChatListProps) => {
   // Mock data for available users
-  const mockUsers: ChatUser[] = [
+  const mockUsers: User[] = [
     {
       _id: "user1",
+      email: "ron@example.com",
       fullName: "רון לוי",
       profilePicture: "https://placehold.co/50x50",
       role: "מנהל קמפיינים",
-      lastMessage: "תודה רבה על העזרה!",
-      lastMessageTime: "10:30",
+      expertise: ["קמפיינים", "פרסום"],
+      lastSeen: new Date(),
+      online: true
     },
     {
       _id: "user2",
+      email: "michal@example.com",
       fullName: "מיכל כהן",
       profilePicture: "https://placehold.co/50x50",
       role: "יועצת שיווק דיגיטלי",
-      lastMessage: "אשמח לקבוע פגישת ייעוץ",
-      lastMessageTime: "09:15",
+      expertise: ["שיווק דיגיטלי"],
+      lastSeen: new Date(),
+      online: true
     },
     {
       _id: "user3",
+      email: "avi@example.com",
       fullName: "אבי ישראלי",
       profilePicture: "https://placehold.co/50x50",
       role: "מומחה SEO",
-      lastMessage: "בוא נדבר על אסטרטגיית התוכן",
-      lastMessageTime: "אתמול",
+      expertise: ["SEO"],
+      lastSeen: new Date(),
+      online: false
     },
   ];
 
@@ -64,14 +62,11 @@ export const ChatList = ({ onSelectUser, currentUserId }: ChatListProps) => {
             <div className={styles.userInfo}>
               <h3>{user.fullName}</h3>
               <span className={styles.userRole}>{user.role}</span>
-              {user.lastMessage && (
-                <p className={styles.lastMessage}>
-                  {user.lastMessage}
-                  <span className={styles.messageTime}>
-                    {user.lastMessageTime}
-                  </span>
-                </p>
-              )}
+              <p className={styles.lastMessage}>
+                <span className={styles.onlineStatus}>
+                  {user.online ? "מחובר" : "לא מחובר"}
+                </span>
+              </p>
             </div>
           </div>
         ))}

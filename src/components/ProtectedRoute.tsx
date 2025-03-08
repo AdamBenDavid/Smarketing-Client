@@ -1,34 +1,29 @@
-import { useEffect } from "react";
+import { Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { CircularProgress } from "@mui/material";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
 }
 
-export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const { isAuthenticated, loading } = useAuth();
-  const navigate = useNavigate();
+export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
+  const { isAuthenticated, isLoading } = useAuth();
 
-  useEffect(() => {
-    if (!loading && !isAuthenticated) {
-      navigate("/forms", { replace: true });
-    }
-  }, [loading, isAuthenticated, navigate]);
-
-  console.log(
-    "ProtectedRoute - isAuthenticated:",
-    isAuthenticated,
-    "loading:",
-    loading
-  );
-
-  if (loading) {
-    return <div>Loading...</div>;
+  if (isLoading) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        height: '100vh' 
+      }}>
+        <CircularProgress />
+      </div>
+    );
   }
 
   if (!isAuthenticated) {
-    return null;
+    return <Navigate to="/forms" replace />;
   }
 
   return <>{children}</>;

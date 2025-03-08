@@ -4,9 +4,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import "boxicons/css/boxicons.min.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { loginUser, googleSignin } from "../api";
 import { useAuth } from "../../../context/AuthContext";
 import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 
@@ -26,25 +24,9 @@ const LoginForm: React.FC = () => {
 
   const onSubmit: SubmitHandler<LoginInputs> = async (data) => {
     try {
-      const userData = await loginUser(data.email, data.password);
-      console.log("User Logged In:", userData);
-
-      login(
-        {
-          _id: userData._id,
-          email: data.email,
-          fullName: "User Name",
-          role: "user",
-          expertise: [],
-        },
-        userData.accessToken
-      );
-
+      await login(data.email, data.password);
       toast.success("ברוך הבא!");
-      console.log("toast.success");
-
       navigate("/profile", { replace: true });
-      console.log("redirected to /profile");
     } catch (error) {
       console.error("Login Error:", error);
       toast.error(
@@ -76,7 +58,7 @@ const LoginForm: React.FC = () => {
   ) => {
     console.log({ credentialResponse });
     try {
-      const res = await googleSignin(credentialResponse);
+      // TODO: Implement Google sign-in
       navigate("/profile", { replace: true });
     } catch (err) {
       console.log(err);

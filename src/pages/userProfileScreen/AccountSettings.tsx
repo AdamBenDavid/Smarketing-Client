@@ -2,45 +2,32 @@ import { useEffect, useState } from "react";
 import { Typography } from "@mui/material";
 import styles from "./UserProfile.module.css";
 import { ChatModal } from "../../components/Chat/ChatModal";
-import { ChatUser } from "../../components/Chat/ChatList";
 import { EditProfileModal } from "./EditProfileModal";
 import { usersService } from '../../services/users.service';
-
-interface User {
-  _id: string;
-  email: string;
-  fullName: string;
-  role: string;
-  expertise: string[];
-  profilePicture?: string;
-}
+import { useAuth } from '../../context/AuthContext';
+import { User } from "../../types/user";
 
 export const AccountSettings = () => {
+  const { user: currentUser, token } = useAuth();
   const [user, setUser] = useState<User | null>(null);
   const [isChatOpen, setIsChatOpen] = useState(false);
-  const [selectedChatUser, setSelectedChatUser] = useState<ChatUser | null>(null);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const currentUser = {
-    _id: "current123",
-    fullName: "דן כהן",
-  };
-
   useEffect(() => {
-    const mockUser = {
-      _id: currentUser._id,
-      email: "marketer@example.com",
-      fullName: currentUser.fullName,
-      role: "מנהל שיווק דיגיטלי",
-      expertise: ["קמפיינים דיגיטליים", "SEO", "תוכן שיווקי", "מדיה חברתית"],
-      profilePicture: "https://placehold.co/150x150",
-    };
-    setUser(mockUser);
-  }, [currentUser._id]);
+    if (currentUser) {
+      setUser({
+        _id: currentUser._id,
+        email: currentUser.email,
+        fullName: currentUser.fullName,
+        role: currentUser.role || "משתמש",
+        expertise: currentUser.expertise || [],
+        profilePicture: currentUser.profilePicture || "https://placehold.co/150x150",
+      });
+    }
+  }, [currentUser]);
 
   const handleEditProfile = async (fullName: string, image?: File) => {
-    if (!user) return;
+    if (!user || !token) return;
     
     try {
       const updatedUser = await usersService.updateProfile(user._id, {
@@ -48,7 +35,10 @@ export const AccountSettings = () => {
         profilePicture: image
       });
       
-      setUser(updatedUser);
+      setUser(prevUser => ({
+        ...prevUser!,
+        ...updatedUser
+      }));
       setIsEditModalOpen(false);
       setError(null);
     } catch (err) {
@@ -57,7 +47,9 @@ export const AccountSettings = () => {
     }
   };
 
-  if (!user) {
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+  if (!user || !currentUser || !token) {
     return <Typography>טוען...</Typography>;
   }
 
@@ -81,7 +73,7 @@ export const AccountSettings = () => {
           </div>
           <p className={styles.role}>{user.role}</p>
           <div className={styles.expertise}>
-            {user.expertise.map((exp, index) => (
+            {user.expertise?.map((exp, index) => (
               <span key={index} className={styles.expertiseTag}>
                 {exp}
               </span>
@@ -98,22 +90,16 @@ export const AccountSettings = () => {
         </div>
       </div>
 
-      <ChatModal
-        isOpen={isChatOpen}
-        onClose={() => {
-          setIsChatOpen(false);
-          setSelectedChatUser(null);
-        }}
-        showUserList={!selectedChatUser}
-        onSelectUser={(user) => setSelectedChatUser(user)}
-        recipientId={selectedChatUser?._id || ""}
-        recipientName={selectedChatUser?.fullName || ""}
-        currentUserId={currentUser._id}
-        currentUserName={currentUser.fullName}
-      />
+      {isChatOpen && (
+        <ChatModal
+          token={token}
+          currentUser={currentUser}
+          onClose={() => setIsChatOpen(false)}
+        />
+      )}
 
       <EditProfileModal
-        isOpen={isEditModalOpen}
+        isOpen={isEditModalOpen} 
         onClose={() => setIsEditModalOpen(false)}
         onSubmit={handleEditProfile}
         currentName={user.fullName}

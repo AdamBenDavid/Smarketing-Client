@@ -1,12 +1,12 @@
 import { User } from '../../types/user';
+
 export type ChatUser = User;
 
 export interface ChatMessage {
-  id: string;
+  _id?: string;
   senderId: string;
-  senderName: string;
   recipientId: string;
   content: string;
-  timestamp: string;
+  timestamp: string | Date;
   read: boolean;
-} 
+}  
