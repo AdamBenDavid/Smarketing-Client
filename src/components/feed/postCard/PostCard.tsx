@@ -4,15 +4,22 @@ import PostHeader from "../postHeader/PostHeader";
 import PostImage from "../postImage/PostImage";
 import PostActions from "../postActions/PostActions";
 import CommentSection from "../commentSection/CommentSection";
-import { useAuth } from "../../../context/AuthContext"; // Get logged-in user
+import { useAuth } from "../../../context/AuthContext";
 import "./PostCard.css";
 
 const PostCard: React.FC<{ post: Post }> = ({ post }) => {
-  const [comments, setComments] = useState(post.comments || []); // ✅ Default to empty array
-  const { user } = useAuth(); // Get logged-in user
+  const [comments, setComments] = useState(post.comments ?? []);
+  const { user } = useAuth();
+
+  console.log("🟢 PostCard post.image:", post.image);
+
+  const correctedImage =
+    post.image && !post.image.startsWith("http")
+      ? `http://localhost:3000/uploads/post_images/${post.image}`
+      : post.image;
 
   const handleAddComment = (text: string) => {
-    if (!text.trim() || !user) return; // Ensure user is logged in before adding a comment
+    if (!text.trim() || !user) return;
 
     const newComment = {
       id: Date.now().toString(),
@@ -23,16 +30,18 @@ const PostCard: React.FC<{ post: Post }> = ({ post }) => {
         profilePicture: user.profilePicture || "https://placehold.co/150x150",
       },
     };
-
-    // setComments((prevComments) => [...prevComments, newComment]);
   };
 
   return (
     <div className="post-card">
       <PostHeader user={post.user} />
-      {post.image && <PostImage image={post.image} />}
-      <PostActions postId={post.id} commentCount={comments.length} />{" "}
-      {/* ✅ No more undefined error */}
+      <PostImage image={correctedImage} />
+      <p className="post-description">
+        {post.postData || "No description available."}
+      </p>
+
+      <PostActions postId={post.id} commentCount={comments.length || 0} />
+
       <CommentSection
         comments={comments}
         postId={post.id}
