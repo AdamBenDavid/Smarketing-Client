@@ -32,10 +32,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         expertise: [],
         profilePicture:
           localStorage.getItem("profilePicture") ||
-          "https://placehold.co/150x150", // here I will ensure that the profile picture is always available
+          "https://placehold.co/150x150",
       });
       setIsAuthenticated(true);
     }
+
     setLoading(false);
   }, []);
 
@@ -44,6 +45,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     localStorage.setItem("userId", userData._id || "");
     localStorage.setItem("userEmail", userData.email || "");
     localStorage.setItem("userFullName", userData.fullName);
+    localStorage.setItem("profilePicture", userData.profilePicture || "");
 
     setUser(userData);
     setIsAuthenticated(true);
@@ -72,6 +74,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     localStorage.removeItem("userId");
     localStorage.removeItem("userEmail");
     localStorage.removeItem("userFullName");
+    localStorage.removeItem("profilePicture");
 
     setUser(null);
     setIsAuthenticated(false);

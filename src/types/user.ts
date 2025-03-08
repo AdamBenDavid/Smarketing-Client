@@ -4,7 +4,6 @@ export interface User {
 
   _id?: string; // Consistent ID field
   password?: string;
-  imgUrl?: string;
 
   role?: string;
   expertise?: string[];

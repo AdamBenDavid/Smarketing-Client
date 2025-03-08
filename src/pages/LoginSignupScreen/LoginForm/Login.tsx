@@ -30,11 +30,16 @@ const LoginForm: React.FC = () => {
       const userData = await loginUser(data.email, data.password);
       console.log("User Logged In:", userData);
 
+      if (!userData || !userData.accessToken) {
+        throw new Error("Invalid login response: Missing accessToken");
+      }
+
       login(
         {
           _id: userData._id,
           email: data.email,
-          fullName: "User Name",
+          fullName: userData.fullName,
+          profilePicture: userData.profilePicture,
           role: "user",
           expertise: [],
         },
@@ -42,10 +47,7 @@ const LoginForm: React.FC = () => {
       );
 
       toast.success("ברוך הבא!");
-      console.log("toast.success");
-
       navigate("/profile", { replace: true });
-      console.log("redirected to /profile");
     } catch (error) {
       console.error("Login Error:", error);
       toast.error(
@@ -82,16 +84,36 @@ const LoginForm: React.FC = () => {
       console.log("🔹 Google Sign-In Response from Backend:", res);
 
       if (res.accessToken) {
-        localStorage.setItem("token", res.accessToken); // ✅ Store token
-        console.log("🔹 Token stored in localStorage:", res.accessToken);
+        const profilePicUrl = res.user.profilePicture
+          ? res.user.profilePicture
+          : "https://placehold.co/150x150";
 
-        login(res.user, res.accessToken); // ✅ Update authentication state
+        localStorage.setItem("token", res.accessToken);
+        localStorage.setItem("userId", res.user._id || "");
+        localStorage.setItem("userFullName", res.user.fullName);
+        localStorage.setItem("profilePicture", profilePicUrl);
+
+        console.log("🔹 Token stored in localStorage:", res.accessToken);
+        console.log("🔹 Profile picture stored:", profilePicUrl);
+
+        login(
+          {
+            _id: res.user._id,
+            email: res.user.email,
+            fullName: res.user.fullName,
+            profilePicture: profilePicUrl,
+            role: "user",
+            expertise: [],
+          },
+          res.accessToken
+        );
+
         navigate("/profile", { replace: true });
       } else {
-        console.error("❌ No accessToken received from backend");
+        console.error(" No accessToken received from backend");
       }
     } catch (err) {
-      console.error("❌ Google Sign-in Error:", err);
+      console.error(" Google Sign-in Error:", err);
     }
   };
 
