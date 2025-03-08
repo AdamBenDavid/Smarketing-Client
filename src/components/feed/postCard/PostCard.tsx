@@ -13,10 +13,8 @@ const PostCard: React.FC<{ post: Post }> = ({ post }) => {
 
   console.log("🟢 PostCard post.image:", post.image);
 
-  const correctedImage =
-    post.image && !post.image.startsWith("http")
-      ? `http://localhost:3000/uploads/post_images/${post.image}`
-      : post.image;
+  // ✅ Fix incorrect image URL format
+  const correctedImage = post.image ? post.image.replace("//", "/") : null;
 
   const handleAddComment = (text: string) => {
     if (!text.trim() || !user) return;

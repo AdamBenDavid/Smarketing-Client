@@ -10,11 +10,11 @@ import ContactsOutlinedIcon from "@mui/icons-material/ContactsOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import { ChatList } from "../Chat/ChatList";
 import logo from "../../assets/Smarketing.png";
-import FeedPage from "../../pages/feedPage/Feed";
 import { MyPosts } from "../../pages/userProfileScreen/MyPosts";
 import { AccountSettings } from "../../pages/userProfileScreen/AccountSettings";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useAuth } from "../../context/AuthContext";
+import MainFeed from "../../pages/feedPage/MainFeed";
 
 export default function DashboardLayoutBasic(props: any) {
   const { window } = props;
@@ -109,7 +109,7 @@ export default function DashboardLayoutBasic(props: any) {
   const routeComponents: { [key: string]: React.ReactNode } = {
     "/settings/my-posts": <MyPosts />,
     "/settings/account": <AccountSettings />,
-    "/feed": <FeedPage posts={[]} />,
+    "/feed": <MainFeed />,
     "/chats": <ChatList currentUserId="Adam" onSelectUser={() => {}} />,
   };
 

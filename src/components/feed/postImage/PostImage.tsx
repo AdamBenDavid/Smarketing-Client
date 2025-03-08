@@ -10,19 +10,18 @@ const PostImage: React.FC<{ image?: string | null }> = ({ image }) => {
   const notFoundPlaceholder =
     "https://placehold.co/600x400?text=Image+Not+Found";
 
-  console.log("🟢 PostImage received image:", image);
-
   const correctedImage =
     !image || image === "null"
       ? noUploadPlaceholder
       : image.startsWith("http")
-        ? image
-        : `http://localhost:3000/uploads/post_images/${image}`;
+        ? image.replace("//", "/")
+        : `http://localhost:3000/${image.replace("//", "/")}`;
 
   return (
     <img
       src={error ? notFoundPlaceholder : correctedImage}
       alt="Post"
+      crossOrigin="anonymous" //  Helps with CORS issues
       className="post-image"
       onError={() => {
         console.error("❌ Image failed to load:", correctedImage);
