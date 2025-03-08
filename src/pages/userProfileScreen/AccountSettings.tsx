@@ -17,15 +17,12 @@ export const AccountSettings = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (user) {
-      setUser(user);
-    }
-  }, [user, setUser]);
+  console.log("User state in AccountSettings:", user);
+  console.log("User profilePicture:", user?.profilePicture);
+  console.log("User fullName:", user?.fullName);
 
   const handleEditProfile = async (fullName: string, image?: File) => {
     if (!user) return;
-    console.log("User state in AccountSettings:", user);
     try {
       const formData = new FormData();
       formData.append("fullName", fullName);
@@ -46,7 +43,7 @@ export const AccountSettings = () => {
         fullName: updatedUser.fullName || user.fullName,
         profilePicture: updatedUser.profilePicture || user.profilePicture,
       });
-
+      console.log("Updated user from API:", updatedUser);
       setIsEditModalOpen(false);
       setError(null);
     } catch (err) {
@@ -63,9 +60,12 @@ export const AccountSettings = () => {
     <div className={styles.profileContainer}>
       <div className={styles.userInfo}>
         <img
-          src={user.profilePicture || "/default-profile.png"}
+          src={
+            user.profilePicture ? user.profilePicture : "/default-profile.png"
+          }
           alt="Profile"
           className={styles.profilePicture}
+          crossOrigin="anonymous" // Helps with CORS issues
         />
         <div className={styles.userDetails}>
           <div className={styles.nameSection}>

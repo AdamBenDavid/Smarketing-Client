@@ -7,7 +7,6 @@ const PostHeader: React.FC<{
 }> = ({ user }) => {
   const { user: loggedInUser } = useAuth();
 
-  // ✅ Ensure user is always defined
   const displayUser = user ||
     loggedInUser || {
       fullName: "משתמש אנונימי",

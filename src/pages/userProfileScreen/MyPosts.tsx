@@ -65,7 +65,7 @@ export const MyPosts = () => {
           profilePicture:
             user?.profilePicture || "https://placehold.co/150x150",
         },
-        image: newPost.image ? `http://localhost:3000${newPost.image}` : "",
+        image: newPost.image ? newPost.image : "",
         comments: newPost.comments || [],
       };
 
