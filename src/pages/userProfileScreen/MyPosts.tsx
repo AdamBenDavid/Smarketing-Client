@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import styles from "./UserProfile.module.css";
+import "./MyPosts.css"; // ✅ Correct import
 import { CreatePostModal } from "./CreatePostModal";
 import Feed from "../feedPage/components/Feed";
 import { Post } from "../../types/post";
@@ -9,6 +9,7 @@ export const MyPosts = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [localPosts, setLocalPosts] = useState<Post[]>([]);
   const { user } = useAuth();
+
   useEffect(() => {
     fetchUserPosts();
   }, [user?._id]);
@@ -30,20 +31,29 @@ export const MyPosts = () => {
   };
 
   return (
-    <div className={styles.profileContainer}>
-      <div className={styles.postsSection}>
-        <div className={styles.sectionHeader}>
+    <div className="profileContainer">
+      {" "}
+      {/* ✅ Apply container style */}
+      <div className="postsSection">
+        {" "}
+        {/* ✅ Apply section style */}
+        <div className="sectionHeader">
+          {" "}
+          {/* ✅ Apply header style */}
           <h3>הפוסטים שלי</h3>
           <button
-            className={styles.createPostButton}
+            className="createPostButton" // ✅ Apply button style
             onClick={() => setIsCreateModalOpen(true)}
           >
             צור פוסט
           </button>
         </div>
-        <Feed posts={localPosts} />
+        <div className="feed">
+          {" "}
+          {/* ✅ Ensure Feed uses grid style */}
+          <Feed posts={localPosts} />
+        </div>
       </div>
-
       <CreatePostModal
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
