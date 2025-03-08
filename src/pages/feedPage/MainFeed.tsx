@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Feed from "../feedPage/components/Feed";
-import { Post } from "../../components/feed/types";
-import "./MainFeed.css"; // Optional for styling
+import { Post } from "../../types/post";
+import "./MainFeed.css";
 
 export const MainFeed = () => {
   const [posts, setPosts] = useState<Post[]>([]);

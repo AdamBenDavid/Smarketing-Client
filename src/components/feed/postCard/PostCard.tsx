@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Post } from "../types";
+import { Post } from "../../../types/post";
 import PostHeader from "../postHeader/PostHeader";
 import PostImage from "../postImage/PostImage";
 import PostActions from "../postActions/PostActions";

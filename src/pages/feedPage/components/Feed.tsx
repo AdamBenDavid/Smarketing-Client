@@ -1,16 +1,13 @@
 import React from "react";
-import { Post } from "../../../components/feed/types";
+import { Post } from "../../../types/post";
 import PostCard from "../../../components/feed/postCard/PostCard";
 import "./Feed.css";
 
-const Feed: React.FC<{ posts: Post[]; className?: string }> = ({
-  posts,
-  className,
-}) => {
+const Feed: React.FC<{ posts: Post[] }> = ({ posts }) => {
   return (
-    <div className={`feed ${className || ""}`}>
+    <div className="feed">
       {posts.map((post) => (
-        <PostCard key={post.id} post={post} />
+        <PostCard key={post._id} post={post} />
       ))}
     </div>
   );

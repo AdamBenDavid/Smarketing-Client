@@ -1,5 +1,5 @@
 import React from "react";
-import { CommentType } from "../types";
+import { CommentType } from "../../../types/post";
 import "./Comment.css";
 
 const Comment: React.FC<{ comment: CommentType }> = ({ comment }) => {

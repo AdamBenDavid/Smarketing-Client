@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import styles from "./UserProfile.module.css";
 import { CreatePostModal } from "./CreatePostModal";
 import Feed from "../feedPage/components/Feed";
-import { Post } from "../../components/feed/types";
+import { Post } from "../../types/post";
 import { useAuth } from "../../context/AuthContext";
 
 export const MyPosts = () => {
@@ -41,7 +41,7 @@ export const MyPosts = () => {
             צור פוסט
           </button>
         </div>
-        <Feed posts={localPosts} className={styles.feed} />
+        <Feed posts={localPosts} />
       </div>
 
       <CreatePostModal

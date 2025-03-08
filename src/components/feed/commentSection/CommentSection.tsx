@@ -1,7 +1,7 @@
 import React from "react";
 import Comment from "../comment/Comment";
 import AddComment from "../addComment/AddComment";
-import { CommentType } from "../../feed/types";
+import { CommentType } from "../../../types/post";
 import "./CommentSection.css";
 
 const CommentSection: React.FC<{
