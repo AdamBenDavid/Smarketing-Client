@@ -55,7 +55,7 @@
   display: inline-block;
   padding: 10px 20px;
   background-color: #e8f0fe;
-  color: #001D3F;
+  color: #001d3f;
   border-radius: 8px;
   cursor: pointer;
   transition: background-color 0.2s;
@@ -65,7 +65,7 @@
   background-color: #d0e3fd;
 }
 
- /* submit button to be bg #3a86ff */
+/* submit button to be bg #3a86ff */
 .submitButton {
   background-color: #3a86ff !important;
 }
@@ -99,4 +99,4 @@
 .submitButton:disabled {
   background-color: #ccc;
   cursor: not-allowed;
-} 
+}

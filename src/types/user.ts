@@ -12,3 +12,8 @@ export interface User {
   online?: boolean; // For chat functionality
   lastSeen?: Date; // For chat functionality
 }
+
+export interface AuthResponse {
+  user: User;
+  accessToken: string;
+}

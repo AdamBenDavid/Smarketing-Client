@@ -4,56 +4,54 @@ import styles from "./UserProfile.module.css";
 import { ChatModal } from "../../components/Chat/ChatModal";
 import { ChatUser } from "../../components/Chat/ChatList";
 import { EditProfileModal } from "./EditProfileModal";
-import { usersService } from '../../services/users.service';
-
-interface User {
-  _id: string;
-  email: string;
-  fullName: string;
-  role: string;
-  expertise: string[];
-  profilePicture?: string;
-}
+import { usersService } from "../../services/api";
+import { useAuth } from "../../context/AuthContext";
+import { User } from "../../types/user";
 
 export const AccountSettings = () => {
-  const [user, setUser] = useState<User | null>(null);
+  const { user, setUser } = useAuth();
   const [isChatOpen, setIsChatOpen] = useState(false);
-  const [selectedChatUser, setSelectedChatUser] = useState<ChatUser | null>(null);
+  const [selectedChatUser, setSelectedChatUser] = useState<ChatUser | null>(
+    null
+  );
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const currentUser = {
-    _id: "current123",
-    fullName: "דן כהן",
-  };
-
   useEffect(() => {
-    const mockUser = {
-      _id: currentUser._id,
-      email: "marketer@example.com",
-      fullName: currentUser.fullName,
-      role: "מנהל שיווק דיגיטלי",
-      expertise: ["קמפיינים דיגיטליים", "SEO", "תוכן שיווקי", "מדיה חברתית"],
-      profilePicture: "https://placehold.co/150x150",
-    };
-    setUser(mockUser);
-  }, [currentUser._id]);
+    if (user) {
+      setUser(user);
+    }
+  }, [user, setUser]);
 
   const handleEditProfile = async (fullName: string, image?: File) => {
     if (!user) return;
-    
+    console.log("User state in AccountSettings:", user);
     try {
-      const updatedUser = await usersService.updateProfile(user._id, {
-        fullName,
-        profilePicture: image
+      const formData = new FormData();
+      formData.append("fullName", fullName);
+      if (image) {
+        formData.append("profilePicture", image);
+      }
+
+      const updatedUser = await usersService.updateProfile(
+        user._id || "",
+        formData
+      );
+
+      console.log("Updated user from API:", updatedUser);
+
+      // Ensure profilePicture and fullName are being set
+      setUser({
+        ...user,
+        fullName: updatedUser.fullName || user.fullName,
+        profilePicture: updatedUser.profilePicture || user.profilePicture,
       });
-      
-      setUser(updatedUser);
+
       setIsEditModalOpen(false);
       setError(null);
     } catch (err) {
-      console.error('Error updating profile:', err);
-      setError('Failed to update profile');
+      console.error("Error updating profile:", err);
+      setError("Failed to update profile");
     }
   };
 
@@ -65,28 +63,30 @@ export const AccountSettings = () => {
     <div className={styles.profileContainer}>
       <div className={styles.userInfo}>
         <img
-          src={user.profilePicture}
+          src={user.profilePicture || "/default-profile.png"}
           alt="Profile"
           className={styles.profilePicture}
         />
         <div className={styles.userDetails}>
           <div className={styles.nameSection}>
             <h2>{user.fullName}</h2>
-            <button 
+            <button
               className={styles.editButton}
               onClick={() => setIsEditModalOpen(true)}
             >
               ערוך פרופיל
             </button>
           </div>
-          <p className={styles.role}>{user.role}</p>
-          <div className={styles.expertise}>
-            {user.expertise.map((exp, index) => (
-              <span key={index} className={styles.expertiseTag}>
-                {exp}
-              </span>
-            ))}
-          </div>
+          {user.role && <p className={styles.role}>{user.role}</p>}
+          {user.expertise && user.expertise.length > 0 && (
+            <div className={styles.expertise}>
+              {user.expertise.map((exp, index) => (
+                <span key={index} className={styles.expertiseTag}>
+                  {exp}
+                </span>
+              ))}
+            </div>
+          )}
           <div className={styles.buttonGroup}>
             <button
               className={styles.chatButton}
@@ -108,8 +108,8 @@ export const AccountSettings = () => {
         onSelectUser={(user) => setSelectedChatUser(user)}
         recipientId={selectedChatUser?._id || ""}
         recipientName={selectedChatUser?.fullName || ""}
-        currentUserId={currentUser._id}
-        currentUserName={currentUser.fullName}
+        currentUserId={user._id || ""}
+        currentUserName={user.fullName}
       />
 
       <EditProfileModal
@@ -120,4 +120,4 @@ export const AccountSettings = () => {
       />
     </div>
   );
-}; 
+};
