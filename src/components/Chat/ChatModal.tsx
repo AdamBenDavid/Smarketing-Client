@@ -63,12 +63,23 @@ export const ChatModal = memo(({ token, currentUser, onClose }: ChatModalProps) 
       
       console.log('[ChatModal] Adding new message to state:', message);
       setMessages(prev => {
-        // Check if message already exists to prevent duplicates
-        const messageExists = prev.some(m => m._id === message._id);
+        // Check if message already exists by comparing content and timestamps
+        const messageExists = prev.some(m => {
+          // If we have an exact ID match
+          if (m._id === message._id) return true;
+          
+          // If we have a matching content and timestamp within 1 second (for optimistic updates)
+          const timeDiff = Math.abs(new Date(m.timestamp).getTime() - new Date(message.timestamp).getTime());
+          return m.content === message.content && 
+                 m.sender === message.sender && 
+                 timeDiff < 1000;
+        });
+
         if (messageExists) {
-          console.log('[ChatModal] Message already exists, skipping');
+          console.log('[ChatModal] Message already exists (either by ID or content+time), skipping');
           return prev;
         }
+
         console.log('[ChatModal] Adding new message');
         return [...prev, message];
       });
@@ -209,11 +220,12 @@ export const ChatModal = memo(({ token, currentUser, onClose }: ChatModalProps) 
   const handleSendMessage = useCallback(() => {
     if (!newMessage.trim() || !selectedUser) return;
 
+    const now = new Date();
     const message = {
       senderId: currentUser._id,
       recipientId: selectedUser._id,
       content: newMessage,
-      timestamp: new Date(),
+      timestamp: now,
     };
 
     console.log('[ChatModal] Sending message:', message);
@@ -221,11 +233,11 @@ export const ChatModal = memo(({ token, currentUser, onClose }: ChatModalProps) 
     
     // Optimistically add message to state
     const localMessage: Message = {
-      _id: Date.now().toString(), // Temporary ID
+      _id: `temp-${now.getTime()}`, // Temporary ID that won't conflict with MongoDB IDs
       sender: currentUser._id,
       receiver: selectedUser._id,
       content: newMessage,
-      timestamp: new Date()
+      timestamp: now
     };
     
     setMessages(prev => [...prev, localMessage]);
