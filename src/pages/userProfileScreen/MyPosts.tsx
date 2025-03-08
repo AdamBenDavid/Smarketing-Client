@@ -33,16 +33,13 @@ export const MyPosts = () => {
   return (
     <div className="profileContainer">
       {" "}
-      {/* ✅ Apply container style */}
       <div className="postsSection">
         {" "}
-        {/* ✅ Apply section style */}
         <div className="sectionHeader">
           {" "}
-          {/* ✅ Apply header style */}
           <h3>הפוסטים שלי</h3>
           <button
-            className="createPostButton" // ✅ Apply button style
+            className="createPostButton"
             onClick={() => setIsCreateModalOpen(true)}
           >
             צור פוסט
@@ -50,7 +47,6 @@ export const MyPosts = () => {
         </div>
         <div className="feed">
           {" "}
-          {/* ✅ Ensure Feed uses grid style */}
           <Feed posts={localPosts} />
         </div>
       </div>
