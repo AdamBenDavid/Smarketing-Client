@@ -64,7 +64,12 @@ class SocketService {
     });
 
     this._socket.on('chat_history', (messages: ChatMessage[]) => {
-      this.chatHistoryHandlers.forEach(handler => handler(messages));
+      console.log('[SocketService] Received chat history:', messages.length, 'messages');
+      console.log('[SocketService] Number of chat history handlers:', this.chatHistoryHandlers.length);
+      this.chatHistoryHandlers.forEach(handler => {
+        console.log('[SocketService] Calling chat history handler');
+        handler(messages);
+      });
     });
 
     this._socket.on('user_typing', (data: { userId: string }) => {
@@ -126,8 +131,10 @@ class SocketService {
   }
 
   onChatHistory(handler: (messages: ChatMessage[]) => void) {
+    console.log('[SocketService] Adding chat history handler');
     this.chatHistoryHandlers.push(handler);
     return () => {
+      console.log('[SocketService] Removing chat history handler');
       this.chatHistoryHandlers = this.chatHistoryHandlers.filter(h => h !== handler);
     };
   }
