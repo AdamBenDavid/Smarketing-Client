@@ -4,8 +4,8 @@ import ProfileIcon from "./ProfileIcon";
 const HeroSection: React.FC = () => {
   return (
     <div style={styles.container} className="hero-section">
-      <ProfileIcon />
       <Logo size="300px" />
+      <ProfileIcon />
     </div>
   );
 };

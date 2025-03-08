@@ -4,12 +4,20 @@ import MainAnimation from "./MainAnimation";
 import MainSentence from "./MainSentence";
 
 const SecondSection: React.FC = () => {
+  const scrollToSection = () => {
+    const targetSection = document.getElementById("explanations");
+    if (targetSection) {
+      targetSection.scrollIntoView({ behavior: "smooth" });
+    }
+    console.log("scrolling to explanations " + targetSection);
+  };
+
   return (
     <div className="second-section" style={styles.section}>
       <div style={styles.rightSection}>
         <div style={styles.buttonsContainer}>
           <MainButton text="התחל עכשיו" />
-          <SeconderyButton text="גלה עוד" />
+          <SeconderyButton text="גלה עוד" onClick={scrollToSection} />
         </div>
         <MainSentence />
       </div>
@@ -23,13 +31,13 @@ const SecondSection: React.FC = () => {
 
 const styles = {
   section: {
+    direction: "rtl" as const,
     display: "flex",
-    flexDirection: "row-reverse" as const, // צד ימין ושמאל באותה שורה
-    alignItems: "center", // יישור אנכי
-    width: "100%", // מניעת גלילה אופקית
-    padding: "50px", // מסיר רווחים מכל הצדדים
-    paddingTop: "0px", // מסיר רווח מלמעלה
-    gap: "20px", // מסיר רווח בין צד ימין לשמאל
+    alignItems: "center",
+    width: "100%",
+    padding: "50px",
+    paddingTop: "0px",
+    gap: "20px",
     boxSizing: "border-box" as const,
     margin: "0px",
   },
@@ -37,14 +45,15 @@ const styles = {
   rightSection: {
     display: "flex",
     flexDirection: "column" as const,
-    alignItems: "flex-end", // כל התוכן בצד ימין
+    alignItems: "flex",
     maxWidth: "60%", // נותן יותר מקום לצד ימין
   },
 
   buttonsContainer: {
     display: "flex",
-    flexDirection: "row-reverse" as const, // כפתורים מימין לשמאל
     gap: "16px",
+    width: "100%",
+    justifyContent: "flex",
   },
 
   leftSection: {
