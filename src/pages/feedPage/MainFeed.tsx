@@ -7,7 +7,7 @@ export const MainFeed = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
+  //test
   useEffect(() => {
     const fetchPosts = async () => {
       try {
