@@ -9,8 +9,6 @@ export default function FooterComp() {
     <Footer container className="rtl" style={styles.rtl as React.CSSProperties}>
       <div className="w-full">
         <div className="grid w-full justify-between sm:flex sm:justify-between md:flex md:grid-cols-1">
-          <Logo size="200px" />
-
           <div className="grid grid-cols-2 gap-8 sm:mt-4 sm:grid-cols-3 sm:gap-6">
             <div>
               <Footer.Title title="צור קשר" />
@@ -35,6 +33,8 @@ export default function FooterComp() {
               </Footer.LinkGroup>
             </div>
           </div>
+
+          <Logo size="200px" />
         </div>
 
         <Footer.Divider />
@@ -59,7 +59,7 @@ export default function FooterComp() {
 
 const styles = {
   rtl: {
-    margin: "50px",
+    margin: "0px",
     direction: "rtl",
     textAlign: "right",
   },
