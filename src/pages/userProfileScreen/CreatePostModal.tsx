@@ -1,19 +1,17 @@
 import { useState } from "react";
 import styles from "./CreatePostModal.module.css";
-import { create } from "@mui/material/styles/createTransitions";
 import { useAuth } from "../../context/AuthContext";
-import { User } from "../../types/user";
 
 interface CreatePostModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (postData: string, image?: File, userName?: string) => void;
+  fetchUserPosts: () => void;
 }
 
 export const CreatePostModal = ({
   isOpen,
   onClose,
-  onSubmit,
+  fetchUserPosts,
 }: CreatePostModalProps) => {
   const [postContent, setPostContent] = useState("");
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -35,14 +33,15 @@ export const CreatePostModal = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!postContent.trim()) return; // Prevent empty posts
+    if (!postContent.trim()) return;
 
     try {
-      await createPost(postContent, selectedImage || undefined); // Pass parameters
-      setPostContent(""); // Clear the input
+      const newPost = await createPost(postContent, selectedImage || undefined);
+      fetchUserPosts();
+      setPostContent("");
       setSelectedImage(null);
       setImagePreview(null);
-      onClose(); // Close modal after successful submission
+      onClose();
     } catch (error) {
       console.error("Error submitting post:", error);
     }
@@ -54,7 +53,7 @@ export const CreatePostModal = ({
       formData.append("postData", postData);
 
       if (user?._id) {
-        formData.append("senderId", user._id); // Dynamically append user ID
+        formData.append("senderId", user._id);
       } else {
         throw new Error("User ID is missing");
       }

@@ -1,9 +1,9 @@
 import React from "react";
-import { Post } from "../../components/feed/types";
-import PostCard from "../../components/feed/postCard/PostCard";
+import { Post } from "../../../components/feed/types";
+import PostCard from "../../../components/feed/postCard/PostCard";
 import "./Feed.css";
 
-const FeedPage: React.FC<{ posts: Post[]; className?: string }> = ({
+const Feed: React.FC<{ posts: Post[]; className?: string }> = ({
   posts,
   className,
 }) => {
@@ -16,4 +16,4 @@ const FeedPage: React.FC<{ posts: Post[]; className?: string }> = ({
   );
 };
 
-export default FeedPage;
+export default Feed;

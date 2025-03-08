@@ -8,5 +8,13 @@
   flex-direction: column;
   gap: 1rem;
   padding: 5px;
-  margin-bottom: 20px;
+}
+
+.post-description {
+  display: inline-block;
+  color: #333;
+  font-size: 14px;
+  font-weight: bold;
+  padding: 6px 12px;
+  border-radius: 20px;
 }
