@@ -4,7 +4,6 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import "boxicons/css/boxicons.min.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { loginUser, googleSignin } from "../../../services/api";
 import { useAuth } from "../../../context/AuthContext";
@@ -90,7 +89,7 @@ const LoginForm: React.FC = () => {
 
         localStorage.setItem("token", res.accessToken);
         localStorage.setItem("userId", res.user._id || "");
-        localStorage.setItem("userFullName", res.user.fullName);
+        localStorage.setItem("userFullName", res.user.fullName || "");
         localStorage.setItem("profilePicture", profilePicUrl);
 
         console.log("🔹 Token stored in localStorage:", res.accessToken);

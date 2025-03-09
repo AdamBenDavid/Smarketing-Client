@@ -15,8 +15,15 @@ import { AccountSettings } from "../../pages/userProfileScreen/AccountSettings";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useAuth } from "../../context/AuthContext";
 import MainFeed from "../../pages/feedPage/MainFeed";
+import { useNavigate } from "react-router-dom";
 
 export default function DashboardLayoutBasic(props: any) {
+  const navigate = useNavigate();
+
+  const handleHomeClick = () => {
+    navigate("/");
+  };
+
   const { window } = props;
   const router = useDemoRouter("/dashboard");
   const demoWindow = window ? window() : undefined;
@@ -128,7 +135,9 @@ export default function DashboardLayoutBasic(props: any) {
         slots={{
           appTitle: () => (
             <div>
-              <img src={logo} alt="App Logo" style={{ height: "40px" }} />
+              <button onClick={handleHomeClick}>
+                <img src={logo} alt="App Logo" style={{ height: "40px" }} />
+              </button>
             </div>
           ),
         }}
