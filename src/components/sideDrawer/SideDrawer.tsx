@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { extendTheme } from "@mui/material/styles";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
@@ -15,6 +15,7 @@ import TimelineOutlinedIcon from "@mui/icons-material/TimelineOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import LandingPage from "../../pages/landingPageScreen/LandingPage";
 import { ChatList } from "../Chat/ChatList";
+import { ChatModal } from "../Chat/ChatModal";
 import logo from "../../assets/Smarketing.png";
 import Dashboard from "../../pages/dashboard/dashboard";
 import FeedPage from "../../pages/feedPage/Feed";
@@ -22,12 +23,15 @@ import { MyPosts } from "../../pages/userProfileScreen/MyPosts";
 import { AccountSettings } from "../../pages/userProfileScreen/AccountSettings";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useAuth } from "../../context/AuthContext";
+import { User } from "../../types/user";
 
 export default function DashboardLayoutBasic(props: any) {
   const { window } = props;
-  const router = useDemoRouter("/dashboard");
+  const { user, token } = useAuth();
+  const router = useDemoRouter("/landingPage");
   const demoWindow = window ? window() : undefined;
   const { logout } = useAuth();
+  const [selectedChatUser, setSelectedChatUser] = useState<User | null>(null);
 
   useEffect(() => {
     if (router.pathname === "/logout") {
@@ -149,7 +153,28 @@ export default function DashboardLayoutBasic(props: any) {
     "/settings/my-posts": <MyPosts />,
     "/settings/account": <AccountSettings />,
     "/feed": <FeedPage posts={[]} />,
-    "/chats": <ChatList currentUserId="Adam" onSelectUser={() => {}} />,
+    "/chats": user && token ? (
+      <div style={{ position: 'relative', height: '100%' }}>
+        <ChatList 
+          currentUser={user} 
+          token={token} 
+          onSelectUser={(selectedUser) => {
+            console.log('Selected user:', selectedUser);
+            setSelectedChatUser(selectedUser);
+          }} 
+        />
+        {selectedChatUser && (
+          <ChatModal
+            token={token}
+            currentUser={user}
+            selectedUser={selectedChatUser}
+            onClose={() => setSelectedChatUser(null)}
+          />
+        )}
+      </div>
+    ) : (
+      <div>Please log in to access chat</div>
+    ),
     "/landingPage": <LandingPage />,
     "/campaign": <div>Campaign Page Content</div>,
     "/details": <div>Business Details Content</div>,

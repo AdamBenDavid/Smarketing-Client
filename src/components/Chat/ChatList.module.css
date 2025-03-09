@@ -23,6 +23,15 @@
   font-weight: 600;
 }
 
+.connectionError {
+  padding: 10px;
+  background-color: #fff3cd;
+  color: #856404;
+  text-align: center;
+  font-size: 0.9rem;
+  border-bottom: 1px solid #ffeeba;
+}
+
 .userList {
   flex: 1;
   overflow-y: auto;

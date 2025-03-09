@@ -12,20 +12,29 @@ class SocketService {
   private connectionAttempts: number = 0;
   private maxRetries: number = 3;
   private retryDelay: number = 2000;
+  private isSettingUpListeners: boolean = false;
 
   get socket(): Socket | null {
     return this._socket;
   }
 
   connect(token: string): void {
+    console.log('[SocketService] Connecting with token:', token ? 'Present' : 'Missing');
+    
     if (this._socket?.connected) {
-      return; // Already connected
+      console.log('[SocketService] Already connected, emitting initial events');
+      this._socket.emit('getOnlineUsers');
+      return;
     }
 
     if (this._socket) {
+      console.log('[SocketService] Disconnecting existing socket');
       this._socket.disconnect();
+      this._socket.removeAllListeners();
+      this._socket = null;
     }
 
+    console.log('[SocketService] Creating new socket connection');
     this._socket = io('http://localhost:3000', {
       auth: { token },
       transports: ['websocket', 'polling'],
@@ -37,12 +46,16 @@ class SocketService {
       timeout: 10000
     });
 
+    console.log('[SocketService] Socket created:', this._socket ? 'Success' : 'Failed');
     this.setupEventListeners();
     this.handleReconnection(token);
   }
 
   private handleReconnection(token: string): void {
-    if (!this._socket) return;
+    if (!this._socket) {
+      console.log('[SocketService] No socket instance for reconnection handling');
+      return;
+    }
 
     this._socket.on('connect_error', (error) => {
       console.error('[SocketService] Connection error:', error.message);
@@ -53,6 +66,7 @@ class SocketService {
         
         setTimeout(() => {
           if (!this._socket?.connected) {
+            console.log('[SocketService] Attempting reconnection');
             this.connect(token);
           }
         }, this.retryDelay);
@@ -63,14 +77,15 @@ class SocketService {
 
     this._socket.on('connect', () => {
       console.log('[SocketService] Successfully connected');
-      this.connectionAttempts = 0; // Reset attempts on successful connection
+      console.log('[SocketService] Socket ID:', this._socket?.id);
+      this.connectionAttempts = 0;
       this._socket?.emit('getOnlineUsers');
     });
 
     this._socket.on('disconnect', (reason) => {
       console.log('[SocketService] Disconnected:', reason);
       if (reason === 'io server disconnect') {
-        // Server initiated disconnect, try to reconnect
+        console.log('[SocketService] Server initiated disconnect, attempting reconnect');
         setTimeout(() => this.connect(token), this.retryDelay);
       }
     });
@@ -82,33 +97,60 @@ class SocketService {
       return;
     }
 
+    if (this.isSettingUpListeners) {
+      console.log('[SocketService] Already setting up listeners, skipping');
+      return;
+    }
+
+    this.isSettingUpListeners = true;
+    console.log('[SocketService] Setting up event listeners');
+
+    // Remove any existing listeners to prevent duplicates
+    this._socket.removeAllListeners('onlineUsers');
+    this._socket.removeAllListeners('new_message');
+    this._socket.removeAllListeners('message_sent');
+    this._socket.removeAllListeners('chat_history');
+    this._socket.removeAllListeners('user_typing');
+    this._socket.removeAllListeners('messages_read');
+
     this._socket.on('onlineUsers', (users: User[]) => {
-        this.onlineUsersHandlers.forEach(handler => {
-        handler(users);
+      console.log('[SocketService] Received online users:', users);
+      this.onlineUsersHandlers.forEach(handler => {
+        try {
+          handler(users);
+        } catch (error) {
+          console.error('[SocketService] Error in online users handler:', error);
+        }
       });
     });
 
     this._socket.on('new_message', (data: { message: ChatMessage, sender: string }) => {
+      console.log('[SocketService] Received new message:', data);
       this.messageHandlers.forEach(handler => handler(data.message));
     });
 
     this._socket.on('message_sent', (message: ChatMessage) => {
+      console.log('[SocketService] Message sent confirmation:', message);
       this.messageHandlers.forEach(handler => handler(message));
     });
 
     this._socket.on('chat_history', (messages: ChatMessage[]) => {
-        this.chatHistoryHandlers.forEach(handler => {
-        handler(messages);
-      });
+      console.log('[SocketService] Received chat history:', messages);
+      this.chatHistoryHandlers.forEach(handler => handler(messages));
     });
 
     this._socket.on('user_typing', (data: { userId: string }) => {
+      console.log('[SocketService] User typing:', data);
       this.typingHandlers.forEach(handler => handler(data.userId));
     });
 
     this._socket.on('messages_read', (data: { by: string }) => {
+      console.log('[SocketService] Messages read by:', data);
       this.readHandlers.forEach(handler => handler(data.by));
     });
+
+    console.log('[SocketService] Event listeners setup complete');
+    this.isSettingUpListeners = false;
   }
 
   sendMessage(recipientId: string, content: string) {
