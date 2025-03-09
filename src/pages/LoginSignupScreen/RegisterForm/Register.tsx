@@ -8,7 +8,7 @@ import axios from "axios";
 import { registerUser } from "../../../services/api";
 
 type FormInputs = {
-  username: string;
+  fullName: string;
   email: string;
   password: string;
   confirmPassword: string;
@@ -18,7 +18,6 @@ const RegisterForm: React.FC = () => {
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors },
   } = useForm<FormInputs>();
 
@@ -35,7 +34,9 @@ const RegisterForm: React.FC = () => {
     } catch (error) {
       console.log("Register Error:", error);
       if (axios.isAxiosError(error)) {
-        toast.error(error.response?.data?.message || "שגיאה בהרשמה, נסה שוב");
+        toast.error(
+          error.response?.data?.message || "שגיאה בהרשמה, אנא נסה שוב"
+        );
       } else {
         toast.error("שגיאה בהרשמה, נסה שוב");
       }
@@ -50,8 +51,8 @@ const RegisterForm: React.FC = () => {
       <div className={styles.inputBox}>
         <input
           type="text"
-          placeholder="שם משתמש"
-          {...register("username", { required: true, minLength: 3 })}
+          placeholder="שם מלא"
+          {...register("fullName", { required: true, minLength: 3 })}
         />
         <i className="bx bx-user"></i>
       </div>

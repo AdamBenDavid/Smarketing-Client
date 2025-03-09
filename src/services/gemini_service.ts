@@ -13,7 +13,7 @@ export const sendImageToGemini = async (
 ): Promise<string | null> => {
   console.log("gemini service");
   try {
-    console.log("length:" + (Image.length * 0.75) / 1024 + "KB");
+    console.log("length: " + (Image.length * 0.75) / 1024 + "KB");
 
     const response = await api.post("/gemini", { base64Image: Image });
 

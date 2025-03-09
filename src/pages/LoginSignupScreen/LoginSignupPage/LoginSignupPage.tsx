@@ -22,9 +22,6 @@ const FormsPage: React.FC = () => {
       <button className={styles.backButton} onClick={handleHomeClick}>
         &larr; חזרה לדף הבית
       </button>
-      {/* <button className={styles.backButton} onClick={() => navigate("/")}>
-        &larr; Back to Home
-      </button> */}
 
       <div className={`${styles.container} ${isRegister ? styles.active : ""}`}>
         {/* The two forms:  Login & Register */}
