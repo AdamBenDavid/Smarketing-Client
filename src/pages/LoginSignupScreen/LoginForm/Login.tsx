@@ -56,17 +56,14 @@ const LoginForm: React.FC = () => {
   const googleResponseMessage = async (
     credentialResponse: CredentialResponse
   ) => {
-    console.log({ credentialResponse });
     try {
       // TODO: Implement Google sign-in
       navigate("/profile", { replace: true });
     } catch (err) {
-      console.log(err);
     }
   };
 
   const googleErrorMessage = () => {
-    console.log("Google error");
   };
 
   return (

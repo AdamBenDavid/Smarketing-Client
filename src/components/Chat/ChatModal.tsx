@@ -24,6 +24,7 @@ export const ChatModal = memo(({ token, currentUser, onClose }: ChatModalProps) 
   const [newMessage, setNewMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [onlineUsers, setOnlineUsers] = useState<User[]>([]);
+  const [connectionStatus, setConnectionStatus] = useState<'connecting' | 'connected' | 'disconnected'>('connecting');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const socketRef = useRef(socketService.socket);
   const typingTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
@@ -45,8 +46,7 @@ export const ChatModal = memo(({ token, currentUser, onClose }: ChatModalProps) 
 
   // Handle receiving messages
   const handleReceiveMessage = useCallback((chatMessage: ChatMessage) => {
-    console.log('------------------------');
-    console.log('[ChatModal] Received new message:', chatMessage);
+
     
     // Only add message if it's part of the current conversation
     if (selectedUser && (
@@ -61,7 +61,6 @@ export const ChatModal = memo(({ token, currentUser, onClose }: ChatModalProps) 
         timestamp: new Date(chatMessage.timestamp)
       };
       
-      console.log('[ChatModal] Adding new message to state:', message);
       setMessages(prev => {
         // Check if message already exists by comparing content and timestamps
         const messageExists = prev.some(m => {
@@ -84,47 +83,27 @@ export const ChatModal = memo(({ token, currentUser, onClose }: ChatModalProps) 
         return [...prev, message];
       });
     } else {
-      console.log('[ChatModal] Message not for current conversation, skipping');
-      console.log('Current user:', currentUser._id);
-      console.log('Selected user:', selectedUser?._id);
-      console.log('Message sender:', chatMessage.senderId);
-      console.log('Message recipient:', chatMessage.recipientId);
+
     }
-    console.log('------------------------');
   }, [currentUser._id, selectedUser]);
 
   // Handle chat history
   const handleChatHistory = useCallback((history: ChatMessage[]) => {
-    console.log('------------------------');
-    console.log('[ChatModal] handleChatHistory START');
-    console.log('[ChatModal] Current user:', currentUser._id);
-    console.log('[ChatModal] Selected user:', selectedUser?._id);
-    console.log('[ChatModal] Raw history length:', history.length);
-    console.log('[ChatModal] First raw message:', history[0]);
+ 
     
     if (!selectedUser) {
       console.warn('[ChatModal] No selected user, skipping chat history');
       return;
     }
     
-    console.log('[ChatModal] Processing chat history between:', {
-      currentUser: currentUser._id,
-      selectedUser: selectedUser._id
-    });
-
+  
     const formattedHistory = history.map(msg => {
       const isRelevant = (
         (msg.senderId === currentUser._id && msg.recipientId === selectedUser._id) ||
         (msg.senderId === selectedUser._id && msg.recipientId === currentUser._id)
       );
 
-      console.log('[ChatModal] Message check:', {
-        messageId: msg._id,
-        sender: msg.senderId,
-        recipient: msg.recipientId,
-        isRelevant,
-        content: msg.content.substring(0, 20) // Show first 20 chars
-      });
+      
       
       if (isRelevant) {
         return {
@@ -138,46 +117,29 @@ export const ChatModal = memo(({ token, currentUser, onClose }: ChatModalProps) 
       return null;
     }).filter(msg => msg !== null) as Message[];
 
-    console.log('[ChatModal] Filtered history length:', formattedHistory.length);
-    console.log('[ChatModal] First 3 formatted messages:', formattedHistory.slice(0, 3));
-    console.log('[ChatModal] Setting messages state');
+
     setMessages(formattedHistory);
-    console.log('[ChatModal] handleChatHistory END');
-    console.log('------------------------');
+
   }, [selectedUser, currentUser._id]);
 
   // Socket connection effect
   useEffect(() => {
-    console.log('------------------------');
-    console.log('[ChatModal] Socket setup START');
-    console.log('[ChatModal] Current socket state:', {
-      exists: !!socketRef.current,
-      connected: socketRef.current?.connected
-    });
-    
-    const setupSocket = () => {
-      if (!socketRef.current?.connected) {
-        console.log('[ChatModal] Connecting new socket with token');
-        socketService.connect(token);
-        socketRef.current = socketService.socket;
-        console.log('[ChatModal] New socket connected:', socketRef.current?.connected);
-      }
+    if (!token) {
+      setConnectionStatus('disconnected');
+      return;
+    }
 
-      // Set up event handlers
-      console.log('[ChatModal] Setting up event handlers');
-      const unsubscribeMessage = socketService.onMessage(handleReceiveMessage);
-      const unsubscribeTyping = socketService.onTyping(handleTypingEvent);
-      const unsubscribeOnlineUsers = socketService.onOnlineUsers(handleOnlineUsers);
-      const unsubscribeChatHistory = socketService.onChatHistory(handleChatHistory);
+    try {
+      socketService.connect(token);
+      socketRef.current = socketService.socket;
 
-      // Handle socket connect event
+      // Set up connection status listeners
       socketRef.current?.on('connect', () => {
-        console.log('[ChatModal] Socket connected event');
+        setConnectionStatus('connected');
         socketRef.current?.emit("getOnlineUsers");
         
         // Re-request chat history if we have a selected user
         if (selectedUser) {
-          console.log('[ChatModal] Re-requesting chat history after reconnect for user:', selectedUser._id);
           socketRef.current?.emit("getChatHistory", {
             userId: currentUser._id,
             partnerId: selectedUser._id,
@@ -185,31 +147,34 @@ export const ChatModal = memo(({ token, currentUser, onClose }: ChatModalProps) 
         }
       });
 
+      socketRef.current?.on('disconnect', () => {
+        setConnectionStatus('disconnected');
+      });
+
+      socketRef.current?.on('connect_error', () => {
+        setConnectionStatus('disconnected');
+      });
+
+      // Set up event handlers
+      const unsubscribeMessage = socketService.onMessage(handleReceiveMessage);
+      const unsubscribeTyping = socketService.onTyping(handleTypingEvent);
+      const unsubscribeOnlineUsers = socketService.onOnlineUsers(handleOnlineUsers);
+      const unsubscribeChatHistory = socketService.onChatHistory(handleChatHistory);
+
       return () => {
-        console.log('[ChatModal] Cleanup event handlers');
         unsubscribeMessage();
         unsubscribeTyping();
         unsubscribeOnlineUsers();
         unsubscribeChatHistory();
         socketRef.current?.off('connect');
+        socketRef.current?.off('disconnect');
+        socketRef.current?.off('connect_error');
       };
-    };
-
-    const cleanup = setupSocket();
-    console.log('[ChatModal] Socket setup END');
-    console.log('------------------------');
-
-    return () => {
-      cleanup();
-      // Only disconnect if component is unmounting completely
-      if (socketRef.current?.connected && !document.querySelector('.chatModal')) {
-        console.log('[ChatModal] Disconnecting socket - component fully unmounting');
-        socketService.disconnect();
-      } else {
-        console.log('[ChatModal] Keeping socket connection alive');
-      }
-    };
-  }, [token, handleTypingEvent, handleOnlineUsers, handleReceiveMessage, handleChatHistory, selectedUser, currentUser._id]);
+    } catch (error) {
+      console.error('Error setting up socket connection:', error);
+      setConnectionStatus('disconnected');
+    }
+  }, [token, selectedUser, currentUser._id]);
 
   // Scroll effect
   useEffect(() => {
@@ -228,7 +193,6 @@ export const ChatModal = memo(({ token, currentUser, onClose }: ChatModalProps) 
       timestamp: now,
     };
 
-    console.log('[ChatModal] Sending message:', message);
     socketRef.current?.emit("private_message", message);
     
     // Optimistically add message to state
@@ -261,7 +225,6 @@ export const ChatModal = memo(({ token, currentUser, onClose }: ChatModalProps) 
         userId: currentUser._id,
         receiverId: selectedUser._id,
       });
-
     }, 3000);
   }, [selectedUser, currentUser._id]);
 
@@ -271,30 +234,19 @@ export const ChatModal = memo(({ token, currentUser, onClose }: ChatModalProps) 
   }, [handleTyping]);
 
   const handleUserSelect = useCallback((user: User) => {
-    console.log('------------------------');
-    console.log('[ChatModal] User selection START');
-    console.log('[ChatModal] Selecting user:', {
-      id: user._id,
-      name: user.fullName,
-      email: user.email
-    });
+  
     
     setSelectedUser(user);
-    console.log('[ChatModal] Clearing previous messages');
     setMessages([]);
 
     const requestChatHistory = () => {
       if (socketRef.current?.connected) {
-        console.log('[ChatModal] Requesting chat history:', {
-          currentUser: currentUser._id,
-          partnerId: user._id
-        });
+     
         socketRef.current.emit("getChatHistory", {
           userId: currentUser._id,
           partnerId: user._id,
         });
       } else {
-        console.log('[ChatModal] Socket not connected, retrying in 500ms');
         setTimeout(requestChatHistory, 500);
       }
     };
@@ -302,18 +254,8 @@ export const ChatModal = memo(({ token, currentUser, onClose }: ChatModalProps) 
     // Wait a short moment for the socket to be ready
     setTimeout(requestChatHistory, 100);
     
-    console.log('[ChatModal] User selection END');
-    console.log('------------------------');
   }, [currentUser._id]);
 
-  // Debug messages state changes
-  useEffect(() => {
-    console.log('------------------------');
-    console.log('[ChatModal] Messages state changed');
-    console.log('[ChatModal] Messages count:', messages.length);
-    console.log('[ChatModal] First 3 messages:', messages.slice(0, 3));
-    console.log('------------------------');
-  }, [messages]);
 
   return (
     <div className={styles.chatModal}>
@@ -340,6 +282,12 @@ export const ChatModal = memo(({ token, currentUser, onClose }: ChatModalProps) 
         </button>
       </div>
 
+      {connectionStatus === 'disconnected' && (
+        <div className={styles.connectionError}>
+          מתנתק מהשרת... מנסה להתחבר מחדש
+        </div>
+      )}
+
       {!selectedUser ? (
         <div className={styles.userList}>
           {onlineUsers.map((user) => (
@@ -355,6 +303,7 @@ export const ChatModal = memo(({ token, currentUser, onClose }: ChatModalProps) 
               />
               <div className={styles.userInfo}>
                 <h3>{user.fullName || user.email}</h3>
+                <span className={styles.userEmail}>{user.email}</span>
                 <span className={styles.onlineStatus}>
                   מחובר
                 </span>

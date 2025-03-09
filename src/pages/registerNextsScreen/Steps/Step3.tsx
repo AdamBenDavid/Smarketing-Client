@@ -9,7 +9,6 @@ const Step3: React.FC = () => {
   } = useFormContext();
 
   const onSubmit = (data: any) => {
-    console.log("Form Data:", data);
   };
 
   return (

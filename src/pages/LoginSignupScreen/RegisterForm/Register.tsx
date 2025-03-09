@@ -30,10 +30,8 @@ const RegisterForm: React.FC = () => {
 
     try {
       const userData = await registerUser(data.email, data.password);
-      console.log("User Registered:", userData);
       toast.success("נרשמת בהצלחה! כעת תוכל להתחבר.");
     } catch (error) {
-      console.log("Register Error:", error);
       if (axios.isAxiosError(error)) {
         toast.error(error.response?.data?.message || "שגיאה בהרשמה, נסה שוב");
       } else {

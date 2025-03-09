@@ -4,8 +4,6 @@ import MultiStepForm from "./Stepper";
 
 const RegisterBase: React.FC = () => {
   {
-    console.log(styles.formsPageWrapper);
-    console.log(styles.container);
   }
 
   return (

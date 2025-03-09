@@ -30,11 +30,9 @@ export const loginUser = async (email: string, password: string) => {
 
 export const googleSignin = async (credentialResponse: CredentialResponse) => {
   return new Promise<User>((resolve, reject) => {
-    console.log("googleSignin...");
     api
       .post("/auth/google", credentialResponse)
       .then((response: any) => {
-        console.log("googleSignin response:", response);
         resolve(response.data);
       })
       .catch((error: any) => {
