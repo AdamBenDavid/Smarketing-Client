@@ -56,7 +56,7 @@ const SecondSection: React.FC = () => {
         <MainSentence />
       </div>
 
-      <div style={styles.leftSection}>
+      <div style={styles.leftSection} className="left-section">
         <MainAnimation />
       </div>
     </div>
@@ -71,9 +71,10 @@ const styles = {
     width: "100%",
     padding: "50px",
     paddingTop: "0px",
-    gap: "20px",
+    gap: "10px",
     boxSizing: "border-box" as const,
     margin: "0px",
+    justifyContent: "center",
   },
 
   rightSection: {
@@ -92,10 +93,10 @@ const styles = {
 
   leftSection: {
     display: "flex", // מתאים את גודל ה-div לגודל האנימציה
-    justifyContent: "flex-start", // ממקם את התוכן בצד שמאל
+    justifyContent: "left", // יישור אופקי
     alignItems: "center", // יישור אנכי
     width: "40%", // מצמצם את המקום של החלק השמאלי
-    transform: "translateX(-20px)", // מזיז את החלק השמאלי שמאלה
+    //transform: "translateX(-20px)", // מזיז את החלק השמאלי שמאלה
     boxSizing: "border-box" as const,
   },
 };
