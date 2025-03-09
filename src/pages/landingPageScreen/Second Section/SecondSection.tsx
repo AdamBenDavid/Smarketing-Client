@@ -7,6 +7,7 @@ import { useState } from "react";
 
 const SecondSection: React.FC = () => {
   let imagePath = "src/assets/picture-lake1.jpeg";
+
   const handleSendImage = async () => {
     console.log("second section on click");
     try {
