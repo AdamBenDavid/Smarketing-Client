@@ -67,7 +67,9 @@
   text-align: center;
   padding: 40px;
   z-index: 1;
-  transition: 0.6s ease-in-out 1.2s, visibility 0s 1s;
+  transition:
+    0.6s ease-in-out 1.2s,
+    visibility 0s 1s;
 }
 
 .formBox.register {
@@ -148,7 +150,6 @@ p {
   color: var(--dark-text);
 }
 
-/* Social icons (optional) */
 .socialIcons {
   display: flex;
   justify-content: center;
@@ -214,8 +215,8 @@ p {
 }
 .backButton {
   position: absolute;
-  top: 20px; /* adjust as needed */
-  left: 20px; /* adjust as needed */
+  top: 20px;
+  left: 20px;
   background: transparent;
   border: 2px solid var(--accent-coffee);
   color: var(--accent-coffee);

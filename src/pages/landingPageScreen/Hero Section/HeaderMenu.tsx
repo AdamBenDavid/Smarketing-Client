@@ -30,7 +30,7 @@ const styles = {
     justifyContent: "center",
     gap: "100px",
     padding: 0,
-    margin: 0,
+    margin: "0px",
     flexDirection: "row-reverse" as const,
   },
   menuItem: {

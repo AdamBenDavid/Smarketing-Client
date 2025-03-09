@@ -7,19 +7,27 @@ const PostHeader: React.FC<{
 }> = ({ user }) => {
   const { user: loggedInUser } = useAuth();
 
-  // ✅ Ensure user is always defined
-  const displayUser = user ||
-    loggedInUser || {
-      fullName: "משתמש אנונימי",
-      profilePicture: "https://placehold.co/150x150",
-    };
+  const displayUser =
+    user && user.profilePicture
+      ? user
+      : loggedInUser && loggedInUser.profilePicture
+        ? loggedInUser
+        : {
+            fullName: "משתמש אנונימי",
+            profilePicture: "/default-profile.png",
+          };
 
   return (
     <div className="post-header">
       <img
-        src={displayUser.profilePicture || "https://placehold.co/150x150"}
+        src={displayUser.profilePicture}
         alt="Profile"
         className="profile-picture"
+        crossOrigin="anonymous" // ✅ Helps with CORS issues
+        onError={(e) => {
+          console.error("❌ Failed to load image:", displayUser.profilePicture);
+          e.currentTarget.src = "/default-profile.png";
+        }}
       />
       <span className="username">{displayUser.fullName}</span>
     </div>

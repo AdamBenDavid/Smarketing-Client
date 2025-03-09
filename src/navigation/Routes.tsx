@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import DashboardLayoutBasic from "../components/sideDrawer/SideDrawer";
 import LandingPage from "../pages/landingPageScreen/LandingPage";
 import FormsPage from "../pages/LoginSignupScreen/LoginSignupPage/LoginSignupPage";

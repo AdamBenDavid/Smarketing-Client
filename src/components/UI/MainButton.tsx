@@ -1,11 +1,16 @@
 interface ButtonProps {
   text: string;
+  onClick: () => void;
 }
 
-const MainButton: React.FC<ButtonProps> = ({ text }) => {
+const MainButton: React.FC<ButtonProps> = ({ text, onClick }) => {
   return (
     <div>
-      <button className="register-button" style={styles.button}>
+      <button
+        className="register-button"
+        style={styles.button}
+        onClick={onClick}
+      >
         {text}
       </button>
     </div>

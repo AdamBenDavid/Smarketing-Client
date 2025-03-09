@@ -1,32 +1,59 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./CreatePostModal.module.css";
-import { create } from "@mui/material/styles/createTransitions";
 import { useAuth } from "../../context/AuthContext";
-import { User } from "../../types/user";
+import { sendImageToGemini } from "../../services/gemini_service";
+import { IconButton } from "@mui/material";
 
 interface CreatePostModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (postData: string, image?: File, userName?: string) => void;
+  fetchUserPosts: () => void;
 }
 
 export const CreatePostModal = ({
   isOpen,
   onClose,
-  onSubmit,
+  fetchUserPosts,
 }: CreatePostModalProps) => {
   const [postContent, setPostContent] = useState("");
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
   const { user } = useAuth();
 
+  const aiGenerateText = async () => {
+    console.log("second section on click");
+    try {
+      if (imagePreview) {
+        const response = await sendImageToGemini(imagePreview);
+        if (response) {
+          setLoading(false);
+          setPostContent(response);
+        }
+      }
+    } catch (error) {
+      console.error("שגיאה בשליחת התמונה:", error);
+    }
+  };
+
+  const handleClose = () => {
+    setPostContent("");
+    setSelectedImage(null);
+    setImagePreview(null);
+    setLoading(false);
+    onClose(); // סגור את המודל
+  };
+
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log("Image change event:", e.target.files);
+    //console.log(imagePreview);
     const file = e.target.files?.[0];
     if (file) {
       setSelectedImage(file);
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result as string);
+        //console.log("Image preview:", reader.result as string);
       };
       reader.readAsDataURL(file);
     }
@@ -35,14 +62,15 @@ export const CreatePostModal = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!postContent.trim()) return; // Prevent empty posts
+    if (!postContent.trim()) return;
 
     try {
-      await createPost(postContent, selectedImage || undefined); // Pass parameters
-      setPostContent(""); // Clear the input
+      const newPost = await createPost(postContent, selectedImage || undefined);
+      fetchUserPosts();
+      setPostContent("");
       setSelectedImage(null);
       setImagePreview(null);
-      onClose(); // Close modal after successful submission
+      onClose();
     } catch (error) {
       console.error("Error submitting post:", error);
     }
@@ -54,7 +82,7 @@ export const CreatePostModal = ({
       formData.append("postData", postData);
 
       if (user?._id) {
-        formData.append("senderId", user._id); // Dynamically append user ID
+        formData.append("senderId", user._id);
       } else {
         throw new Error("User ID is missing");
       }
@@ -84,7 +112,7 @@ export const CreatePostModal = ({
   return (
     <div className={styles.modalOverlay}>
       <div className={styles.modal}>
-        <button className={styles.closeButton} onClick={onClose}>
+        <button className={styles.closeButton} onClick={handleClose}>
           ×
         </button>
         <h2>יצירת פוסט חדש</h2>
@@ -104,9 +132,26 @@ export const CreatePostModal = ({
               id="imageInput"
               className={styles.fileInput}
             />
-            <label htmlFor="imageInput" className={styles.uploadButton}>
-              {imagePreview ? "שנה תמונה" : "הוסף תמונה"}
-            </label>
+            <IconButton className={styles.uploadButton}>
+              <label htmlFor="imageInput" className={styles.uploadButton}>
+                {imagePreview ? "שנה תמונה" : "הוסף תמונה"}
+              </label>
+            </IconButton>
+
+            {imagePreview && (
+              <IconButton
+                className={styles.uploadButton}
+                onClick={() => setLoading(true)}
+                loading={loading}
+              >
+                <button
+                  className={styles.uploadButton}
+                  onClick={aiGenerateText}
+                >
+                  {loading ? "" : "יצירת טקסט מבוססת AI"}
+                </button>
+              </IconButton>
+            )}
           </div>
 
           {imagePreview && (

@@ -50,12 +50,12 @@ const styles = {
     alignItems: "center",
     gap: "80px",
     margin: "20px",
-    // marginLeft: "100px",
-    // marginRight: "100px",
+    marginRight: "50px",
+    marginLeft: "50px",
   },
   text: {
     flex: "1",
-    fontSize: "16px",
+    fontSize: "24px",
     color: "#333",
   },
   paragraph: {
@@ -64,6 +64,7 @@ const styles = {
     lineHeight: "1.5",
     direction: "rtl" as const,
     textAlign: "justify" as const,
+    fontSize: "24px",
   },
 };
 

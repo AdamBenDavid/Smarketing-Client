@@ -4,8 +4,8 @@ import ProfileIcon from "./ProfileIcon";
 const HeroSection: React.FC = () => {
   return (
     <div style={styles.container} className="hero-section">
-      <ProfileIcon />
       <Logo size="300px" />
+      <ProfileIcon />
     </div>
   );
 };
@@ -13,7 +13,7 @@ const HeroSection: React.FC = () => {
 const styles = {
   container: {
     margin: "0px",
-    width: "100vw",
+    width: "100%",
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between", // מבטיח מרחק בין האלמנטים

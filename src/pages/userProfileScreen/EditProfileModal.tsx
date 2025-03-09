@@ -1,17 +1,26 @@
-import { useState } from 'react';
-import styles from './EditProfileModal.module.css';
+import { useState } from "react";
+import styles from "./EditProfileModal.module.css";
+import { updateProfile } from "../../services/api"; // ✅ Import API function
+import { useAuth } from "../../context/AuthContext"; // ✅ Import auth context for user info
+import { toast } from "react-toastify";
 
 interface EditProfileModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (fullName: string, image?: File) => void;
+  onSubmit: (fullName: string, image?: File | undefined) => Promise<void>; // ✅ Fix function signature
   currentName: string;
 }
 
-export const EditProfileModal = ({ isOpen, onClose, onSubmit, currentName }: EditProfileModalProps) => {
+export const EditProfileModal = ({
+  isOpen,
+  onClose,
+  currentName,
+}: EditProfileModalProps) => {
+  const { user, setUser } = useAuth(); // ✅ Get logged-in user info
   const [fullName, setFullName] = useState(currentName);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -25,10 +34,30 @@ export const EditProfileModal = ({ isOpen, onClose, onSubmit, currentName }: Edi
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!fullName.trim()) return;
-    onSubmit(fullName, selectedImage || undefined);
+    if (!fullName.trim() || !user?._id) return;
+
+    setLoading(true);
+    const formData = new FormData();
+    formData.append("fullName", fullName);
+    if (selectedImage) {
+      formData.append("profilePicture", selectedImage);
+    }
+
+    try {
+      const updatedUser = await updateProfile(user._id, formData);
+      setUser(updatedUser.user); // ✅ Update user state in context
+      toast.success("פרופיל עודכן בהצלחה!");
+      onClose(); // ✅ Close modal on success
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "שגיאה בעדכון הפרופיל"
+      );
+      console.error("❌ Update Profile Error:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (!isOpen) return null;
@@ -57,20 +86,24 @@ export const EditProfileModal = ({ isOpen, onClose, onSubmit, currentName }: Edi
               className={styles.fileInput}
             />
             {imagePreview && (
-              <img 
-                src={imagePreview} 
-                alt="Preview" 
+              <img
+                src={imagePreview}
+                alt="Preview"
                 className={styles.imagePreview}
               />
             )}
           </div>
 
           <div className={styles.buttonGroup}>
-            <button type="submit" className={styles.submitButton}>
-              שמור שינויים
+            <button
+              type="submit"
+              className={styles.submitButton}
+              disabled={loading}
+            >
+              {loading ? "שומר..." : "שמור שינויים"}
             </button>
-            <button 
-              type="button" 
+            <button
+              type="button"
               onClick={onClose}
               className={styles.cancelButton}
             >
@@ -81,4 +114,4 @@ export const EditProfileModal = ({ isOpen, onClose, onSubmit, currentName }: Edi
       </div>
     </div>
   );
-}; 
+};

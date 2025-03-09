@@ -1,31 +1,31 @@
 import React, { useEffect, useState } from "react";
 import { extendTheme } from "@mui/material/styles";
-import DashboardIcon from "@mui/icons-material/Dashboard";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { AppProvider, Navigation, Router } from "@toolpad/core/AppProvider";
 import { DashboardLayout } from "@toolpad/core/DashboardLayout";
 import { PageContainer } from "@toolpad/core/PageContainer";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
-import ReceiptOutlinedIcon from "@mui/icons-material/ReceiptOutlined";
 import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
 import ContactsOutlinedIcon from "@mui/icons-material/ContactsOutlined";
-import PieChartOutlineOutlinedIcon from "@mui/icons-material/PieChartOutlineOutlined";
-import TimelineOutlinedIcon from "@mui/icons-material/TimelineOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
-import LandingPage from "../../pages/landingPageScreen/LandingPage";
 import { ChatList } from "../Chat/ChatList";
 import { ChatModal } from "../Chat/ChatModal";
 import logo from "../../assets/Smarketing.png";
-import Dashboard from "../../pages/dashboard/dashboard";
-import FeedPage from "../../pages/feedPage/Feed";
 import { MyPosts } from "../../pages/userProfileScreen/MyPosts";
 import { AccountSettings } from "../../pages/userProfileScreen/AccountSettings";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useAuth } from "../../context/AuthContext";
+import MainFeed from "../../pages/feedPage/MainFeed";
+import { useNavigate } from "react-router-dom";
 import { User } from "../../types/user";
 
 export default function DashboardLayoutBasic(props: any) {
+  const navigate = useNavigate();
+
+  const handleHomeClick = () => {
+    navigate("/");
+  };
+
   const { window } = props;
   const { user, token } = useAuth();
   const router = useDemoRouter("/landingPage");
@@ -53,38 +53,6 @@ export default function DashboardLayoutBasic(props: any) {
       segment: "chats",
       title: "צאטים",
       icon: <CalendarTodayOutlinedIcon />,
-    },
-    {
-      kind: "divider",
-    },
-    {
-      kind: "header",
-      title: "Smarketing",
-    },
-    {
-      segment: "landingPage",
-      title: "דף הנחיתה שלי",
-      icon: <ReceiptOutlinedIcon />,
-    },
-    {
-      segment: "campaign",
-      title: "קמפיינים",
-      icon: <TimelineOutlinedIcon />,
-    },
-    {
-      segment: "details",
-      title: "פרטי העסק",
-      icon: <DashboardIcon />,
-    },
-    {
-      segment: "analytics",
-      title: "נתונים וניתוחים",
-      icon: <PieChartOutlineOutlinedIcon />,
-    },
-    {
-      segment: "marketingPlan",
-      title: "תוכנית שיווק",
-      icon: <ShoppingCartIcon />,
     },
     {
       kind: "divider",
@@ -152,7 +120,7 @@ export default function DashboardLayoutBasic(props: any) {
   const routeComponents: { [key: string]: React.ReactNode } = {
     "/settings/my-posts": <MyPosts />,
     "/settings/account": <AccountSettings />,
-    "/feed": <FeedPage posts={[]} />,
+    "/feed": <MainFeed />,
     "/chats": user && token ? (
       <div style={{ position: 'relative', height: '100%' }}>
         <ChatList 
@@ -175,11 +143,6 @@ export default function DashboardLayoutBasic(props: any) {
     ) : (
       <div>Please log in to access chat</div>
     ),
-    "/landingPage": <LandingPage />,
-    "/campaign": <div>Campaign Page Content</div>,
-    "/details": <div>Business Details Content</div>,
-    "/analytics": <Dashboard />,
-    "/marketingPlan": <div>Marketing Plan Page Content</div>,
   };
 
   const CurrentComponent = routeComponents[router.pathname];
@@ -197,7 +160,9 @@ export default function DashboardLayoutBasic(props: any) {
         slots={{
           appTitle: () => (
             <div>
-              <img src={logo} alt="App Logo" style={{ height: "40px" }} />
+              <button onClick={handleHomeClick}>
+                <img src={logo} alt="App Logo" style={{ height: "40px" }} />
+              </button>
             </div>
           ),
         }}

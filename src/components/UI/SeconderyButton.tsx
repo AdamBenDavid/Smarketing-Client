@@ -1,11 +1,16 @@
 interface SeconderyButtonProps {
   text: string;
+  onClick: () => void;
 }
 
-const SeconderyButton: React.FC<SeconderyButtonProps> = ({ text }) => {
+const SeconderyButton: React.FC<SeconderyButtonProps> = ({ text, onClick }) => {
   return (
     <div>
-      <button className="register-button" style={styles.button}>
+      <button
+        className="register-button"
+        style={styles.button}
+        onClick={onClick}
+      >
         {text}
       </button>
     </div>
