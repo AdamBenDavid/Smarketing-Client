@@ -2,8 +2,41 @@ import MainButton from "../../../components/UI/MainButton";
 import SeconderyButton from "../../../components/UI/SeconderyButton";
 import MainAnimation from "./MainAnimation";
 import MainSentence from "./MainSentence";
+import { sendImageToGemini } from "../../../services/gemini_service";
+import { useState } from "react";
 
 const SecondSection: React.FC = () => {
+  let imagePath = "src/assets/picture-lake1.jpeg";
+  const handleSendImage = async () => {
+    console.log("second section on click");
+    try {
+      const base64Image = await convertImageToBase64(imagePath);
+      if (!base64Image) return;
+
+      const response = await sendImageToGemini(base64Image);
+    } catch (error) {
+      console.error("שגיאה בשליחת התמונה:", error);
+    }
+  };
+
+  // המרת תמונה ל-Base64 (משתמש ב-Fetch)
+  const convertImageToBase64 = async (
+    imageUrl: string
+  ): Promise<string | null> => {
+    try {
+      const response = await fetch(imageUrl);
+      const blob = await response.blob();
+      return await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.readAsDataURL(blob);
+      });
+    } catch (error) {
+      console.error("שגיאה בהמרת תמונה ל-Base64:", error);
+      return null;
+    }
+  };
+
   const scrollToSection = () => {
     const targetSection = document.getElementById("explanations");
     if (targetSection) {
@@ -16,7 +49,7 @@ const SecondSection: React.FC = () => {
     <div className="second-section" style={styles.section}>
       <div style={styles.rightSection}>
         <div style={styles.buttonsContainer}>
-          <MainButton text="התחל עכשיו" />
+          <MainButton text="התחל עכשיו" onClick={handleSendImage} />
           <SeconderyButton text="גלה עוד" onClick={scrollToSection} />
         </div>
         <MainSentence />

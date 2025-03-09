@@ -19,12 +19,15 @@ export const CreatePostModal = ({
   const { user } = useAuth();
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log("Image change event:", e.target.files);
+    console.log(imagePreview);
     const file = e.target.files?.[0];
     if (file) {
       setSelectedImage(file);
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result as string);
+        console.log("Image preview:", reader.result as string);
       };
       reader.readAsDataURL(file);
     }
