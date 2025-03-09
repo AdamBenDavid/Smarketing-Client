@@ -261,6 +261,7 @@ export const ChatModal = memo(({ token, currentUser, onClose }: ChatModalProps) 
         userId: currentUser._id,
         receiverId: selectedUser._id,
       });
+
     }, 3000);
   }, [selectedUser, currentUser._id]);
 
@@ -317,7 +318,23 @@ export const ChatModal = memo(({ token, currentUser, onClose }: ChatModalProps) 
   return (
     <div className={styles.chatModal}>
       <div className={styles.header}>
-        <h2>{selectedUser ? selectedUser.fullName : 'צ\'אט'}</h2>
+        {selectedUser ? (
+          <div className={styles.selectedUserInfo}>
+            <img
+              src={selectedUser.profilePicture || "https://placehold.co/40x40"}
+              alt={selectedUser.email}
+              className={styles.userAvatar}
+            />
+            <div className={styles.userDetails}>
+              <h2>{selectedUser.email}</h2>
+              <span className={styles.onlineStatus}>
+                {onlineUsers.some(u => u._id === selectedUser._id) ? 'מחובר' : 'לא מחובר'}
+              </span>
+            </div>
+          </div>
+        ) : (
+          <h2>צ'אט</h2>
+        )}
         <button onClick={onClose} className={styles.closeButton}>
           ✕
         </button>
@@ -338,7 +355,6 @@ export const ChatModal = memo(({ token, currentUser, onClose }: ChatModalProps) 
               />
               <div className={styles.userInfo}>
                 <h3>{user.fullName || user.email}</h3>
-                <span className={styles.userEmail}>{user.email}</span>
                 <span className={styles.onlineStatus}>
                   מחובר
                 </span>

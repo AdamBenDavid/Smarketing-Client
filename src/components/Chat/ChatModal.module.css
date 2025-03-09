@@ -23,6 +23,47 @@
   align-items: center;
 }
 
+.selectedUserInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.selectedUserInfo .userAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.selectedUserInfo .userDetails {
+  display: flex;
+  flex-direction: column;
+}
+
+.selectedUserInfo .userDetails h2 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #343a40;
+}
+
+.selectedUserInfo .onlineStatus {
+  font-size: 0.8rem;
+  color: #28a745;
+  margin-top: 2px;
+}
+
+.selectedUserInfo .onlineStatus::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background-color: currentColor;
+  border-radius: 50%;
+  margin-left: 4px;
+  vertical-align: middle;
+}
+
 .header h2 {
   margin: 0;
   font-size: 1.1rem;
