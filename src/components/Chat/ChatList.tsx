@@ -150,7 +150,6 @@ export const ChatList = ({ onSelectUser, currentUser, token }: ChatListProps) =>
             />
             <div className={styles.userInfo}>
               <h3>{user.fullName || user.email}</h3>
-              <span className={styles.userRole}>{user.role}</span>
               <p className={styles.lastMessage}>
                 <span className={styles.onlineStatus}>
                   מחובר
