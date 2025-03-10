@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Typography } from "@mui/material";
 import "./AccountSettings.css"; // ✅ Corrected import
 import { EditProfileModal } from "./EditProfileModal";
@@ -46,34 +46,35 @@ export const AccountSettings = () => {
   }
 
   return (
-    <div className="profileContainer">
-      {" "}
-      {/* ✅ Fixed className usage */}
-      <div className="userInfo">
-        <img
-          src={user.profilePicture || "/default-profile.png"}
-          alt="Profile"
-          className="profilePicture"
-          crossOrigin="anonymous"
-        />
-        <div className="userDetails">
-          <div className="nameSection">
-            <h2>{user.fullName}</h2>
-            <button
-              className="editButton"
-              onClick={() => setIsEditModalOpen(true)}
-            >
-              ערוך פרופיל
-            </button>
+    <>
+      <div className="profileContainer">
+        <div className="userInfo">
+          <img
+            src={user.profilePicture || "/default-profile.png"}
+            alt="Profile"
+            className="profilePicture"
+            crossOrigin="anonymous"
+          />
+
+          <div className="userDetails">
+            <div className="nameSection">
+              <h2>{user.fullName}</h2>
+              <button
+                className="editButton"
+                onClick={() => setIsEditModalOpen(true)}
+              >
+                ערוך פרופיל
+              </button>
+            </div>
           </div>
         </div>
+        <EditProfileModal
+          isOpen={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+          onSubmit={handleEditProfile}
+          currentName={user.fullName}
+        />
       </div>
-      <EditProfileModal
-        isOpen={isEditModalOpen}
-        onClose={() => setIsEditModalOpen(false)}
-        onSubmit={handleEditProfile}
-        currentName={user.fullName}
-      />
-    </div>
+    </>
   );
 };

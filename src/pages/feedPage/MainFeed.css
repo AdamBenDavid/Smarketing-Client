@@ -1,7 +1,13 @@
 .main-feed {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(300px, 1fr)
+  ); /* ✅ Dynamically fits posts */
+  gap: 20px;
+  width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 20px;
 }
 
 h1 {
@@ -17,9 +23,8 @@ h1 {
 }
 
 .post-card {
-  flex: 1 1 calc(25% - 20px);
-  min-width: 250px;
-  max-width: 300px;
+  width: 100%;
+  min-height: 400px;
   background: white;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
