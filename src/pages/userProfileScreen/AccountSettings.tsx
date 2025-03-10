@@ -7,6 +7,10 @@ import { useAuth } from "../../context/AuthContext";
 
 export const AccountSettings = () => {
   const { user, setUser } = useAuth();
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  // const [selectedChatUser, setSelectedChatUser] = useState<ChatUser | null>(
+  //   null
+  // );
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -19,11 +23,11 @@ export const AccountSettings = () => {
         formData.append("profilePicture", image);
       }
 
-      const updatedUser = await usersService.updateProfile(
-        user._id || "",
-        formData
-      );
+      const updatedUser = await usersService.updateProfile(user, formData);
 
+      console.log("Updated user from API:", updatedUser);
+
+      // Ensure profilePicture and fullName are being set
       setUser({
         ...user,
         fullName: updatedUser.fullName || user.fullName,

@@ -96,11 +96,20 @@ export const usersService = {
     }
   },
 
-  updateProfile: async (userId: string, formData: FormData) => {
+  //continue- access token
+  updateProfile: async (updateUser: User, formData: FormData) => {
     try {
-      const response = await api.put(`/auth/profile/${userId}`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      const accessToken = localStorage.getItem("token");
+
+      const response = await api.put(
+        `/auth/profile/${updateUser._id}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
       return response.data;
     } catch (error: any) {
       throw error.response?.data || "Failed to update profile";

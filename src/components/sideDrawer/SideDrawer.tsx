@@ -27,7 +27,7 @@ export default function DashboardLayoutBasic(props: any) {
   };
 
   const { window } = props;
-  const { user, token } = useAuth();
+  const { user, accessToken } = useAuth();
   const router = useDemoRouter("/landingPage");
   const demoWindow = window ? window() : undefined;
   const { logout } = useAuth();
@@ -122,11 +122,11 @@ export default function DashboardLayoutBasic(props: any) {
     "/settings/account": <AccountSettings />,
     "/feed": <MainFeed />,
     "/chats":
-      user && token ? (
+      user && accessToken ? (
         <div style={{ position: "relative", height: "100%" }}>
           <ChatList
             currentUser={user}
-            token={token}
+            token={accessToken}
             onSelectUser={(selectedUser) => {
               console.log("Selected user:", selectedUser);
               setSelectedChatUser(selectedUser);
@@ -134,7 +134,7 @@ export default function DashboardLayoutBasic(props: any) {
           />
           {selectedChatUser && (
             <ChatModal
-              token={token}
+              token={accessToken}
               currentUser={user}
               selectedUser={selectedChatUser}
               onClose={() => setSelectedChatUser(null)}
