@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Post } from "../../../components/feed/types";
 import PostCard from "../../../components/feed/postCard/PostCard";
 import "./Feed.css";
@@ -7,11 +7,27 @@ const Feed: React.FC<{ posts: Post[]; className?: string }> = ({
   posts,
   className,
 }) => {
+  const [postList, setPostList] = useState<Post[]>(posts);
+
+  // עדכון הסטייט אם `posts` משתנה מהקומפוננטה ההורה
+  useEffect(() => {
+    setPostList(posts);
+  }, [posts]);
+
+  const handleDeletePost = (postId: string) => {
+    console.log("feed.tsx handleDelete post: ", postId);
+    setPostList((prevPosts) => prevPosts.filter((post) => post._id !== postId));
+  };
+
   return (
     <div className={`feed ${className || ""}`}>
-      {posts.map((post) => (
-        <PostCard key={post.id} post={post} />
-      ))}
+      {postList.length > 0 ? (
+        postList.map((post) => (
+          <PostCard key={post._id} post={post} onDelete={handleDeletePost} />
+        ))
+      ) : (
+        <p className="no-posts">אין פוסטים להצגה</p>
+      )}
     </div>
   );
 };

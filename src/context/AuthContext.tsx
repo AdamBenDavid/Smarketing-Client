@@ -8,6 +8,7 @@ interface AuthContextType {
   loading: boolean;
   login: (userData: User, token: string) => void;
   logout: () => void;
+  accessToken: string | null;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -18,6 +19,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [user, setUser] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [accessToken, setAccessToken] = useState<string | null>(null);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -47,6 +49,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     localStorage.setItem("userFullName", userData.fullName);
     localStorage.setItem("profilePicture", userData.profilePicture || "");
 
+    setAccessToken(token);
     setUser(userData);
     setIsAuthenticated(true);
     setLoading(false);
@@ -76,6 +79,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     localStorage.removeItem("userFullName");
     localStorage.removeItem("profilePicture");
 
+    setAccessToken(null);
     setUser(null);
     setIsAuthenticated(false);
     setLoading(false);
@@ -85,7 +89,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   return (
     <AuthContext.Provider
-      value={{ user, setUser, isAuthenticated, loading, login, logout }}
+      value={{
+        user,
+        setUser,
+        isAuthenticated,
+        loading,
+        accessToken,
+        login,
+        logout,
+      }}
     >
       {children}
     </AuthContext.Provider>

@@ -56,11 +56,13 @@ export const CreatePostModal = ({
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     console.log("Image change event:", e.target.files);
 
-    cancelGeminiRequest();
-    setPostContent("");
-    setSelectedImage(null);
-    setImagePreview(null);
-    setLoading(false);
+    if (imagePreview != null) {
+      cancelGeminiRequest();
+      setPostContent("");
+      setSelectedImage(null);
+      setImagePreview(null);
+      setLoading(false);
+    }
 
     const file = e.target.files?.[0];
     if (file) {
