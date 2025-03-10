@@ -168,7 +168,9 @@ export default function DashboardLayoutBasic(props: any) {
           ),
         }}
       >
-        <PageContainer>{CurrentComponent}</PageContainer>
+        <PageContainer sx={{ padding: "0px", margin: "0px", width: "100%" }}>
+          {CurrentComponent}
+        </PageContainer>
       </DashboardLayout>
     </AppProvider>
   );
