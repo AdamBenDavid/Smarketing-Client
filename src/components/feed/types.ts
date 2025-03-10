@@ -6,7 +6,7 @@ export interface CommentType {
 }
 
 export interface Post {
-  id: string;
+  _id: string;
   user: User;
   postData: string;
   image: string;
