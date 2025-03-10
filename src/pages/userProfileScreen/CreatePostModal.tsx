@@ -101,7 +101,6 @@ export const CreatePostModal = ({
       }
 
       const data = await response.json();
-      console.log("Post created successfully:", data);
       return data;
     } catch (error) {
       console.error("Error creating post:", error);

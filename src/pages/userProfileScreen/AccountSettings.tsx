@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Typography } from "@mui/material";
 import styles from "./UserProfile.module.css";
 import { ChatModal } from "../../components/Chat/ChatModal";
-import { ChatUser } from "../../components/Chat/ChatList";
+// import { ChatUser } from "../../components/Chat/ChatList";
 import { EditProfileModal } from "./EditProfileModal";
 import { usersService } from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
@@ -98,7 +98,7 @@ export const AccountSettings = () => {
         </div>
       </div>
 
-      <ChatModal
+      {/* <ChatModal
         isOpen={isChatOpen}
         onClose={() => {
           setIsChatOpen(false);
@@ -110,7 +110,7 @@ export const AccountSettings = () => {
         recipientName={selectedChatUser?.fullName || ""}
         currentUserId={user._id || ""}
         currentUserName={user.fullName}
-      />
+      /> */}
 
       <EditProfileModal
         isOpen={isEditModalOpen}

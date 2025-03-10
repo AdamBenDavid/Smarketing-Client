@@ -117,7 +117,6 @@ const LoginForm: React.FC = () => {
   };
 
   const googleErrorMessage = () => {
-    console.log("Google error");
   };
 
   return (

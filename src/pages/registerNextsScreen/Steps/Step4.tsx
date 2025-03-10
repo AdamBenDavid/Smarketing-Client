@@ -37,7 +37,6 @@ const Step4: React.FC = () => {
                 onChange={(e) => {
                   const files = e.target.files as FileList; // הגדרת טיפוס הקובץ
                   field.onChange(files);
-                  console.log("Selected files:", files);
                 }}
               />
               בחר קבצים
