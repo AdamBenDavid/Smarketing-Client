@@ -15,9 +15,9 @@ const PostCard: React.FC<{
   const [comments, setComments] = useState(post.comments ?? []);
   const { user, accessToken } = useAuth();
 
-  //console.log("🟢 PostCard post.image:", post.image);
+  //console.log("PostCard post.image:", post.image);
 
-  // ✅ Fix incorrect image URL format
+  // Fix incorrect image URL format
   const correctedImage = post.image ? post.image.replace("//", "/") : null;
 
   const handleAddComment = (text: string) => {
@@ -39,7 +39,7 @@ const PostCard: React.FC<{
       console.log("postcard.tsx handleDelete post: ", post._id);
 
       if (!accessToken) {
-        console.error("❌ No access token available");
+        console.error("No access token available");
         return;
       }
 
