@@ -121,28 +121,29 @@ export default function DashboardLayoutBasic(props: any) {
     "/settings/my-posts": <MyPosts />,
     "/settings/account": <AccountSettings />,
     "/feed": <MainFeed />,
-    "/chats": user && token ? (
-      <div style={{ position: 'relative', height: '100%' }}>
-        <ChatList 
-          currentUser={user} 
-          token={token} 
-          onSelectUser={(selectedUser) => {
-            console.log('Selected user:', selectedUser);
-            setSelectedChatUser(selectedUser);
-          }} 
-        />
-        {selectedChatUser && (
-          <ChatModal
-            token={token}
+    "/chats":
+      user && token ? (
+        <div style={{ position: "relative", height: "100%" }}>
+          <ChatList
             currentUser={user}
-            selectedUser={selectedChatUser}
-            onClose={() => setSelectedChatUser(null)}
+            token={token}
+            onSelectUser={(selectedUser) => {
+              console.log("Selected user:", selectedUser);
+              setSelectedChatUser(selectedUser);
+            }}
           />
-        )}
-      </div>
-    ) : (
-      <div>Please log in to access chat</div>
-    ),
+          {selectedChatUser && (
+            <ChatModal
+              token={token}
+              currentUser={user}
+              selectedUser={selectedChatUser}
+              onClose={() => setSelectedChatUser(null)}
+            />
+          )}
+        </div>
+      ) : (
+        <div>Please log in to access chat</div>
+      ),
   };
 
   const CurrentComponent = routeComponents[router.pathname];
@@ -167,7 +168,9 @@ export default function DashboardLayoutBasic(props: any) {
           ),
         }}
       >
-        <PageContainer>{CurrentComponent}</PageContainer>
+        <PageContainer sx={{ padding: "0px", margin: "0px", width: "100%" }}>
+          {CurrentComponent}
+        </PageContainer>
       </DashboardLayout>
     </AppProvider>
   );

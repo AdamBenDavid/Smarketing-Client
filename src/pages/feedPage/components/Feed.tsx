@@ -9,13 +9,11 @@ const Feed: React.FC<{ posts: Post[]; className?: string }> = ({
 }) => {
   const [postList, setPostList] = useState<Post[]>(posts);
 
-  // עדכון הסטייט אם `posts` משתנה מהקומפוננטה ההורה
   useEffect(() => {
     setPostList(posts);
   }, [posts]);
 
   const handleDeletePost = (postId: string) => {
-    console.log("feed.tsx handleDelete post: ", postId);
     setPostList((prevPosts) => prevPosts.filter((post) => post._id !== postId));
   };
 

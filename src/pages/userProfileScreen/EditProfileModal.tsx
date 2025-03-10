@@ -1,13 +1,13 @@
 import { useState } from "react";
 import styles from "./EditProfileModal.module.css";
-import { updateProfile } from "../../services/api"; // ✅ Import API function
-import { useAuth } from "../../context/AuthContext"; // ✅ Import auth context for user info
+import { updateProfile } from "../../services/api";
+import { useAuth } from "../../context/AuthContext";
 import { toast } from "react-toastify";
 
 interface EditProfileModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (fullName: string, image?: File | undefined) => Promise<void>; // ✅ Fix function signature
+  onSubmit: (fullName: string, image?: File | undefined) => Promise<void>;
   currentName: string;
 }
 
@@ -16,7 +16,7 @@ export const EditProfileModal = ({
   onClose,
   currentName,
 }: EditProfileModalProps) => {
-  const { user, setUser } = useAuth(); // ✅ Get logged-in user info
+  const { user, setUser } = useAuth();
   const [fullName, setFullName] = useState(currentName);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -47,9 +47,9 @@ export const EditProfileModal = ({
 
     try {
       const updatedUser = await updateProfile(user._id, formData);
-      setUser(updatedUser.user); // ✅ Update user state in context
+      setUser(updatedUser.user);
       toast.success("פרופיל עודכן בהצלחה!");
-      onClose(); // ✅ Close modal on success
+      onClose();
     } catch (error) {
       toast.error(
         error instanceof Error ? error.message : "שגיאה בעדכון הפרופיל"

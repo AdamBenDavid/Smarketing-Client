@@ -3,46 +3,24 @@ import { Post } from "../types";
 import PostHeader from "../postHeader/PostHeader";
 import PostImage from "../postImage/PostImage";
 import PostActions from "../postActions/PostActions";
-import CommentSection from "../commentSection/CommentSection";
 import { useAuth } from "../../../context/AuthContext";
-import { FaEdit, FaTrash } from "react-icons/fa"; // ✅ Import icons
+import { FaEdit, FaTrash } from "react-icons/fa";
+import ImageModal from "./ImageModal";
 import "./PostCard.css";
 
 const PostCard: React.FC<{
   post: Post;
   onDelete: (postId: string) => void;
 }> = ({ post, onDelete }) => {
-  const [comments, setComments] = useState(post.comments ?? []);
   const { user, accessToken } = useAuth();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  //console.log("PostCard post.image:", post.image);
-
-  // Fix incorrect image URL format
   const correctedImage = post.image ? post.image.replace("//", "/") : null;
 
-  const handleAddComment = (text: string) => {
-    if (!text.trim() || !user) return;
-
-    const newComment = {
-      id: Date.now().toString(),
-      text,
-      user: {
-        id: user._id,
-        name: user.fullName || "משתמש אנונימי",
-        profilePicture: user.profilePicture || "https://placehold.co/150x150",
-      },
-    };
-  };
-
   const handleDelete = async () => {
+    if (!accessToken) return;
+
     try {
-      console.log("postcard.tsx handleDelete post: ", post._id);
-
-      if (!accessToken) {
-        console.error("No access token available");
-        return;
-      }
-
       const response = await fetch(`http://localhost:3000/posts/${post._id}`, {
         method: "DELETE",
         headers: {
@@ -50,11 +28,9 @@ const PostCard: React.FC<{
           Authorization: `Bearer ${accessToken}`,
         },
       });
+
       if (response.ok) {
-        console.log("Post deleted successfully:", post._id);
         onDelete(post._id);
-      } else {
-        console.error("Failed to delete post");
       }
     } catch (error) {
       console.error("Error deleting post:", error);
@@ -72,18 +48,23 @@ const PostCard: React.FC<{
         </button>
       </div>
       <PostHeader user={post.user} />
-      <PostImage image={correctedImage} />
+
+      <div className="image-container" onClick={() => setIsModalOpen(true)}>
+        <PostImage image={correctedImage} />
+      </div>
+
       <p className="post-description">
         {post.postData || "No description available."}
       </p>
+      <PostActions postId={post._id} commentCount={1} />
 
-      <PostActions postId={post._id} commentCount={comments.length || 0} />
-
-      <CommentSection
-        comments={comments}
-        postId={post._id}
-        onAddComment={handleAddComment}
-      />
+      {isModalOpen && (
+        <ImageModal
+          imageUrl={correctedImage || ""}
+          open={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+        />
+      )}
     </div>
   );
 };

@@ -33,7 +33,6 @@ export const MyPosts = () => {
     <div className={styles.profileContainer}>
       <div className={styles.postsSection}>
         <div className={styles.sectionHeader}>
-          <h3>הפוסטים שלי</h3>
           <button
             className={styles.createPostButton}
             onClick={() => setIsCreateModalOpen(true)}
