@@ -5,7 +5,7 @@ import PostImage from "../postImage/PostImage";
 import PostActions from "../postActions/PostActions";
 import { useAuth } from "../../../context/AuthContext";
 import { FaEdit, FaTrash } from "react-icons/fa";
-import ImageModal from "./ImageModal";
+import ImageModal from "./ImageModal"; // Import the new modal component
 import "./PostCard.css";
 
 const PostCard: React.FC<{
