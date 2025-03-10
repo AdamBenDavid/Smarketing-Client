@@ -7,8 +7,9 @@ export interface CommentType {
 
 export interface Post {
   _id: string;
-  user: User;
+  senderId: string;
   postData: string;
-  image: string;
   comments: CommentType[];
+  image?: string;
+  likes?: User[];
 }
