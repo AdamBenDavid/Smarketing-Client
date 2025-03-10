@@ -11,7 +11,7 @@ const PostCard: React.FC<{ post: Post }> = ({ post }) => {
   const [comments, setComments] = useState(post.comments ?? []);
   const { user } = useAuth();
 
-  console.log("🟢 PostCard post.image:", post.image);
+  //console.log("🟢 PostCard post.image:", post.image);
 
   // ✅ Fix incorrect image URL format
   const correctedImage = post.image ? post.image.replace("//", "/") : null;

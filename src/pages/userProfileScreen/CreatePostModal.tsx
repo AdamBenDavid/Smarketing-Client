@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 import styles from "./CreatePostModal.module.css";
 import { useAuth } from "../../context/AuthContext";
-import { sendImageToGemini } from "../../services/gemini_service";
+import {
+  sendImageToGemini,
+  cancelGeminiRequest,
+} from "../../services/gemini_service";
 import { IconButton } from "@mui/material";
 
 interface CreatePostModalProps {
@@ -19,16 +22,20 @@ export const CreatePostModal = ({
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
   const { user } = useAuth();
 
   const aiGenerateText = async () => {
-    console.log("second section on click");
+    console.log("aiGenerateText");
     try {
       if (imagePreview) {
+        setLoading(true);
         const response = await sendImageToGemini(imagePreview);
-        if (response) {
-          setLoading(false);
+        console.log(response);
+
+        if (response && isOpen) {
           setPostContent(response);
+          setLoading(false);
         }
       }
     } catch (error) {
@@ -37,6 +44,8 @@ export const CreatePostModal = ({
   };
 
   const handleClose = () => {
+    console.log("handle close");
+    cancelGeminiRequest();
     setPostContent("");
     setSelectedImage(null);
     setImagePreview(null);
@@ -46,14 +55,19 @@ export const CreatePostModal = ({
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     console.log("Image change event:", e.target.files);
-    //console.log(imagePreview);
+
+    cancelGeminiRequest();
+    setPostContent("");
+    setSelectedImage(null);
+    setImagePreview(null);
+    setLoading(false);
+
     const file = e.target.files?.[0];
     if (file) {
       setSelectedImage(file);
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result as string);
-        //console.log("Image preview:", reader.result as string);
       };
       reader.readAsDataURL(file);
     }
@@ -141,15 +155,14 @@ export const CreatePostModal = ({
             {imagePreview && (
               <IconButton
                 className={styles.uploadButton}
-                onClick={() => setLoading(true)}
                 loading={loading}
+                onClick={aiGenerateText}
+                disabled={!!postContent.trim() || loading}
               >
-                <button
-                  className={styles.uploadButton}
-                  onClick={aiGenerateText}
-                >
+                {/* buttonText */}
+                <label className={styles.buttonText}>
                   {loading ? "" : "יצירת טקסט מבוססת AI"}
-                </button>
+                </label>
               </IconButton>
             )}
           </div>
