@@ -23,7 +23,7 @@ export const CreatePostModal = ({
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const { user } = useAuth();
+  const { user, accessToken } = useAuth();
 
   const aiGenerateText = async () => {
     console.log("aiGenerateText");
@@ -79,6 +79,10 @@ export const CreatePostModal = ({
     e.preventDefault();
 
     if (!postContent.trim()) return;
+    if (!accessToken) {
+      console.error("No access token available");
+      return;
+    }
 
     try {
       const newPost = await createPost(postContent, selectedImage || undefined);
@@ -110,6 +114,9 @@ export const CreatePostModal = ({
       const response = await fetch("http://localhost:3000/posts", {
         method: "POST",
         body: formData,
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
       });
 
       if (!response.ok) {
