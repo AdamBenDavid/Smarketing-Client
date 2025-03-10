@@ -3,9 +3,9 @@ import { Post } from "../types";
 import PostHeader from "../postHeader/PostHeader";
 import PostImage from "../postImage/PostImage";
 import PostActions from "../postActions/PostActions";
+import CommentSection from "../commentSection/CommentSection";
 import { useAuth } from "../../../context/AuthContext";
 import { FaEdit, FaTrash } from "react-icons/fa";
-import ImageModal from "./ImageModal"; // Import the new modal component
 import "./PostCard.css";
 import styles from "./PostCard.module.css";
 import { IconButton } from "@mui/material";
@@ -15,14 +15,15 @@ const PostCard: React.FC<{
   post: Post;
   onDelete: (postId: string) => void;
 }> = ({ post, onDelete }) => {
+  const [comments, setComments] = useState(post.comments ?? []);
   const { user, accessToken } = useAuth();
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [postContent, setPostContent] = useState("");
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   //console.log("PostCard post.image:", post.image);
 
+  // Fix incorrect image URL format
   const correctedImage = post.image ? post.image.replace("//", "/") : null;
 
   //edit post
@@ -54,9 +55,14 @@ const PostCard: React.FC<{
   };
 
   const handleDelete = async () => {
-    if (!accessToken) return;
-
     try {
+      console.log("postcard.tsx handleDelete post: ", post._id);
+
+      if (!accessToken) {
+        console.error("No access token available");
+        return;
+      }
+
       const response = await fetch(`http://localhost:3000/posts/${post._id}`, {
         method: "DELETE",
         headers: {
@@ -64,9 +70,11 @@ const PostCard: React.FC<{
           Authorization: `Bearer ${accessToken}`,
         },
       });
-
       if (response.ok) {
+        console.log("Post deleted successfully:", post._id);
         onDelete(post._id);
+      } else {
+        console.error("Failed to delete post");
       }
     } catch (error) {
       console.error("Error deleting post:", error);
@@ -90,20 +98,6 @@ const PostCard: React.FC<{
 
   return (
     <div className="post-card">
-      <div className="post-actions edit-delete-actions">
-        <button className="edit-btn">
-          <FaEdit />
-        </button>
-        <button className="delete-btn" onClick={handleDelete}>
-          <FaTrash />
-        </button>
-      </div>
-      <PostHeader user={post.user} />
-
-      <div className="image-container" onClick={() => setIsModalOpen(true)}>
-        <PostImage image={correctedImage} />
-      </div>
-
       {checkUser() && (
         <div className="post-actions edit-delete-actions">
           <button className="edit-btn" onClick={openEditModal}>
@@ -120,15 +114,6 @@ const PostCard: React.FC<{
       <p className="post-description">
         {post.postData || "No description available."}
       </p>
-      <PostActions postId={post._id} commentCount={1} />
-
-      {isModalOpen && (
-        <ImageModal
-          imageUrl={correctedImage || ""}
-          open={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-        />
-      )}
       <PostActions postId={post._id} commentCount={comments.length || 0} />
       <CommentSection
         comments={comments}
