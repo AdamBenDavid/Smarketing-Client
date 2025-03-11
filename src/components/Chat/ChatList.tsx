@@ -34,18 +34,17 @@ export const ChatList = ({ onSelectUser, currentUser, token }: ChatListProps) =>
   // Socket connection effect
   useEffect(() => {
     console.log('[ChatList] Setting up socket connection');
-    console.log('[ChatList] Token:', token ? 'Present' : 'Missing');
-    console.log('[ChatList] Current user:', currentUser);
-
     if (!token) {
-      console.log('[ChatList] No token available, disconnecting');
+      console.log('[ChatList] No token available');
       setConnectionStatus('disconnected');
       return;
     }
 
     try {
+      // Clean token before connecting
+      const cleanToken = token.replace('Bearer ', '');
       console.log('[ChatList] Attempting to connect socket');
-      socketService.connect(token);
+      socketService.connect(cleanToken);
       socketRef.current = socketService.socket;
       console.log('[ChatList] Socket reference:', socketRef.current ? 'Created' : 'Failed');
 

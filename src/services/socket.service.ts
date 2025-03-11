@@ -34,9 +34,12 @@ class SocketService {
       this._socket = null;
     }
 
+    // Clean the token - remove 'Bearer ' if present
+    const cleanToken = token.replace('Bearer ', '');
+    
     console.log('[SocketService] Creating new socket connection');
     this._socket = io('http://localhost:3000', {
-      auth: { token },
+      auth: { token: cleanToken }, // Send clean token without Bearer prefix
       transports: ['websocket', 'polling'],
       withCredentials: true,
       reconnection: true,
@@ -48,7 +51,7 @@ class SocketService {
 
     console.log('[SocketService] Socket created:', this._socket ? 'Success' : 'Failed');
     this.setupEventListeners();
-    this.handleReconnection(token);
+    this.handleReconnection(cleanToken); // Pass clean token
   }
 
   private handleReconnection(token: string): void {

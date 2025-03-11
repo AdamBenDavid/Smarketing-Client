@@ -166,7 +166,9 @@ export const ChatModal = memo(({ token, currentUser, selectedUser, onClose }: Ch
     }
 
     try {
-      socketService.connect(token);
+      // Remove Bearer prefix if it exists
+      const cleanToken = token.replace('Bearer ', '');
+      socketService.connect(cleanToken);
       socketRef.current = socketService.socket;
 
       // Set up connection status listeners
