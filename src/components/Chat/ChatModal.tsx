@@ -3,6 +3,7 @@ import styles from "./ChatModal.module.css";
 import { User } from "../../types/user";
 import { socketService } from "../../services/socket.service";
 import { ChatMessage } from "../../components/Chat/types";
+import { getProfilePictureUrl } from '../../utils/imageUtils';
 
 interface ChatModalProps {
   token: string;
@@ -265,17 +266,34 @@ export const ChatModal = memo(({ token, currentUser, selectedUser, onClose }: Ch
     handleTyping();
   }, [handleTyping]);
 
+  useEffect(() => {
+    if (selectedUser) {
+      console.log('[ChatModal] Current chat user data:', {
+        id: selectedUser._id,
+        fullName: selectedUser.fullName,
+        email: selectedUser.email,
+        profilePicture: selectedUser.profilePicture,
+        resolvedPicture: getProfilePictureUrl(selectedUser.profilePicture)
+      });
+    }
+  }, [selectedUser]);
+
   return (
     <div className={styles.chatModal}>
       <div className={styles.header}>
         <div className={styles.selectedUserInfo}>
           <img
-            src={selectedUser?.profilePicture || "https://placehold.co/40x40"}
-            alt={selectedUser?.email}
+            src={getProfilePictureUrl(selectedUser?.profilePicture)}
+            alt={selectedUser?.fullName || selectedUser?.email}
             className={styles.userAvatar}
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.src = "https://placehold.co/40x40";
+            }}
           />
           <div className={styles.userDetails}>
-            <h2>{selectedUser?.email}</h2>
+            <h2>{selectedUser?.fullName || selectedUser?.email}</h2>
+            <span className={styles.userEmail}>{selectedUser?.email}</span>
             <span className={styles.onlineStatus}>
               {onlineUsers.some(u => u._id === selectedUser?._id) ? 'מחובר' : 'לא מחובר'}
             </span>
