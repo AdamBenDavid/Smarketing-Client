@@ -22,10 +22,6 @@ import { User } from "../../types/user";
 export default function DashboardLayoutBasic(props: any) {
   const navigate = useNavigate();
 
-  const handleHomeClick = () => {
-    navigate("/");
-  };
-
   const { window } = props;
   const { user, accessToken } = useAuth();
   const router = useDemoRouter("/landingPage");
@@ -161,9 +157,7 @@ export default function DashboardLayoutBasic(props: any) {
         slots={{
           appTitle: () => (
             <div>
-              <button onClick={handleHomeClick}>
-                <img src={logo} alt="App Logo" style={{ height: "40px" }} />
-              </button>
+              <img src={logo} alt="App Logo" style={{ height: "40px" }} />
             </div>
           ),
         }}
