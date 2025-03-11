@@ -125,76 +125,69 @@ const PostCard: React.FC<{
           postId={post._id}
           onAddComment={handleAddComment}
         />
-
-        {/* to Fix edit modal  */}
-
-        {isEditModalOpen &&
-          createPortal(
-            <div className={styles.modalOverlay}>
-              <div className={styles.modal}>
-                <button className={styles.closeButton} onClick={closeEditModal}>
-                  ×
-                </button>
-                <h2>עריכת פוסט</h2>
-                <form onSubmit={openEditModal}>
-                  <textarea
-                    value={postContent}
-                    onChange={(e) => setPostContent(e.target.value)}
-                    placeholder="על מה תרצה לשתף?"
-                    className={styles.contentInput}
-                  />
-
-                  <div className={styles.imageUpload}>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageChange}
-                      id="imageInput"
-                      className={styles.fileInput}
-                    />
-                    <IconButton className={styles.uploadButton}>
-                      <label
-                        htmlFor="imageInput"
-                        className={styles.uploadButton}
-                      >
-                        {imagePreview ? "שנה תמונה" : "הוסף תמונה"}
-                      </label>
-                    </IconButton>
-
-                    {imagePreview && (
-                      <IconButton
-                        className={styles.uploadButton}
-                        loading={loading}
-                        // onClick={aiGenerateText}
-                        disabled={!!postContent.trim() || loading}
-                      >
-                        {/* buttonText */}
-                        <label className={styles.buttonText}>
-                          {loading ? "" : "יצירת טקסט מבוססת AI"}
-                        </label>
-                      </IconButton>
-                    )}
-                  </div>
-
-                  {imagePreview && (
-                    <div className={styles.imagePreview}>
-                      <img src={imagePreview} alt="Preview" />
-                    </div>
-                  )}
-
-                  <button
-                    type="submit"
-                    className={styles.submitButton}
-                    disabled={!postContent.trim()}
-                  >
-                    פרסם
-                  </button>
-                </form>
-              </div>
-            </div>,
-            document.body // גורם ל-Modal להיות מחוץ לקומפוננטה ולכסות את כל המסך
-          )}
       </div>
+
+      {/* edit post */}
+      {isEditModalOpen && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.modal}>
+            <button className={styles.closeButton} onClick={closeEditModal}>
+              ×
+            </button>
+            <h2>עריכת פוסט</h2>
+            <form onSubmit={openEditModal}>
+              <textarea
+                value={postContent}
+                onChange={(e) => setPostContent(e.target.value)}
+                placeholder="על מה תרצה לשתף?"
+                className={styles.contentInput}
+              />
+
+              <div className={styles.imageUpload}>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  id="imageInput"
+                  className={styles.fileInput}
+                />
+                <IconButton className={styles.uploadButton}>
+                  <label htmlFor="imageInput" className={styles.uploadButton}>
+                    {imagePreview ? "שנה תמונה" : "הוסף תמונה"}
+                  </label>
+                </IconButton>
+
+                {imagePreview && (
+                  <IconButton
+                    className={styles.uploadButton}
+                    loading={loading}
+                    disabled={!!postContent.trim() || loading}
+                  >
+                    <label className={styles.buttonText}>
+                      {loading ? "" : "יצירת טקסט מבוססת AI"}
+                    </label>
+                  </IconButton>
+                )}
+              </div>
+
+              {imagePreview && (
+                <div className={styles.imagePreview}>
+                  <img src={imagePreview} alt="Preview" />
+                </div>
+              )}
+
+              <button
+                type="submit"
+                className={styles.submitButton}
+                disabled={!postContent.trim()}
+              >
+                פרסם
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
       {isModalOpen && (
         <ImageModal
           imageUrl={correctedImage || ""}
