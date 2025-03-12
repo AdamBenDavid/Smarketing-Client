@@ -104,7 +104,11 @@ const PostCard: React.FC<{
         <p className="post-description">
           {post.postData || "No description available."}
         </p>
-        <PostActions postId={post._id} commentCount={comments.length || 0} />
+        <PostActions
+          postId={post._id}
+          commentCount={comments.length || 0}
+          userId={user?._id}
+        />
         <CommentSection
           comments={comments}
           onViewAll={() => setIsCommentModalOpen(true)}

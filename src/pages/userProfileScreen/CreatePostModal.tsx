@@ -172,7 +172,7 @@ export const CreatePostModal = ({
               >
                 {/* buttonText */}
                 <label className={styles.buttonText}>
-                  {loading ? "" : "יצירת טקסט מבוססת AI"}
+                  {loading ? "" : "✨ יצירת טקסט מבוססת AI ✨"}
                 </label>
               </IconButton>
             )}
