@@ -98,7 +98,7 @@ const PostCard: React.FC<{
 
   return (
     <>
-      <div className={`post-card ${correctedImage ? "has-image" : "no-image"}`}>
+      <div className="post-card">
         {checkUser() && (
           <div className="post-actions edit-delete-actions">
             <button
@@ -114,12 +114,9 @@ const PostCard: React.FC<{
         )}
 
         <PostHeader senderId={post.senderId} />
-        {correctedImage && (
-          <div className="image-container" onClick={() => setIsModalOpen(true)}>
-            <PostImage image={correctedImage} />
-          </div>
-        )}
-
+        <div className="image-container" onClick={() => setIsModalOpen(true)}>
+          <PostImage image={correctedImage} />
+        </div>
         <p className="post-description">
           {post.postData || "No description available."}
         </p>
