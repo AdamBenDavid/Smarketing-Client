@@ -11,10 +11,7 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-<<<<<<< HEAD
   padding-bottom: 5px;
-=======
->>>>>>> 2e483bf4d1933bad0a2ff6847ef88cbff09e1cc1
 }
 
 .modal-content {
@@ -35,18 +32,11 @@
   font-size: 18px;
   font-weight: bold;
   margin-bottom: 10px;
-<<<<<<< HEAD
   text-align: center;
 }
 
 .comment-list {
   max-height: 300px;
-=======
-}
-
-.comment-list {
-  flex-grow: 1;
->>>>>>> 2e483bf4d1933bad0a2ff6847ef88cbff09e1cc1
   overflow-y: auto;
   padding-right: 5px;
 }
@@ -61,11 +51,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-<<<<<<< HEAD
   padding-top: 30px;
-=======
-  padding-top: 10px;
->>>>>>> 2e483bf4d1933bad0a2ff6847ef88cbff09e1cc1
 }
 
 .comment-input .MuiOutlinedInput-root {
