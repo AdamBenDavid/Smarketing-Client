@@ -25,6 +25,7 @@ const PostHeader: React.FC<{
     if (!senderId) return;
     fetch(`http://localhost:3000/users/${senderId}`)
       .then((res) => res.json())
+
       .then((data) => setSenderUser(data))
       .catch((err) => console.error("Error fetching user:", err));
   }, [senderId]);
@@ -43,6 +44,7 @@ const PostHeader: React.FC<{
     <div className="post-header">
       <img
         src={fixImagePath(displayUser.profilePicture)}
+
         alt="Profile"
         className="profile-picture"
         crossOrigin="anonymous"
@@ -58,6 +60,7 @@ const PostHeader: React.FC<{
             displayUser.profilePicture
           );
           console.log(e);
+
           e.currentTarget.src = "/default-profile.png";
         }}
       />

@@ -11,6 +11,12 @@
   font-size: 0.9rem;
 }
 
+/* Add dark mode styles */
+[data-theme='dark'] .add-comment input {
+  color: black;
+  background-color: white;
+}
+
 .add-comment button {
   padding: 0.5rem 1rem;
   border: none;

@@ -2,7 +2,7 @@ export interface User {
   _id?: string; // Consistent ID field
   email: string;
   password?: string;
-  fullName: string; // Use fullName consistently instead of name
+  fullName: string; // We have fullName field
   profilePicture?: string;
 
   role?: string;

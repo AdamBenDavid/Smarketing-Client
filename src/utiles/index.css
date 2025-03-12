@@ -1,5 +1,15 @@
-@import url("https://fonts.googleapis.com/css2?family=Assistant:wght@200;300;400;600;700;800&display=swap");
+@import '@fontsource/assistant/200.css';
+@import '@fontsource/assistant/300.css';
+@import '@fontsource/assistant/400.css';
+@import '@fontsource/assistant/500.css';
+@import '@fontsource/assistant/600.css';
+@import '@fontsource/assistant/700.css';
+@import '@fontsource/assistant/800.css';
 @import "flowbite";
+
+:root {
+  --font-family-base: 'Assistant', sans-serif;
+}
 
 html,
 body {
@@ -8,11 +18,17 @@ body {
   padding: 0;
   box-sizing: border-box;
   background-color: #f0f3fa;
-  font-family: "Assistant";
+  font-family: var(--font-family-base);
 }
 
 *,
 *::before,
 *::after {
   box-sizing: border-box;
+  font-family: inherit;
+}
+
+/* Force Assistant font on all text elements */
+h1, h2, h3, h4, h5, h6, p, span, div, button, input, textarea, select {
+  font-family: var(--font-family-base) !important;
 }

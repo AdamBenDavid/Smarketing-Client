@@ -43,13 +43,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   const login = (userData: User, token: string) => {
-    localStorage.setItem("token", token);
+    const cleanToken = token.replace('Bearer ', '');
+    
+    localStorage.setItem("token", cleanToken);
     localStorage.setItem("userId", userData._id || "");
     localStorage.setItem("userEmail", userData.email || "");
     localStorage.setItem("userFullName", userData.fullName);
     localStorage.setItem("profilePicture", userData.profilePicture || "");
 
-    setAccessToken(token);
+    setAccessToken(cleanToken);
     setUser(userData);
     setIsAuthenticated(true);
     setLoading(false);
