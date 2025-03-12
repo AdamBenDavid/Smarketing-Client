@@ -21,7 +21,7 @@ const PostHeader: React.FC<{
   useEffect(() => {
     if (!senderId) return;
 
-    fetch(`http://localhost:3000/auth/user/${senderId}`)
+    fetch(`http://localhost:3000/users/${senderId}`)
       .then((res) => {
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
         return res.json();

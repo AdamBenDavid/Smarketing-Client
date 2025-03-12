@@ -85,7 +85,7 @@ export const updateProfile = async (
     console.log("user:", userId);
     console.log("access token:", accessToken);
 
-    const response = await api.put(`/auth/profile/${userId}`, formData, {
+    const response = await api.put(`/users/${userId}`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
         Authorization: `Bearer ${accessToken}`,
@@ -114,16 +114,12 @@ export const usersService = {
     accessToken: string | null
   ) => {
     try {
-      const response = await api.put(
-        `/auth/profile/${updateUser._id}`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      );
+      const response = await api.put(`/users/${updateUser._id}`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
       return response.data;
     } catch (error: any) {
       throw error.response?.data || "Failed to update profile";
