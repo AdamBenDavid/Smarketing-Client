@@ -28,8 +28,6 @@ export const EditPostModal = ({
     fetchUserPosts();
   }, []);
 
-  console.log("image preview", imagePreview);
-
   const { user, accessToken } = useAuth();
 
   const closeEditModal = () => {
