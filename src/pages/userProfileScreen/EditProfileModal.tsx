@@ -16,7 +16,7 @@ export const EditProfileModal = ({
   onClose,
   currentName,
 }: EditProfileModalProps) => {
-  const { user, setUser } = useAuth();
+  const { user, setUser, accessToken } = useAuth();
   const [fullName, setFullName] = useState(currentName);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -46,7 +46,7 @@ export const EditProfileModal = ({
     }
 
     try {
-      const updatedUser = await updateProfile(user._id, formData);
+      const updatedUser = await updateProfile(user._id, formData, accessToken);
       setUser(updatedUser.user);
       toast.success("פרופיל עודכן בהצלחה!");
       onClose();

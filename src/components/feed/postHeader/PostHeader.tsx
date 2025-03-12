@@ -12,20 +12,20 @@ const PostHeader: React.FC<{
     profilePicture?: string;
   } | null>(null);
 
-  const getProfilePictureUrl = (profilePicture: string | undefined) => {
-    if (!profilePicture) return "/default-profile.png";
-    if (profilePicture.startsWith("http")) return profilePicture;
-    return `http://localhost:3000/${profilePicture}`;
+  const fixImagePath = (imagePath: string | undefined) => {
+    if (!imagePath) return "/default-profile.png";
+    return imagePath.startsWith("http")
+      ? imagePath
+      : `http://localhost:3000/${imagePath}`;
   };
 
   useEffect(() => {
-    if (!senderId) return;
+    console.log("🔄 Fetching user:", senderId);
 
-    fetch(`http://localhost:3000/auth/user/${senderId}`)
-      .then((res) => {
-        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-        return res.json();
-      })
+    if (!senderId) return;
+    fetch(`http://localhost:3000/users/${senderId}`)
+      .then((res) => res.json())
+
       .then((data) => setSenderUser(data))
       .catch((err) => console.error("Error fetching user:", err));
   }, [senderId]);
@@ -43,11 +43,24 @@ const PostHeader: React.FC<{
   return (
     <div className="post-header">
       <img
-        src={getProfilePictureUrl(displayUser.profilePicture)}
+        src={fixImagePath(displayUser.profilePicture)}
+
         alt="Profile"
         className="profile-picture"
         crossOrigin="anonymous"
+        onLoad={() =>
+          console.log(
+            "✅ Image loaded successfully:",
+            displayUser.profilePicture
+          )
+        }
         onError={(e) => {
+          console.error(
+            "❌ Failed to load image :",
+            displayUser.profilePicture
+          );
+          console.log(e);
+
           e.currentTarget.src = "/default-profile.png";
         }}
       />

@@ -2,6 +2,7 @@ import axios from "axios";
 import { User } from "../types/user";
 import { CredentialResponse } from "@react-oauth/google";
 import { AuthResponse } from "../types/user";
+import { useAuth } from "../context/AuthContext";
 
 const API_BASE_URL = "http://localhost:3000";
 
@@ -75,10 +76,20 @@ export const googleSignin = async (
   }
 };
 
-export const updateProfile = async (userId: string, formData: FormData) => {
+export const updateProfile = async (
+  userId: string,
+  formData: FormData,
+  accessToken: string | null
+) => {
   try {
+    console.log("user:", userId);
+    console.log("access token:", accessToken);
+
     const response = await api.put(`/auth/profile/${userId}`, formData, {
-      headers: { "Content-Type": "multipart/form-data" },
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${accessToken}`,
+      },
     });
     return response.data;
   } catch (error: any) {
@@ -97,16 +108,19 @@ export const usersService = {
   },
 
   //continue- access token
-  updateProfile: async (updateUser: User, formData: FormData) => {
+  updateProfile: async (
+    updateUser: User,
+    formData: FormData,
+    accessToken: string | null
+  ) => {
     try {
-      const accessToken = localStorage.getItem("token");
-
       const response = await api.put(
         `/auth/profile/${updateUser._id}`,
         formData,
         {
           headers: {
             "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${accessToken}`,
           },
         }
       );
