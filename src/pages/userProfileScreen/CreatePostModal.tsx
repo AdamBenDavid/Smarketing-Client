@@ -21,7 +21,7 @@ export const CreatePostModal = ({
   const [postContent, setPostContent] = useState("");
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false); //gemini
 
   const { user, accessToken } = useAuth();
 
@@ -110,6 +110,8 @@ export const CreatePostModal = ({
       if (image) {
         formData.append("image", image);
       }
+
+      console.log("add post formData: ", formData);
 
       const response = await fetch("http://localhost:3000/posts", {
         method: "POST",
