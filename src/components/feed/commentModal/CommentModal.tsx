@@ -13,34 +13,44 @@ const CommentModal: React.FC<{
 }> = ({ open, onClose, imageUrl, comments }) => {
   const [newComment, setNewComment] = useState("");
 
+  const mockComments: CommentType[] = Array.from({ length: 10 }, (_, i) => ({
+    id: `mock${i}`,
+    text: `בדיקה  ${i + 1} `,
+    user: {
+      email: "",
+      _id: `user${i}`,
+      fullName: `User_${i + 1}`,
+      profilePicture: `https://i.pravatar.cc/50?img=${i + 1}`,
+    },
+  }));
+
   return (
     <Modal open={open} onClose={onClose} aria-labelledby="comment-modal">
       <Box className="modal-box">
         <div className="modal-content">
           <div className="comments-container">
-            <h3 className="comment-header">Comments</h3>
+            <h3 className="comment-header">תגובות</h3>
+
             <div className="comment-list">
-              {comments.length === 0 ? (
-                <p className="no-comments-text">No comments yet</p>
+              {mockComments.length === 0 ? (
+                <p className="no-comments-text">אין תגובות עדיין...</p>
               ) : (
-                comments.map((comment) => (
+                mockComments.map((comment) => (
                   <OneComment key={comment.id} comment={comment} />
                 ))
               )}
             </div>
 
             <div className="comment-input-container">
-              <TextField
-                className="comment-input"
-                variant="outlined"
-                placeholder="Write a comment..."
-                fullWidth
-                value={newComment}
-                onChange={(e) => setNewComment(e.target.value)}
-              />
               <Button variant="contained" className="post-button">
-                Post
+                פרסם
               </Button>
+              <TextField
+                id="standard-basic"
+                label="הוספת תגובה"
+                variant="outlined"
+                fullWidth
+              />
             </div>
           </div>
 
@@ -50,7 +60,7 @@ const CommentModal: React.FC<{
         </div>
 
         <Button variant="contained" className="close-button" onClick={onClose}>
-          Close
+          סגור
         </Button>
       </Box>
     </Modal>
