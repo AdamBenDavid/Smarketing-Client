@@ -1,20 +1,31 @@
+// components/commentSection/CommentSection.tsx
 import React from "react";
+import { CommentType } from "../types";
 import Comment from "../comment/Comment";
-import AddComment from "../addComment/AddComment";
-import { CommentType } from "../../feed/types";
 import "./CommentSection.css";
 
 const CommentSection: React.FC<{
   comments: CommentType[];
-  postId: string;
-  onAddComment: (text: string) => void;
-}> = ({ comments, postId, onAddComment }) => {
+  onViewAll: () => void;
+}> = ({ comments, onViewAll }) => {
   return (
     <div className="comment-section">
-      {comments.map((comment) => (
-        <Comment key={comment.id} comment={comment} />
-      ))}
-      <AddComment onAddComment={onAddComment} />
+      {comments.length === 0 ? (
+        <p className="no-comments">אין תגובות עדיין</p>
+      ) : (
+        <>
+          <Comment comment={comments[0]} />
+          {comments.length > 1 && (
+            <button className="view-all-comments" onClick={onViewAll}>
+              View all {comments.length} comments
+            </button>
+          )}
+        </>
+      )}
+
+      <button className="add-comment" onClick={onViewAll}>
+        הוספת תגובה...
+      </button>
     </div>
   );
 };
