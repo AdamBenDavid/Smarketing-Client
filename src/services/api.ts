@@ -12,9 +12,17 @@ const api = axios.create({
   withCredentials: true,
 });
 
-export const registerUser = async (email: string, password: string) => {
+export const registerUser = async (
+  email: string,
+  password: string,
+  fullName: string
+) => {
   try {
-    const response = await api.post("/auth/register", { email, password });
+    const response = await api.post("/auth/register", {
+      email,
+      password,
+      fullName,
+    });
     return response.data;
   } catch (error: any) {
     throw error.response?.data || "Failed to register";
