@@ -7,7 +7,7 @@ import CommentSection from "../commentSection/CommentSection";
 import { useAuth } from "../../../context/AuthContext";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import "./PostCard.css";
-import ImageModal from "./ImageModal";
+import CommentModal from "../commentModal/CommentModal";
 import { EditPostModal } from "../../../pages/userProfileScreen/EditPostModal";
 
 const PostCard: React.FC<{
@@ -16,27 +16,12 @@ const PostCard: React.FC<{
 }> = ({ post, onDelete }) => {
   const [comments, setComments] = useState(post.comments ?? []);
   const { user, accessToken } = useAuth();
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [localPosts, setLocalPosts] = useState<Post[]>([]);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false); //edit post
-
+  const [isCommentModalOpen, setIsCommentModalOpen] = useState(false); // new!
   // Fix incorrect image URL format:
   const correctedImage = post.image ? post.image.replace("//", "/") : null;
   console.log("currectedimage", correctedImage);
-
-  //add comment
-  const handleAddComment = (text: string) => {
-    if (!text.trim() || !user) return;
-    const newComment = {
-      id: Date.now().toString(),
-      text,
-      user: {
-        id: user._id,
-        name: user.fullName || "משתמש אנונימי",
-        profilePicture: user.profilePicture || "https://placehold.co/150x150",
-      },
-    };
-  };
 
   const handleDelete = async () => {
     try {
@@ -114,11 +99,7 @@ const PostCard: React.FC<{
         )}
 
         <PostHeader senderId={post.senderId} />
-        {correctedImage && (
-          <div className="image-container" onClick={() => setIsModalOpen(true)}>
-            <PostImage image={correctedImage} />
-          </div>
-        )}
+        {correctedImage && <PostImage image={correctedImage} />}
 
         <p className="post-description">
           {post.postData || "No description available."}
@@ -130,12 +111,10 @@ const PostCard: React.FC<{
         />
         <CommentSection
           comments={comments}
-          postId={post._id}
-          onAddComment={handleAddComment}
+          onViewAll={() => setIsCommentModalOpen(true)}
         />
       </div>
 
-      {/* edit post */}
       <EditPostModal
         post={post}
         isOpen={isEditModalOpen}
@@ -143,13 +122,12 @@ const PostCard: React.FC<{
         fetchUserPosts={fetchUserPosts}
       />
 
-      {isModalOpen && (
-        <ImageModal
-          imageUrl={correctedImage || ""}
-          open={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-        />
-      )}
+      <CommentModal
+        open={isCommentModalOpen}
+        onClose={() => setIsCommentModalOpen(false)}
+        imageUrl={correctedImage || ""}
+        comments={comments}
+      />
     </>
   );
 };

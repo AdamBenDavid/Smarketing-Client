@@ -5,8 +5,6 @@ import "./PostHeader.css";
 const PostHeader: React.FC<{
   senderId?: string;
 }> = ({ senderId }) => {
-  const { user: loggedInUser } = useAuth();
-
   const [senderUser, setSenderUser] = useState<{
     fullName?: string;
     profilePicture?: string;
@@ -18,10 +16,11 @@ const PostHeader: React.FC<{
     if (profilePicture.startsWith("http")) return profilePicture;
     return `http://localhost:3000/${profilePicture}`;
   };
+
   useEffect(() => {
     if (!senderId) return;
 
-    fetch(`http://localhost:3000/auth/user/${senderId}`)
+    fetch(`http://localhost:3000/users/${senderId}`)
       .then((res) => {
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
         return res.json();
