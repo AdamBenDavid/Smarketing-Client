@@ -43,3 +43,21 @@ export const addComment = async (
     return null;
   }
 };
+
+export const deleteComment = async (commentId: string) => {
+  try {
+    const response = await fetch(
+      `http://localhost:3000/comments/${commentId}`,
+      {
+        method: "DELETE",
+      }
+    );
+
+    if (!response.ok) throw new Error("Failed to delete comment");
+
+    return true; // ✅ Success
+  } catch (error) {
+    console.error("❌ Error deleting comment:", error);
+    return false; // ❌ Failure
+  }
+};
