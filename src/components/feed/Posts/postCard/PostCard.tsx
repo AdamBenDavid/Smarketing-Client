@@ -1,14 +1,14 @@
 import React, { useState } from "react";
-import { Post } from "../types";
+import { Post } from "../../types";
 import PostHeader from "../postHeader/PostHeader";
 import PostImage from "../postImage/PostImage";
 import PostActions from "../postActions/PostActions";
-import CommentSection from "../commentSection/CommentSection";
-import { useAuth } from "../../../context/AuthContext";
+import CommentSection from "../../Comments/commentSection/CommentSection";
+import { useAuth } from "../../../../context/AuthContext";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import "./PostCard.css";
-import CommentModal from "../commentModal/CommentModal";
-import { EditPostModal } from "../../../pages/userProfileScreen/EditPostModal";
+import CommentModal from "../../Comments/commentModal/CommentModal";
+import { EditPostModal } from "../../../../pages/userProfileScreen/EditPostModal";
 
 const PostCard: React.FC<{
   post: Post;
@@ -126,7 +126,7 @@ const PostCard: React.FC<{
         open={isCommentModalOpen}
         onClose={() => setIsCommentModalOpen(false)}
         imageUrl={correctedImage || ""}
-        comments={comments}
+        postId={post?._id}
       />
     </>
   );

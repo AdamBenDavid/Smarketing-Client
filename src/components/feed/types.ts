@@ -1,8 +1,9 @@
 import { User } from "../../types/user";
 export interface CommentType {
-  id: string;
-  text: string;
-  user: User;
+  _id: string;
+  userId: string;
+  commentData: string;
+  postId: string;
 }
 
 export interface Post {

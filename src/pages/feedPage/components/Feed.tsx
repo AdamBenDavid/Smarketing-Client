@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Post } from "../../../components/feed/types";
-import PostCard from "../../../components/feed/postCard/PostCard";
+import PostCard from "../../../components/feed/Posts/postCard/PostCard";
 import "./Feed.css";
 
 const Feed: React.FC<{ posts: Post[]; className?: string }> = ({

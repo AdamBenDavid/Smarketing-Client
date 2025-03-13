@@ -1,6 +1,5 @@
-// components/commentSection/CommentSection.tsx
 import React from "react";
-import { CommentType } from "../types";
+import { CommentType } from "../../types";
 import Comment from "../comment/Comment";
 import "./CommentSection.css";
 
@@ -11,21 +10,27 @@ const CommentSection: React.FC<{
   return (
     <div className="comment-section">
       {comments.length === 0 ? (
-        <p className="no-comments">אין תגובות עדיין</p>
+        <>
+          <p className="no-comments">אין תגובות עדיין</p>
+          <button className="add-comment" onClick={onViewAll}>
+            הוספת תגובה...
+          </button>
+        </>
       ) : (
         <>
           <Comment comment={comments[0]} />
-          {comments.length > 1 && (
+
+          {comments.length > 1 ? (
             <button className="view-all-comments" onClick={onViewAll}>
-              View all {comments.length} comments
+              צפייה בכל {comments.length} התגובות
+            </button>
+          ) : (
+            <button className="add-comment" onClick={onViewAll}>
+              הוספת תגובה...
             </button>
           )}
         </>
       )}
-
-      <button className="add-comment" onClick={onViewAll}>
-        הוספת תגובה...
-      </button>
     </div>
   );
 };
