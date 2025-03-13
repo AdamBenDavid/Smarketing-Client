@@ -43,7 +43,8 @@ const PostHeader: React.FC<{
         crossOrigin="anonymous"
         onError={(e) => {
           console.log("needs to be default");
-          e.currentTarget.src = "/default-profile.png";
+          e.currentTarget.src =
+            "http://localhost:3000/images/default-profile.png";
         }}
       />
       <span className="username">{displayUser.fullName}</span>
