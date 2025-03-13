@@ -5,6 +5,7 @@ import "./CommentModal.css";
 import OneComment from "../oneComment/OneComment";
 import PostImage from "../../Posts/postImage/PostImage";
 import { fetchComments, addComment } from "../../api";
+import { useAuth } from "../../../../context/AuthContext";
 
 const CommentModal: React.FC<{
   open: boolean;
@@ -15,8 +16,8 @@ const CommentModal: React.FC<{
   const [comments, setComments] = useState<CommentType[]>([]);
   const [newComment, setNewComment] = useState("");
   const [loading, setLoading] = useState(false);
+  const { user } = useAuth();
 
-  // Fetch comments when the modal opens
   useEffect(() => {
     if (open) {
       fetchComments(postId).then(setComments);
@@ -25,15 +26,14 @@ const CommentModal: React.FC<{
 
   // Add a new comment
   const handleAddComment = async () => {
-    if (!newComment.trim()) return;
-
-    console.log("📝 Attempting to add comment for postId:", postId);
+    if (!newComment.trim() || !user?._id) return;
 
     setLoading(true);
-    const addedComment = await addComment(postId, "user123", newComment); // Replace "user123" with actual user ID
+    const addedComment = await addComment(postId, user.fullName, newComment);
+
     if (addedComment) {
-      setComments((prev) => [...prev, addedComment]); // Add comment to UI
-      setNewComment(""); // Clear input
+      setComments((prev) => [...prev, addedComment]);
+      setNewComment("");
     }
     setLoading(false);
   };
