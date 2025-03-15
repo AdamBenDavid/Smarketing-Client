@@ -91,8 +91,8 @@ const PostCard: React.FC<{
             >
               <FaEdit />
             </button>
-            <button className="delete-btn" onClick={handleDelete}>
-              <FaTrash />
+            <button className="delete-btn">
+              <FaTrash onClick={handleDelete} />
             </button>
           </div>
         )}

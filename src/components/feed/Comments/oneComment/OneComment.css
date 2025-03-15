@@ -41,4 +41,16 @@
   align-items: center;
   justify-content: space-between;
   margin-bottom: 10px;
+  position: relative;
+}
+
+.delete-icon {
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+  position: absolute;
+  right: 0;
+}
+
+.comment-container:hover .delete-icon {
+  opacity: 1;
 }
