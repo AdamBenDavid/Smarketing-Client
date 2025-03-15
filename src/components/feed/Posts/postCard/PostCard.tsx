@@ -10,6 +10,8 @@ import "./PostCard.css";
 import CommentModal from "../../Comments/commentModal/CommentModal";
 import { EditPostModal } from "../../../../pages/userProfileScreen/EditPostModal";
 import { fetchComments } from "../../api";
+import NoImagePlaceholder from "../../../../assets/No-Image-Placeholder.svg";
+import NoImagePlaceholderComponent from "../NoImage/NoImagePlaceHolder"; //flexible component for no image
 
 const PostCard: React.FC<{
   post: Post;
@@ -30,14 +32,6 @@ const PostCard: React.FC<{
       setCommentCount(comments.length)
     );
   }, [post._id]);
-
-  const handleNewComment = () => {
-    setCommentCount((prev) => prev + 1);
-  };
-
-  const handleDeleteComment = () => {
-    setCommentCount((prev) => Math.max(prev - 1, 0));
-  };
 
   const handleDelete = async () => {
     try {
@@ -121,7 +115,27 @@ const PostCard: React.FC<{
         )}
 
         <PostHeader senderId={post.senderId} />
-        {correctedImage && <PostImage image={correctedImage} />}
+
+        {correctedImage ? (
+          <PostImage image={correctedImage} />
+        ) : (
+          <div className="post-image no-image">
+            <img
+              src={NoImagePlaceholder}
+              alt="No Image Available"
+              className="no-image-placeholder"
+              style={{ width: 400, height: 250, alignItems: "center" }}
+            />
+          </div>
+        )}
+
+        {/* {correctedImage ? (
+          <PostImage image={correctedImage} />
+        ) : (
+          <div className="post-image no-image">
+            <NoImagePlaceholderComponent commentText={post.postData || "אין תיאור"} />
+          </div>
+        )} */}
 
         <p className="post-description">
           {post.postData || "No description available."}
