@@ -17,8 +17,8 @@ const PostCard: React.FC<{
   const [comments, setComments] = useState(post.comments ?? []);
   const { user, accessToken } = useAuth();
   const [localPosts, setLocalPosts] = useState<Post[]>([]);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false); //edit post
-  const [isCommentModalOpen, setIsCommentModalOpen] = useState(false); // new!
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
   // Fix incorrect image URL format:
   const correctedImage = post.image ? post.image.replace("//", "/") : null;
   console.log("currectedimage", correctedImage);
@@ -50,7 +50,6 @@ const PostCard: React.FC<{
     }
   };
 
-  // check if the current user is the post sender
   const checkUser = () => {
     const postUserId =
       typeof post.senderId === "object" ? post.senderId : post.senderId;

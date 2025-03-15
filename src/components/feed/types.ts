@@ -4,6 +4,9 @@ export interface CommentType {
   userId: string;
   commentData: string;
   postId: string;
+  fullName: string;
+
+  profilePicture?: string;
 }
 
 export interface Post {
