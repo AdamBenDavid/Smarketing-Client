@@ -18,17 +18,36 @@ const OneComment: React.FC<OneCommentProps> = ({
 
   const onDelete = async () => {
     try {
+      if (!user) {
+        console.error("User not authenticated");
+        return;
+      }
+
+      const token = localStorage.getItem("token");
+      if (!token) {
+        console.error("No authentication token found");
+        return;
+      }
+
       const response = await fetch(
-        `http://localhost:5000/comments/${comment._id}`,
+        `http://localhost:3000/comments/${comment._id}`,
         {
           method: "DELETE",
           credentials: "include",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
 
-      if (!response.ok) throw new Error("Failed to delete comment");
+      if (!response.ok) {
+        const errorResponse = await response.json();
+        console.error("API Error:", errorResponse);
+        throw new Error("Failed to delete comment");
+      }
 
+      console.log(" Comment deleted:", comment._id);
       onDeleteSuccess(comment._id);
     } catch (error) {
       console.error("Error deleting comment:", error);

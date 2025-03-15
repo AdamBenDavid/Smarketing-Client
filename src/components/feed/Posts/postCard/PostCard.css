@@ -60,6 +60,10 @@
   left: 15px;
   display: flex;
   gap: 12px;
+  opacity: 0;
+}
+.post-card:hover .edit-delete-actions {
+  opacity: 1;
 }
 
 .edit-btn,

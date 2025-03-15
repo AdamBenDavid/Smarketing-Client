@@ -91,8 +91,8 @@ const PostCard: React.FC<{
             >
               <FaEdit />
             </button>
-            <button className="delete-btn" onClick={handleDelete}>
-              <FaTrash />
+            <button className="delete-btn">
+              <FaTrash onClick={handleDelete} />
             </button>
           </div>
         )}
@@ -107,6 +107,7 @@ const PostCard: React.FC<{
           postId={post._id}
           commentCount={comments.length || 0}
           userId={user?._id}
+          onCommentClick={() => setIsCommentModalOpen(true)}
         />
         <CommentSection
           comments={comments}
