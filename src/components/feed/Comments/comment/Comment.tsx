@@ -1,3 +1,4 @@
+//this is the comment component that is used to display the comments on the post page
 import React, { useEffect, useState } from "react";
 import { CommentType } from "../../types";
 import "./Comment.css";
@@ -33,6 +34,9 @@ const Comment: React.FC<{ comment: CommentType }> = ({ comment }) => {
 
   return (
     <div className="comment">
+      <div className="comment-content">
+        <strong>{user.fullName}</strong> <p>{comment.commentData}</p>
+      </div>
       <img
         src={getProfilePictureUrl(user.profilePicture)}
         alt="User"
@@ -43,9 +47,6 @@ const Comment: React.FC<{ comment: CommentType }> = ({ comment }) => {
           e.currentTarget.src = "/default-profile.png";
         }}
       />
-      <div className="comment-content">
-        <strong>{user.fullName}</strong> <p>{comment.commentData}</p>
-      </div>
     </div>
   );
 };

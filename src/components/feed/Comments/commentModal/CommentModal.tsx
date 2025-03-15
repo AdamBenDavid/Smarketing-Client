@@ -12,7 +12,9 @@ const CommentModal: React.FC<{
   onClose: () => void;
   imageUrl: string;
   postId: string;
-}> = ({ open, onClose, imageUrl, postId }) => {
+  onNewComment: () => void;
+  onDeleteComment: () => void;
+}> = ({ open, onClose, imageUrl, postId, onNewComment, onDeleteComment }) => {
   const [comments, setComments] = useState<CommentType[]>([]);
   const [newComment, setNewComment] = useState("");
   const [loading, setLoading] = useState(false);
@@ -24,22 +26,45 @@ const CommentModal: React.FC<{
     }
   }, [open, postId]);
 
-  // Add a new comment
   const handleAddComment = async () => {
-    if (!newComment.trim() || !user?._id) return;
+    console.log("User ID from Context:", user?._id);
+
+    if (!user?._id) {
+      console.error("No user ID found! Ensure authentication works.");
+      return;
+    }
 
     setLoading(true);
-    const addedComment = await addComment(postId, user.fullName, newComment);
 
-    if (addedComment) {
-      setComments((prev) => [...prev, addedComment]);
+    const createdComment = await addComment(postId, user._id, newComment);
+
+    if (createdComment) {
+      console.log("Comment added successfully!", createdComment);
+
+      setComments((prevComments) => [createdComment, ...prevComments]);
+
       setNewComment("");
+      onNewComment();
     }
+
     setLoading(false);
   };
 
+  const onDelete = (id: string) => {
+    console.log("Comment deleted successfully", id);
+
+    setComments((prevComments) =>
+      prevComments.filter((comment) => comment._id !== id)
+    );
+    onDeleteComment();
+  };
+
+  const handleClose = () => {
+    onClose();
+  };
+
   return (
-    <Modal open={open} onClose={onClose} aria-labelledby="comment-modal">
+    <Modal open={open} onClose={handleClose} aria-labelledby="comment-modal">
       <Box className="modal-box">
         <div className="modal-content">
           <div className="comments-container">
@@ -50,7 +75,11 @@ const CommentModal: React.FC<{
                 <p className="no-comments-text">אין תגובות עדיין...</p>
               ) : (
                 comments.map((comment) => (
-                  <OneComment key={comment._id} comment={comment} />
+                  <OneComment
+                    key={comment._id}
+                    comment={comment}
+                    onDeleteSuccess={onDelete}
+                  />
                 ))
               )}
             </div>

@@ -5,7 +5,8 @@ const PostActions: React.FC<{
   postId: string;
   commentCount: number;
   userId?: string;
-}> = ({ postId, commentCount, userId }) => {
+  onCommentClick: () => void;
+}> = ({ postId, commentCount, userId, onCommentClick }) => {
   const [liked, setLiked] = useState(false);
   const [likes, setLikes] = useState(0);
 
@@ -47,7 +48,7 @@ const PostActions: React.FC<{
       >
         {liked ? "❤️" : "🤍"} {likes}
       </button>
-      <button>💬 {commentCount}</button>
+      <button onClick={onCommentClick}>💬 {commentCount}</button>
     </div>
   );
 };

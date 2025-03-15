@@ -1,9 +1,10 @@
-export const API_URL = "http://localhost:3000"; // Update to match backend
+export const API_URL = "http://localhost:3000";
 
-// Fetch all comments for a post
 export const fetchComments = async (postId: string) => {
   try {
-    const response = await fetch(`${API_URL}/comments?postId=${postId}`);
+    const response = await fetch(
+      `http://localhost:3000/comments?postId=${postId}`
+    );
     if (!response.ok) throw new Error("Failed to fetch comments");
     return await response.json();
   } catch (error) {
@@ -39,25 +40,27 @@ export const addComment = async (
 
     return await response.json();
   } catch (error) {
-    console.error(" Error adding comment:", error);
+    console.error("❌ Error adding comment:", error);
     return null;
   }
 };
 
 export const deleteComment = async (commentId: string) => {
   try {
-    const response = await fetch(
-      `http://localhost:3000/comments/${commentId}`,
-      {
-        method: "DELETE",
-      }
-    );
+    const response = await fetch(`${API_URL}/comments/${commentId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      credentials: "include",
+    });
 
     if (!response.ok) throw new Error("Failed to delete comment");
 
-    return true; // ✅ Success
+    return true;
   } catch (error) {
     console.error("❌ Error deleting comment:", error);
-    return false; // ❌ Failure
+    return false;
   }
 };

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Post } from "../../types";
 import PostHeader from "../postHeader/PostHeader";
 import PostImage from "../postImage/PostImage";
@@ -9,19 +9,35 @@ import { FaEdit, FaTrash } from "react-icons/fa";
 import "./PostCard.css";
 import CommentModal from "../../Comments/commentModal/CommentModal";
 import { EditPostModal } from "../../../../pages/userProfileScreen/EditPostModal";
+import { fetchComments } from "../../api";
 
 const PostCard: React.FC<{
   post: Post;
   onDelete: (postId: string) => void;
 }> = ({ post, onDelete }) => {
   const [comments, setComments] = useState(post.comments ?? []);
+  const [commentCount, setCommentCount] = useState(post.comments.length);
   const { user, accessToken } = useAuth();
   const [localPosts, setLocalPosts] = useState<Post[]>([]);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false); //edit post
-  const [isCommentModalOpen, setIsCommentModalOpen] = useState(false); // new!
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
   // Fix incorrect image URL format:
   const correctedImage = post.image ? post.image.replace("//", "/") : null;
   console.log("currectedimage", correctedImage);
+
+  useEffect(() => {
+    fetchComments(post._id).then((comments) =>
+      setCommentCount(comments.length)
+    );
+  }, [post._id]);
+
+  const handleNewComment = () => {
+    setCommentCount((prev) => prev + 1);
+  };
+
+  const handleDeleteComment = () => {
+    setCommentCount((prev) => Math.max(prev - 1, 0));
+  };
 
   const handleDelete = async () => {
     try {
@@ -50,7 +66,6 @@ const PostCard: React.FC<{
     }
   };
 
-  // check if the current user is the post sender
   const checkUser = () => {
     const postUserId =
       typeof post.senderId === "object" ? post.senderId : post.senderId;
@@ -81,6 +96,13 @@ const PostCard: React.FC<{
     }
   };
 
+  const handleModalClose = () => {
+    fetchComments(post._id).then((comments) => {
+      setCommentCount(comments.length);
+    });
+    setIsCommentModalOpen(false);
+  };
+
   return (
     <>
       <div className={`post-card ${correctedImage ? "has-image" : "no-image"}`}>
@@ -92,8 +114,8 @@ const PostCard: React.FC<{
             >
               <FaEdit />
             </button>
-            <button className="delete-btn" onClick={handleDelete}>
-              <FaTrash />
+            <button className="delete-btn">
+              <FaTrash onClick={handleDelete} />
             </button>
           </div>
         )}
@@ -108,6 +130,7 @@ const PostCard: React.FC<{
           postId={post._id}
           commentCount={comments.length || 0}
           userId={user?._id}
+          onCommentClick={() => setIsCommentModalOpen(true)}
         />
         <CommentSection
           comments={comments}
@@ -124,9 +147,11 @@ const PostCard: React.FC<{
 
       <CommentModal
         open={isCommentModalOpen}
-        onClose={() => setIsCommentModalOpen(false)}
+        onClose={handleModalClose}
         imageUrl={correctedImage || ""}
         postId={post?._id}
+        onNewComment={() => setCommentCount((prev) => prev + 1)}
+        onDeleteComment={() => setCommentCount((prev) => Math.max(prev - 1, 0))}
       />
     </>
   );

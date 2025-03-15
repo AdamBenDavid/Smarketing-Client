@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useAuth } from "../../../../context/AuthContext";
 import "./PostHeader.css";
 
 const PostHeader: React.FC<{
@@ -29,7 +28,6 @@ const PostHeader: React.FC<{
       .catch((err) => console.error("Error fetching user:", err));
   }, [senderId]);
   const displayUser = senderUser;
-  // const displayUser = senderUser && senderUser.profilePicture;
 
   if (!displayUser) {
     return null;
