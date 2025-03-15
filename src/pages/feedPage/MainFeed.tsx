@@ -1,40 +1,31 @@
-import { useEffect, useState } from "react";
+import { useFetchPosts } from "./hooks/useFetchPosts";
 import Feed from "../feedPage/components/Feed";
-import { Post } from "../../components/feed/types";
-import "./MainFeed.css"; // Optional for styling
+import "./MainFeed.css";
 
 export const MainFeed = () => {
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  //test
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const response = await fetch("http://localhost:3000/posts");
-        if (!response.ok) throw new Error("Failed to fetch posts");
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, error } =
+    useFetchPosts();
 
-        const data = await response.json();
-        setPosts(data);
-      } catch (err) {
-        console.error("Error fetching posts:", err);
-        setError("Error loading posts");
-      } finally {
-        setLoading(false);
-      }
-    };
+  console.log(" Data from useFetchPosts:", data);
 
-    fetchPosts();
-  }, []);
+  const posts = data?.pages.flatMap((page) => page.posts) || [];
 
   return (
-    <div className="main-feed">
-      {loading ? (
-        <p>Loading posts...</p>
-      ) : error ? (
-        <p>{error}</p>
-      ) : (
+    <div className="main-feed-container">
+      <div className="main-feed">
+        {error && <p>Error loading posts</p>}
+        {posts.length === 0 && !isFetchingNextPage && <p>No posts available</p>}
         <Feed posts={posts} />
+      </div>
+
+      {isFetchingNextPage && <div className="loader">Loading more...</div>}
+
+      {hasNextPage && !isFetchingNextPage && (
+        <div className="load-more-container">
+          <button className="load-more-btn" onClick={() => fetchNextPage()}>
+            Load More
+          </button>
+        </div>
       )}
     </div>
   );
