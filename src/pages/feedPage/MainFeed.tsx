@@ -23,7 +23,7 @@ export const MainFeed = () => {
       {hasNextPage && !isFetchingNextPage && (
         <div className="load-more-container">
           <button className="load-more-btn" onClick={() => fetchNextPage()}>
-            Load More
+            טען עוד פוסטים
           </button>
         </div>
       )}
