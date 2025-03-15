@@ -2,14 +2,13 @@ export const API_URL = "http://localhost:3000";
 
 export const fetchComments = async (postId: string) => {
   try {
-    const response = await fetch(`${API_URL}/comments?postId=${postId}`, {
-      credentials: "include",
-    });
-
+    const response = await fetch(
+      `http://localhost:3000/comments?postId=${postId}`
+    );
     if (!response.ok) throw new Error("Failed to fetch comments");
     return await response.json();
   } catch (error) {
-    console.error("❌ Error fetching comments:", error);
+    console.error("Error fetching comments:", error);
     return [];
   }
 };

@@ -12,7 +12,9 @@ const CommentModal: React.FC<{
   onClose: () => void;
   imageUrl: string;
   postId: string;
-}> = ({ open, onClose, imageUrl, postId }) => {
+  onNewComment: () => void;
+  onDeleteComment: () => void;
+}> = ({ open, onClose, imageUrl, postId, onNewComment, onDeleteComment }) => {
   const [comments, setComments] = useState<CommentType[]>([]);
   const [newComment, setNewComment] = useState("");
   const [loading, setLoading] = useState(false);
@@ -42,6 +44,7 @@ const CommentModal: React.FC<{
       setComments((prevComments) => [createdComment, ...prevComments]);
 
       setNewComment("");
+      onNewComment();
     }
 
     setLoading(false);
@@ -53,10 +56,15 @@ const CommentModal: React.FC<{
     setComments((prevComments) =>
       prevComments.filter((comment) => comment._id !== id)
     );
+    onDeleteComment();
+  };
+
+  const handleClose = () => {
+    onClose();
   };
 
   return (
-    <Modal open={open} onClose={onClose} aria-labelledby="comment-modal">
+    <Modal open={open} onClose={handleClose} aria-labelledby="comment-modal">
       <Box className="modal-box">
         <div className="modal-content">
           <div className="comments-container">
