@@ -22,7 +22,6 @@ export const EditPostModal = ({
   const [imagePreview, setImagePreview] = useState<string | null>(
     post.image ? `http://localhost:3000/${post.image}` : null
   );
-  const [previousImageFile, setPreviousImageFile] = useState<File | null>(null);
 
   useEffect(() => {
     fetchUserPosts();
@@ -57,6 +56,26 @@ export const EditPostModal = ({
     }
   };
 
+  const deleteImage = async (imagePath: string) => {
+    const fileName = imagePath.split("/").pop();
+    console.log("delete image function: " + fileName);
+    try {
+      const response = await fetch(
+        `http://localhost:3000/posts/delete-image/${fileName}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      console.log("response ", response);
+      if (response) console.log("Image deleted successfully:", fileName);
+    } catch (error) {
+      console.error("Error deleting image:", error);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -72,11 +91,15 @@ export const EditPostModal = ({
     //delete image/ no image- UNDEFINED
 
     try {
-      // אם לא נבחרה תמונה חדשה – נשלח את התמונה הקיימת
       const imageToSend = selectedImage !== null ? selectedImage : post.image;
       console.log("image to send", post.image);
       console.log("image to send", imageToSend);
       console.log("image to send", imageToSend);
+
+      if (selectedImage && post.image) {
+        console.log("need to delete image");
+        await deleteImage(post.image);
+      } else console.log("no need to delete image");
 
       const updatedPost = await updatePost(post._id, postContent, imageToSend);
 
@@ -90,11 +113,10 @@ export const EditPostModal = ({
             : null
         );
 
-        //update post also
         post.postData = updatedPost.postData;
         post.image = updatedPost.image;
 
-        setSelectedImage(null); //change to only null
+        setSelectedImage(null);
         fetchUserPosts();
         onClose();
       }
@@ -138,7 +160,7 @@ export const EditPostModal = ({
       }
 
       const data = await response.json();
-      console.log("✅client Updated post:", data);
+      console.log("client Updated post:", data);
       return data;
     } catch (error) {
       console.error("Error updating post:", error);
