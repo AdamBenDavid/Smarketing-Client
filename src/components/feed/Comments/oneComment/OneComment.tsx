@@ -73,7 +73,8 @@ const OneComment: React.FC<OneCommentProps> = ({
           crossOrigin="anonymous"
           onError={(e) => {
             console.log("Needs to be default");
-            e.currentTarget.src = "/default-profile.png";
+            e.currentTarget.src =
+              "http://localhost:3000/images/default-profile.png";
           }}
         />
         <div className="comment-content">

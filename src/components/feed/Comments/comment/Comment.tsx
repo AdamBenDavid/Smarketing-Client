@@ -12,8 +12,8 @@ const Comment: React.FC<{ comment: CommentType }> = ({ comment }) => {
   const getProfilePictureUrl = (profilePicture: string | undefined) => {
     if (!profilePicture)
       return "http://localhost:3000/images/default-profile.png";
-    if (profilePicture.startsWith("http")) return profilePicture;
-    return `http://localhost:3000/${profilePicture}`;
+    else if (profilePicture.startsWith("http")) return profilePicture;
+    else return `http://localhost:3000/${profilePicture}`;
   };
 
   useEffect(() => {
@@ -44,7 +44,8 @@ const Comment: React.FC<{ comment: CommentType }> = ({ comment }) => {
         crossOrigin="anonymous"
         onError={(e) => {
           console.log("Needs to be default");
-          e.currentTarget.src = "/default-profile.png";
+          e.currentTarget.src =
+            "http://localhost:3000/images/default-profile.png";
         }}
       />
     </div>
