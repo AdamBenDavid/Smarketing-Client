@@ -9,7 +9,6 @@ const SecondSection: React.FC = () => {
     if (targetSection) {
       targetSection.scrollIntoView({ behavior: "smooth" });
     }
-    console.log("scrolling to explanations " + targetSection);
   };
 
   return (

@@ -31,7 +31,6 @@ export const CreatePostModal = ({
       if (imagePreview) {
         setLoading(true);
         const response = await sendImageToGemini(imagePreview);
-        console.log(response);
 
         if (response && isOpen) {
           setPostContent(response);
@@ -39,7 +38,7 @@ export const CreatePostModal = ({
         }
       }
     } catch (error) {
-      console.error("שגיאה בשליחת התמונה:", error);
+      console.error("שגיאה בשליחת התמונה");
     }
   };
 
@@ -50,12 +49,10 @@ export const CreatePostModal = ({
     setSelectedImage(null);
     setImagePreview(null);
     setLoading(false);
-    onClose(); // סגור את המודל
+    onClose();
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log("Image change event:", e.target.files);
-
     if (imagePreview != null) {
       cancelGeminiRequest();
       setPostContent("");
@@ -80,7 +77,6 @@ export const CreatePostModal = ({
 
     if (!postContent.trim()) return;
     if (!accessToken) {
-      console.error("No access token available");
       return;
     }
 
@@ -92,7 +88,7 @@ export const CreatePostModal = ({
       setImagePreview(null);
       onClose();
     } catch (error) {
-      console.error("Error submitting post:", error);
+      console.error("Error submitting post");
     }
   };
 
@@ -111,8 +107,6 @@ export const CreatePostModal = ({
         formData.append("image", image);
       }
 
-      console.log("add post formData: ", formData);
-
       const response = await fetch("http://localhost:3000/posts", {
         method: "POST",
         body: formData,
@@ -128,7 +122,7 @@ export const CreatePostModal = ({
       const data = await response.json();
       return data;
     } catch (error) {
-      console.error("Error creating post:", error);
+      console.error("Error creating post");
     }
   };
 

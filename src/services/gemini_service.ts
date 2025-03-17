@@ -5,7 +5,6 @@ const API_BASE_URL = "http://localhost:3000";
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: { "Content-Type": "application/json" },
-  //withCredentials: true,
 });
 
 let abortController: AbortController | null = null;
@@ -13,19 +12,14 @@ let abortController: AbortController | null = null;
 export const sendImageToGemini = async (
   Image: string
 ): Promise<string | null> => {
-  console.log("gemini service");
-
-  // ביטול בקשה קודמת אם יש
   if (abortController) {
     abortController.abort();
   }
 
-  // יצירת בקר חדש
   abortController = new AbortController();
   const { signal } = abortController;
 
   try {
-    //console.log("length: " + (Image.length * 0.75) / 1024 + "KB");
     const response = await api.post(
       "/gemini",
       { base64Image: Image },
@@ -36,7 +30,7 @@ export const sendImageToGemini = async (
     return response.data.response;
   } catch (error) {
     if (axios.isCancel(error)) {
-      console.log("הבקשה ל-Gemini בוטלה:", error.message);
+      console.log("הבקשה ל-Gemini לא בוטלה");
     } else {
       console.error("שגיאה בשליחת התמונה ל-Gemini:", error);
     }
@@ -44,7 +38,6 @@ export const sendImageToGemini = async (
   }
 };
 
-// פונקציה לביטול הבקשה
 export const cancelGeminiRequest = () => {
   if (abortController) {
     abortController.abort();

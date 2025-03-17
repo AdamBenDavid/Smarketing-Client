@@ -124,7 +124,6 @@ export default function DashboardLayoutBasic(props: any) {
             currentUser={user}
             token={accessToken}
             onSelectUser={(selectedUser) => {
-              console.log("Selected user:", selectedUser);
               setSelectedChatUser(selectedUser);
             }}
           />

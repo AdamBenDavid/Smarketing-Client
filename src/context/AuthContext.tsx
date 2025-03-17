@@ -22,18 +22,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [accessToken, setAccessToken] = useState<string | null>(null);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    const userId = localStorage.getItem("userId");
+    const token = sessionStorage.getItem("token");
+    const userId = sessionStorage.getItem("userId");
 
     if (token && userId) {
       setUser({
         _id: userId,
-        email: localStorage.getItem("userEmail") || "",
-        fullName: localStorage.getItem("userFullName") || "",
+        email: sessionStorage.getItem("userEmail") || "",
+        fullName: sessionStorage.getItem("userFullName") || "",
         role: "user",
         expertise: [],
         profilePicture:
-          localStorage.getItem("profilePicture") ||
+          sessionStorage.getItem("profilePicture") ||
           "https://placehold.co/150x150",
       });
       setIsAuthenticated(true);
@@ -43,13 +43,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   const login = (userData: User, token: string) => {
-    const cleanToken = token.replace('Bearer ', '');
-    
-    localStorage.setItem("token", cleanToken);
-    localStorage.setItem("userId", userData._id || "");
-    localStorage.setItem("userEmail", userData.email || "");
-    localStorage.setItem("userFullName", userData.fullName);
-    localStorage.setItem("profilePicture", userData.profilePicture || "");
+    const cleanToken = token.replace("Bearer ", "");
+
+    sessionStorage.setItem("token", cleanToken);
+    sessionStorage.setItem("userId", userData._id || "");
+    sessionStorage.setItem("userEmail", userData.email || "");
+    sessionStorage.setItem("userFullName", userData.fullName);
+    sessionStorage.setItem("profilePicture", userData.profilePicture || "");
 
     setAccessToken(cleanToken);
     setUser(userData);
@@ -58,7 +58,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const logout = async () => {
-    const refreshToken = localStorage.getItem("refreshToken");
+    const refreshToken = sessionStorage.getItem("refreshToken");
 
     if (refreshToken) {
       try {
@@ -74,12 +74,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       }
     }
 
-    localStorage.removeItem("token");
-    localStorage.removeItem("refreshToken");
-    localStorage.removeItem("userId");
-    localStorage.removeItem("userEmail");
-    localStorage.removeItem("userFullName");
-    localStorage.removeItem("profilePicture");
+    sessionStorage.removeItem("token");
+    sessionStorage.removeItem("refreshToken");
+    sessionStorage.removeItem("userId");
+    sessionStorage.removeItem("userEmail");
+    sessionStorage.removeItem("userFullName");
+    sessionStorage.removeItem("profilePicture");
 
     setAccessToken(null);
     setUser(null);

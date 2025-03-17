@@ -27,8 +27,6 @@ const CommentModal: React.FC<{
   }, [open, postId]);
 
   const handleAddComment = async () => {
-    console.log("User ID from Context:", user?._id);
-
     if (!user?._id) {
       console.error("No user ID found! Ensure authentication works.");
       return;
@@ -45,7 +43,7 @@ const CommentModal: React.FC<{
       const createdComment = await addComment(postId, user._id, newComment);
 
       if (createdComment) {
-        console.log("Comment added successfully!", createdComment);
+        console.log("Comment added successfully!");
 
         setComments((prevComments) => [createdComment, ...prevComments]);
 
@@ -53,14 +51,13 @@ const CommentModal: React.FC<{
         onNewComment(createdComment);
       }
     } catch (error) {
-      console.log("Error adding comment:", error);
+      console.log("Error adding comment:");
     } finally {
       setLoading(false);
     }
   };
 
   const handleDeleteComment = async (comment: CommentType) => {
-    console.log("handle delete comment function" + comment._id);
     try {
       setComments((prevComments) =>
         prevComments.filter((c) => c._id !== comment._id)
@@ -71,15 +68,6 @@ const CommentModal: React.FC<{
       console.error("Error deleting comment:", error);
     }
   };
-
-  // const onDelete = (id: string) => {
-  //   console.log("Comment deleted successfully", id);
-
-  //   setComments((prevComments) =>
-  //     prevComments.filter((comment) => comment._id !== id)
-  //   );
-  //   onDeleteComment();
-  // };
 
   const handleClose = () => {
     onClose();

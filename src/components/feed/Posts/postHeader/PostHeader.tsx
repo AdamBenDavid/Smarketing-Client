@@ -25,7 +25,7 @@ const PostHeader: React.FC<{
         return res.json();
       })
       .then((data) => setSenderUser(data))
-      .catch((err) => console.error("Error fetching user:", err));
+      .catch((err) => console.error("Error fetching user"));
   }, [senderId]);
   const displayUser = senderUser;
 
@@ -40,7 +40,7 @@ const PostHeader: React.FC<{
         className="profile-picture"
         crossOrigin="anonymous"
         onError={(e) => {
-          console.log("needs to be default");
+          console.log("needs to be default profile pic");
           e.currentTarget.src =
             "http://localhost:3000/images/default-profile.png";
         }}

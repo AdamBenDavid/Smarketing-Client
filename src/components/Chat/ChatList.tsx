@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import styles from "./ChatList.module.css";
 import { User } from "../../types/user";
 import { socketService } from "../../services/socket.service";
-import { getProfilePictureUrl } from '../../utils/imageUtils';
+import { getProfilePictureUrl } from "../../utils/imageUtils";
 
 interface ChatListProps {
   onSelectUser: (user: User) => void;
@@ -10,16 +10,27 @@ interface ChatListProps {
   token: string;
 }
 
-export const ChatList = ({ onSelectUser, currentUser, token }: ChatListProps) => {
+export const ChatList = ({
+  onSelectUser,
+  currentUser,
+  token,
+}: ChatListProps) => {
   const [onlineUsers, setOnlineUsers] = useState<User[]>([]);
-  const [connectionStatus, setConnectionStatus] = useState<'connecting' | 'connected' | 'disconnected'>('connecting');
+  const [connectionStatus, setConnectionStatus] = useState<
+    "connecting" | "connected" | "disconnected"
+  >("connecting");
   const socketRef = useRef(socketService.socket);
 
   // Handle online users updates
-  const handleOnlineUsers = useCallback((users: User[]) => {
-    const filteredUsers = users.filter(user => user._id !== currentUser._id);
-    setOnlineUsers(filteredUsers);
-  }, [currentUser._id]);
+  const handleOnlineUsers = useCallback(
+    (users: User[]) => {
+      const filteredUsers = users.filter(
+        (user) => user._id !== currentUser._id
+      );
+      setOnlineUsers(filteredUsers);
+    },
+    [currentUser._id]
+  );
 
   // Request online users
   const requestOnlineUsers = useCallback(() => {
@@ -29,38 +40,39 @@ export const ChatList = ({ onSelectUser, currentUser, token }: ChatListProps) =>
   // Socket connection effect
   useEffect(() => {
     if (!token) {
-      setConnectionStatus('disconnected');
+      setConnectionStatus("disconnected");
       return;
     }
 
     try {
       // Clean token before connecting
-      const cleanToken = token.replace('Bearer ', '');
+      const cleanToken = token.replace("Bearer ", "");
       socketService.connect(cleanToken);
       socketRef.current = socketService.socket;
 
       // If socket is already connected, update status and request users
       if (socketRef.current?.connected) {
-        setConnectionStatus('connected');
+        setConnectionStatus("connected");
         requestOnlineUsers();
       }
 
       // Set up connection status listeners
-      socketRef.current?.on('connect', () => {
-        setConnectionStatus('connected');
+      socketRef.current?.on("connect", () => {
+        setConnectionStatus("connected");
         requestOnlineUsers();
       });
 
-      socketRef.current?.on('disconnect', (reason) => {
-        setConnectionStatus('disconnected');
+      socketRef.current?.on("disconnect", (reason) => {
+        setConnectionStatus("disconnected");
       });
 
-      socketRef.current?.on('connect_error', (error) => {
-        setConnectionStatus('disconnected');
+      socketRef.current?.on("connect_error", (error) => {
+        setConnectionStatus("disconnected");
       });
 
       // Set up event handlers
-      const unsubscribeOnlineUsers = socketService.onOnlineUsers(handleOnlineUsers);
+      const unsubscribeOnlineUsers =
+        socketService.onOnlineUsers(handleOnlineUsers);
 
       // Set up periodic online users refresh
       const refreshInterval = setInterval(() => {
@@ -71,13 +83,13 @@ export const ChatList = ({ onSelectUser, currentUser, token }: ChatListProps) =>
 
       return () => {
         unsubscribeOnlineUsers();
-        socketRef.current?.off('connect');
-        socketRef.current?.off('disconnect');
-        socketRef.current?.off('connect_error');
+        socketRef.current?.off("connect");
+        socketRef.current?.off("disconnect");
+        socketRef.current?.off("connect_error");
         clearInterval(refreshInterval);
       };
     } catch (error) {
-      setConnectionStatus('disconnected');
+      setConnectionStatus("disconnected");
     }
   }, [token, currentUser._id, handleOnlineUsers, requestOnlineUsers]);
 
@@ -86,11 +98,11 @@ export const ChatList = ({ onSelectUser, currentUser, token }: ChatListProps) =>
       <div className={styles.header}>
         <h2>צ'אטים</h2>
         <span className={styles.connectionStatus}>
-          {connectionStatus === 'connected' ? 'מחובר' : 'מתחבר...'}
+          {connectionStatus === "connected" ? "מחובר" : "מתחבר..."}
         </span>
       </div>
 
-      {connectionStatus === 'disconnected' && (
+      {connectionStatus === "disconnected" && (
         <div className={styles.connectionError}>
           מתנתק מהשרת... מנסה להתחבר מחדש
         </div>
@@ -102,13 +114,6 @@ export const ChatList = ({ onSelectUser, currentUser, token }: ChatListProps) =>
             key={user._id}
             className={styles.userItem}
             onClick={() => {
-              console.log('[ChatList] Selected user data:', {
-                id: user._id,
-                fullName: user.fullName,
-                email: user.email,
-                profilePicture: user.profilePicture,
-                resolvedPicture: getProfilePictureUrl(user.profilePicture)
-              });
               onSelectUser(user);
             }}
           >
@@ -124,17 +129,13 @@ export const ChatList = ({ onSelectUser, currentUser, token }: ChatListProps) =>
             <div className={styles.userInfo}>
               <h3>{user.fullName || user.email}</h3>
               <p className={styles.lastMessage}>
-                <span className={styles.onlineStatus}>
-                  מחובר
-                </span>
+                <span className={styles.onlineStatus}>מחובר</span>
               </p>
             </div>
           </div>
         ))}
         {onlineUsers.length === 0 && (
-          <div className={styles.noUsers}>
-            אין משתמשים מחוברים כרגע
-          </div>
+          <div className={styles.noUsers}>אין משתמשים מחוברים כרגע</div>
         )}
       </div>
     </div>

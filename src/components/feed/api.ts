@@ -21,13 +21,11 @@ export const addComment = async (
   try {
     const requestBody = { userId, commentData, postId };
 
-    console.log("📡 Sending request to /comments:", requestBody);
-
     const response = await fetch(`${API_URL}/comments`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
       },
       body: JSON.stringify(requestBody),
     });
@@ -46,19 +44,19 @@ export const addComment = async (
 };
 
 export const deleteComment = async (commentId: string) => {
-  console.log("api delete comment", commentId);
   try {
     const response = await fetch(`${API_URL}/comments/${commentId}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
       },
       credentials: "include",
     });
 
     if (!response.ok) throw new Error("Failed to delete comment");
 
+    console.log("Comment deleted successfully");
     return true;
   } catch (error) {
     console.error("❌ Error deleting comment:", error);

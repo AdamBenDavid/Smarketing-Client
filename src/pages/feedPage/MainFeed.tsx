@@ -6,8 +6,6 @@ export const MainFeed = () => {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, error } =
     useFetchPosts();
 
-  console.log(" Data from useFetchPosts:", data);
-
   const posts = data?.pages.flatMap((page) => page.posts) || [];
 
   return (

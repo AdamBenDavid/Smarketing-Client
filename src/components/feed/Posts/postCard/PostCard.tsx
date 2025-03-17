@@ -25,7 +25,6 @@ const PostCard: React.FC<{
   const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
   // Fix incorrect image URL format:
   const correctedImage = post.image ? post.image.replace("//", "/") : null;
-  console.log("currectedimage", correctedImage);
 
   useEffect(() => {
     fetchComments(post._id).then((comments) => {
@@ -36,8 +35,6 @@ const PostCard: React.FC<{
 
   const handleDelete = async () => {
     try {
-      console.log("postcard.tsx handleDelete post: ", post._id);
-
       if (!accessToken) {
         console.error("No access token available");
         return;
@@ -51,7 +48,7 @@ const PostCard: React.FC<{
         },
       });
       if (response.ok) {
-        console.log("Post deleted successfully:", post._id);
+        console.log("Post deleted successfully");
         onDelete(post._id);
       } else {
         console.error("Failed to delete post");
@@ -77,12 +74,8 @@ const PostCard: React.FC<{
     const postUserId =
       typeof post.senderId === "object" ? post.senderId : post.senderId;
 
-    console.log("🔹 user._id:", user?._id);
-    console.log("🔹 postUserId:", postUserId);
-
     if (user?._id && postUserId) {
       const isEqual = user._id === postUserId;
-      console.log("equal? ", isEqual);
       return isEqual;
     }
     return false;

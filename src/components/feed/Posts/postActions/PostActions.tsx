@@ -17,18 +17,17 @@ const PostActions: React.FC<{
         setLikes(data.likes.length);
         setLiked(data.likes.includes(userId));
       })
-      .catch((error) => console.error("Error fetching post likes:", error));
+      .catch((error) => console.error("Error fetching post likes"));
   }, [postId, userId]);
 
   const handleLike = async () => {
-    console.log("handle like " + postId);
     const res = await fetch(
       `http://localhost:3000/posts/${liked ? "unlike" : "like"}/${postId}`,
       {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
         },
         body: JSON.stringify({ userId }),
       }
