@@ -46,6 +46,7 @@ export const addComment = async (
 };
 
 export const deleteComment = async (commentId: string) => {
+  console.log("api delete comment", commentId);
   try {
     const response = await fetch(`${API_URL}/comments/${commentId}`, {
       method: "DELETE",

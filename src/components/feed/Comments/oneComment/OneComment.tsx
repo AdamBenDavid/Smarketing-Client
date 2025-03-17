@@ -4,7 +4,7 @@ import "./OneComment.css";
 import { IconButton } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useAuth } from "../../../../context/AuthContext";
-
+import { deleteComment } from "../../api.ts";
 interface OneCommentProps {
   comment: CommentType;
   onDeleteSuccess: (id: string) => void;
@@ -29,26 +29,12 @@ const OneComment: React.FC<OneCommentProps> = ({
         return;
       }
 
-      const response = await fetch(
-        `http://localhost:3000/comments/${comment._id}`,
-        {
-          method: "DELETE",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (!response.ok) {
-        const errorResponse = await response.json();
-        console.error("API Error:", errorResponse);
-        throw new Error("Failed to delete comment");
+      const success = await deleteComment(comment._id);
+      console.log("🗑️ Comment deleted successfully:", comment._id);
+      if (success) {
+        console.log("one comment deleted successfully");
+        onDeleteSuccess(comment._id);
       }
-
-      console.log(" Comment deleted:", comment._id);
-      onDeleteSuccess(comment._id);
     } catch (error) {
       console.error("Error deleting comment:", error);
     }

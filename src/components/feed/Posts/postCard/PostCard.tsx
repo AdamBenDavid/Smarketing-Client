@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Post } from "../../types";
+import { Post, CommentType } from "../../types";
 import PostHeader from "../postHeader/PostHeader";
 import PostImage from "../postImage/PostImage";
 import PostActions from "../postActions/PostActions";
@@ -28,9 +28,10 @@ const PostCard: React.FC<{
   console.log("currectedimage", correctedImage);
 
   useEffect(() => {
-    fetchComments(post._id).then((comments) =>
-      setCommentCount(comments.length)
-    );
+    fetchComments(post._id).then((comments) => {
+      setComments(comments);
+      setCommentCount(comments.length);
+    });
   }, [post._id]);
 
   const handleDelete = async () => {
@@ -58,6 +59,18 @@ const PostCard: React.FC<{
     } catch (error) {
       console.error("Error deleting post:", error);
     }
+  };
+
+  const handleNewComment = (newComment: CommentType) => {
+    setComments((prevComments) => [...prevComments, newComment]);
+    setCommentCount((prev) => prev + 1);
+  };
+
+  const handleDeleteComment = (newComment: CommentType) => {
+    setComments((prevComments) =>
+      prevComments.filter((comment) => comment._id !== newComment._id)
+    );
+    setCommentCount((prev) => Math.max(prev - 1, 0));
   };
 
   const checkUser = () => {
@@ -164,8 +177,10 @@ const PostCard: React.FC<{
         onClose={handleModalClose}
         imageUrl={correctedImage || ""}
         postId={post?._id}
-        onNewComment={() => setCommentCount((prev) => prev + 1)}
-        onDeleteComment={() => setCommentCount((prev) => Math.max(prev - 1, 0))}
+        // onNewComment={() => setCommentCount((prev) => prev + 1)}
+        // onDeleteComment={() => setCommentCount((prev) => Math.max(prev - 1, 0))}
+        onNewComment={handleNewComment}
+        onDeleteComment={handleDeleteComment}
       />
     </>
   );
