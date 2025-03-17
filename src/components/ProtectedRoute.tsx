@@ -7,9 +7,9 @@ interface ProtectedRouteProps {
 }
 
 export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, loading, user, accessToken } = useAuth();
 
-  if (isLoading) {
+  if (loading) {
     return (
       <div style={{ 
         display: 'flex', 
@@ -22,7 +22,8 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     );
   }
 
-  if (!isAuthenticated) {
+  if (!isAuthenticated || !user || !accessToken) {
+    console.log('Access denied:', { user, accessToken, isAuthenticated });
     return <Navigate to="/forms" replace />;
   }
 

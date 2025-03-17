@@ -31,33 +31,11 @@ export const registerUser = async (
 
 export const loginUser = async (email: string, password: string) => {
   try {
-    const response = await api.post("/auth/login", { email, password });
-
-    const { accessToken, refreshToken, _id, fullName, profilePicture } =
-      response.data;
-
-    if (!accessToken) {
-      throw new Error("Access token missing from login response");
-    }
-
-    const profilePicUrl = profilePicture
-      ? profilePicture.startsWith("http")
-        ? profilePicture
-        : `http://localhost:3000/uploads/profile_pictures/${profilePicture}`
-      : "https://placehold.co/150x150";
-
-    sessionStorage.setItem("token", accessToken);
-    sessionStorage.setItem("refreshToken", refreshToken);
-    sessionStorage.setItem("userId", _id);
-    sessionStorage.setItem("userFullName", fullName);
-    sessionStorage.setItem("profilePicture", profilePicUrl);
-
-    return {
-      _id,
-      fullName,
-      profilePicture: profilePicUrl,
-      accessToken,
-    };
+    const response = await api.post("/auth/login", {
+      email,
+      password,
+    });
+    return response.data;
   } catch (error: any) {
     throw error.response?.data || "Failed to login";
   }

@@ -17,76 +17,39 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [loading, setLoading] = useState(true);
   const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = sessionStorage.getItem("token");
-    const userId = sessionStorage.getItem("userId");
-
-    if (token && userId) {
-      setUser({
-        _id: userId,
-        email: sessionStorage.getItem("userEmail") || "",
-        fullName: sessionStorage.getItem("userFullName") || "",
-        role: "user",
-        expertise: [],
-        profilePicture:
-          sessionStorage.getItem("profilePicture") ||
-          "https://placehold.co/150x150",
-      });
-      setIsAuthenticated(true);
+    const token = localStorage.getItem('accessToken');
+    const savedUser = localStorage.getItem('user');
+    
+    if (token && savedUser) {
+      try {
+        setAccessToken(token);
+        setUser(JSON.parse(savedUser));
+      } catch (error) {
+        console.error('Error parsing saved user:', error);
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('user');
+      }
     }
-
+    
     setLoading(false);
   }, []);
 
   const login = (userData: User, token: string) => {
-    const cleanToken = token.replace("Bearer ", "");
-
-    sessionStorage.setItem("token", cleanToken);
-    sessionStorage.setItem("userId", userData._id || "");
-    sessionStorage.setItem("userEmail", userData.email || "");
-    sessionStorage.setItem("userFullName", userData.fullName);
-    sessionStorage.setItem("profilePicture", userData.profilePicture || "");
-
-    setAccessToken(cleanToken);
     setUser(userData);
-    setIsAuthenticated(true);
-    setLoading(false);
+    setAccessToken(token);
+    localStorage.setItem('accessToken', token);
+    localStorage.setItem('user', JSON.stringify(userData));
   };
 
   const logout = async () => {
-    const refreshToken = sessionStorage.getItem("refreshToken");
-
-    if (refreshToken) {
-      try {
-        await fetch("http://localhost:3000/logout", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ refreshToken }),
-        });
-      } catch (error) {
-        console.error("Logout request failed", error);
-      }
-    }
-
-    sessionStorage.removeItem("token");
-    sessionStorage.removeItem("refreshToken");
-    sessionStorage.removeItem("userId");
-    sessionStorage.removeItem("userEmail");
-    sessionStorage.removeItem("userFullName");
-    sessionStorage.removeItem("profilePicture");
-
-    setAccessToken(null);
     setUser(null);
-    setIsAuthenticated(false);
-    setLoading(false);
-
-    window.location.href = "/forms";
+    setAccessToken(null);
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('user');
   };
 
   return (
@@ -94,7 +57,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       value={{
         user,
         setUser,
-        isAuthenticated,
+        isAuthenticated: !!(user && accessToken),
         loading,
         accessToken,
         login,
@@ -108,6 +71,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
+  console.log(context);
   if (!context) {
     throw new Error("useAuth must be used within an AuthProvider");
   }
