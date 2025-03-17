@@ -56,26 +56,6 @@ export const EditPostModal = ({
     }
   };
 
-  const deleteImage = async (imagePath: string) => {
-    const fileName = imagePath.split("/").pop();
-    console.log("delete image function: " + fileName);
-    try {
-      const response = await fetch(
-        `http://localhost:3000/posts/delete-image/${fileName}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      );
-      console.log("response ", response);
-      if (response) console.log("Image deleted successfully:", fileName);
-    } catch (error) {
-      console.error("Error deleting image:", error);
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -88,18 +68,13 @@ export const EditPostModal = ({
     }
 
     //didnt change image- null
-    //delete image/ no image- UNDEFINED
+    //delete image or no image- UNDEFINED
 
     try {
       const imageToSend = selectedImage !== null ? selectedImage : post.image;
       console.log("image to send", post.image);
       console.log("image to send", imageToSend);
       console.log("image to send", imageToSend);
-
-      if (selectedImage && post.image) {
-        console.log("need to delete image");
-        await deleteImage(post.image);
-      } else console.log("no need to delete image");
 
       const updatedPost = await updatePost(post._id, postContent, imageToSend);
 
@@ -215,51 +190,5 @@ export const EditPostModal = ({
         </form>
       </div>
     </div>
-    // <div className={styles.modalOverlay}>
-    //   <div className={styles.modal}>
-    //     <button className={styles.closeButton} onClick={closeEditModal}>
-    //       ×
-    //     </button>
-    //     <h2>יצירת פוסט חדש</h2>
-    //     <form onSubmit={handleSubmit}>
-    //       <textarea
-    //         value={postContent}
-    //         onChange={(e) => setPostContent(e.target.value)}
-    //         placeholder="על מה תרצה לשתף?"
-    //         className={styles.contentInput}
-    //       />
-
-    //       <div className={styles.imageUpload}>
-    //         <input
-    //           type="file"
-    //           accept="image/*"
-    //           onChange={handleImageChange}
-    //           id="imageInput"
-    //           className={styles.fileInput}
-    //         />
-    //         <IconButton className={styles.uploadButton}>
-    //           <label htmlFor="imageInput" className={styles.uploadButton}>
-    //             {imagePreview ? "שנה תמונה" : "הוסף תמונה"}
-    //           </label>
-    //         </IconButton>
-
-    //       </div>
-
-    //       {imagePreview && (
-    //         <div className={styles.imagePreview}>
-    //           <img src={imagePreview} alt="Preview" />
-    //         </div>
-    //       )}
-
-    //       <button
-    //         type="submit"
-    //         className={styles.submitButton}
-    //         disabled={!postContent.trim()}
-    //       >
-    //         פרסם
-    //       </button>
-    //     </form>
-    //   </div>
-    // </div>
   );
 };

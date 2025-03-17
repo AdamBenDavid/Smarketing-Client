@@ -54,7 +54,7 @@ export const EditProfileModal = ({
       toast.error(
         error instanceof Error ? error.message : "שגיאה בעדכון הפרופיל"
       );
-      console.error("❌ Update Profile Error:", error);
+      console.error("Update Profile Error:", error);
     } finally {
       setLoading(false);
     }
