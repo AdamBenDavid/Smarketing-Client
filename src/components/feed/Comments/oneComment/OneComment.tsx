@@ -23,20 +23,19 @@ const OneComment: React.FC<OneCommentProps> = ({
         return;
       }
 
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       if (!token) {
         console.error("No authentication token found");
         return;
       }
 
       const success = await deleteComment(comment._id);
-      console.log("🗑️ Comment deleted successfully:", comment._id);
       if (success) {
         console.log("one comment deleted successfully");
         onDeleteSuccess(comment._id);
       }
     } catch (error) {
-      console.error("Error deleting comment:", error);
+      console.error("Error deleting comment");
     }
   };
 
@@ -58,7 +57,7 @@ const OneComment: React.FC<OneCommentProps> = ({
           className="comment-avatar"
           crossOrigin="anonymous"
           onError={(e) => {
-            console.log("Needs to be default");
+            console.log("Needs to be default profil pic");
             e.currentTarget.src =
               "http://localhost:3000/images/default-profile.png";
           }}

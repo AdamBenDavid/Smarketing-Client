@@ -19,8 +19,6 @@ export const AccountSettings = () => {
   const [error, setError] = useState<string | null>(null);
 
   console.log("User state in AccountSettings:", user);
-  console.log("User profilePicture:", user?.profilePicture);
-  console.log("User fullName:", user?.fullName);
 
   const handleEditProfile = async (fullName: string, image?: File) => {
     if (!user) return;
@@ -37,19 +35,16 @@ export const AccountSettings = () => {
         accessToken
       );
 
-      console.log("Updated user from API:", updatedUser);
-
       // Ensure profilePicture and fullName are being set
       setUser({
         ...user,
         fullName: updatedUser.fullName || user.fullName,
         profilePicture: updatedUser.profilePicture || user.profilePicture,
       });
-      console.log("Updated user from API:", updatedUser);
       setIsEditModalOpen(false);
       setError(null);
     } catch (err) {
-      console.error("Error updating profile:", err);
+      console.error("Error updating profile");
       setError("Failed to update profile");
     }
   };

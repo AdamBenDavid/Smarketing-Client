@@ -38,8 +38,6 @@ export const EditPostModal = ({
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log("Image change event:", e.target.files);
-
     if (imagePreview != null) {
       setSelectedImage(null);
       setImagePreview(null);
@@ -59,11 +57,8 @@ export const EditPostModal = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    console.log("postContent: ", postContent);
-
     if (!postContent.trim()) return;
     if (!accessToken) {
-      console.error("No access token available");
       return;
     }
 
@@ -74,12 +69,11 @@ export const EditPostModal = ({
       const imageToSend = selectedImage !== null ? selectedImage : post.image;
       console.log("image to send", post.image);
       console.log("image to send", imageToSend);
-      console.log("image to send", imageToSend);
 
       const updatedPost = await updatePost(post._id, postContent, imageToSend);
 
       if (updatedPost) {
-        console.log("Post updated successfully:", updatedPost);
+        console.log("Post updated successfully");
         setPostContent(updatedPost.postData);
 
         setImagePreview(
@@ -96,7 +90,7 @@ export const EditPostModal = ({
         onClose();
       }
     } catch (error) {
-      console.error("Error updating post:", error);
+      console.error("Error updating post");
     }
   };
 
@@ -117,11 +111,6 @@ export const EditPostModal = ({
         formData.append("image", image);
       }
 
-      for (const [key, value] of formData.entries()) {
-        console.log(`📦 FormData - ${key}:`, value);
-      }
-      console.log("form data", formData);
-
       const response = await fetch(`http://localhost:3000/posts/${postId}`, {
         method: "PUT",
         body: formData,
@@ -135,10 +124,10 @@ export const EditPostModal = ({
       }
 
       const data = await response.json();
-      console.log("client Updated post:", data);
+      console.log("client Updated post");
       return data;
     } catch (error) {
-      console.error("Error updating post:", error);
+      console.error("Error updating post");
     }
   };
 

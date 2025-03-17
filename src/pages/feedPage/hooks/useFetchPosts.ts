@@ -8,7 +8,6 @@ const fetchPosts = async ({ pageParam = 1 }) => {
   if (!res.ok) throw new Error("Failed to fetch posts");
 
   const data = await res.json();
-  console.log(" API Response:", data);
 
   return {
     posts: data.posts,

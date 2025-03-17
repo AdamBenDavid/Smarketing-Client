@@ -43,7 +43,7 @@ const Comment: React.FC<{ comment: CommentType }> = ({ comment }) => {
         className="comment-avatar"
         crossOrigin="anonymous"
         onError={(e) => {
-          console.log("Needs to be default");
+          console.log("Needs to be default profile pic");
           e.currentTarget.src =
             "http://localhost:3000/images/default-profile.png";
         }}

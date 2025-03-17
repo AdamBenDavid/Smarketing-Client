@@ -27,10 +27,9 @@ const LoginForm: React.FC = () => {
   const onSubmit: SubmitHandler<LoginInputs> = async (data) => {
     try {
       const userData = await loginUser(data.email, data.password);
-      console.log("User Logged In:", userData);
 
       if (!userData || !userData.accessToken) {
-        throw new Error("Invalid login response: Missing accessToken");
+        throw new Error("Invalid login response");
       }
 
       login(
@@ -47,11 +46,13 @@ const LoginForm: React.FC = () => {
 
       toast.success("ברוך הבא!");
       navigate("/profile", { replace: true });
-    } catch (error) {
-      console.error("Login Error:", error);
-      toast.error(
-        error instanceof Error ? error.message : "שם משתמש או סיסמה שגויים"
-      );
+    } catch (error: any) {
+      if ((error.message = "יותר מדי ניסיונות כושלים. נסה שוב מאוחר יותר")) {
+        toast.error("יותר מדי ניסיונות כושלים. נסה שוב מאוחר יותר");
+      } else {
+        toast.error("שם משתמש או סיסמה שגויים");
+        console.log("Login Error:", error);
+      }
     }
   };
 
@@ -76,24 +77,18 @@ const LoginForm: React.FC = () => {
   const googleResponseMessage = async (
     credentialResponse: CredentialResponse
   ) => {
-    console.log("🔹 Google Credential Response:", credentialResponse);
-
     try {
       const res: AuthResponse = await googleSignin(credentialResponse);
-      console.log("🔹 Google Sign-In Response from Backend:", res);
 
       if (res.accessToken) {
         const profilePicUrl = res.user.profilePicture
           ? res.user.profilePicture
           : "https://placehold.co/150x150";
 
-        localStorage.setItem("token", res.accessToken);
-        localStorage.setItem("userId", res.user._id || "");
-        localStorage.setItem("userFullName", res.user.fullName || "");
-        localStorage.setItem("profilePicture", profilePicUrl);
-
-        console.log("🔹 Token stored in localStorage:", res.accessToken);
-        console.log("🔹 Profile picture stored:", profilePicUrl);
+        sessionStorage.setItem("token", res.accessToken);
+        sessionStorage.setItem("userId", res.user._id || "");
+        sessionStorage.setItem("userFullName", res.user.fullName || "");
+        sessionStorage.setItem("profilePicture", profilePicUrl);
 
         login(
           {
@@ -109,15 +104,16 @@ const LoginForm: React.FC = () => {
 
         navigate("/profile", { replace: true });
       } else {
+        toast.error("ההתחברות עם גוגל נכשלה, נסה שוב מאוחר יותר.");
         console.error(" No accessToken received from backend");
       }
     } catch (err) {
+      toast.error("ההתחברות עם גוגל נכשלה, נסה שוב מאוחר יותר.");
       console.error(" Google Sign-in Error:", err);
     }
   };
 
-  const googleErrorMessage = () => {
-  };
+  const googleErrorMessage = () => {};
 
   return (
     <form

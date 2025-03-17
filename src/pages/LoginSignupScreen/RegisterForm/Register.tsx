@@ -33,10 +33,9 @@ const RegisterForm: React.FC = () => {
           data.password,
           data.fullName
         );
-        console.log("User Registered:", userData);
         toast.success("נרשמת בהצלחה! כעת תוכל להתחבר.");
       } catch (error: any) {
-        console.log("Register Error:", error);
+        console.log("Register Error");
 
         const errorMessage = error.errorResponse.errmsg;
         console.log("Error Message:", errorMessage);
