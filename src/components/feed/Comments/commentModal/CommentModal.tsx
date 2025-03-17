@@ -12,8 +12,8 @@ const CommentModal: React.FC<{
   onClose: () => void;
   imageUrl: string;
   postId: string;
-  onNewComment: () => void;
-  onDeleteComment: () => void;
+  onNewComment: (newCommentCount: CommentType) => void; // עדכון מספר תגובות
+  onDeleteComment: (newCommentCount: CommentType) => void; // עדכון מספר תגובות
 }> = ({ open, onClose, imageUrl, postId, onNewComment, onDeleteComment }) => {
   const [comments, setComments] = useState<CommentType[]>([]);
   const [newComment, setNewComment] = useState("");
@@ -34,30 +34,52 @@ const CommentModal: React.FC<{
       return;
     }
 
-    setLoading(true);
-
-    const createdComment = await addComment(postId, user._id, newComment);
-
-    if (createdComment) {
-      console.log("Comment added successfully!", createdComment);
-
-      setComments((prevComments) => [createdComment, ...prevComments]);
-
-      setNewComment("");
-      onNewComment();
+    if (newComment.trim() === "") {
+      console.warn("Comment cannot be empty");
+      return;
     }
 
-    setLoading(false);
+    setLoading(true);
+
+    try {
+      const createdComment = await addComment(postId, user._id, newComment);
+
+      if (createdComment) {
+        console.log("Comment added successfully!", createdComment);
+
+        setComments((prevComments) => [createdComment, ...prevComments]);
+
+        setNewComment("");
+        onNewComment(createdComment);
+      }
+    } catch (error) {
+      console.log("Error adding comment:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const onDelete = (id: string) => {
-    console.log("Comment deleted successfully", id);
+  const handleDeleteComment = async (comment: CommentType) => {
+    console.log("handle delete comment function" + comment._id);
+    try {
+      setComments((prevComments) =>
+        prevComments.filter((c) => c._id !== comment._id)
+      );
 
-    setComments((prevComments) =>
-      prevComments.filter((comment) => comment._id !== id)
-    );
-    onDeleteComment();
+      onDeleteComment(comment);
+    } catch (error) {
+      console.error("Error deleting comment:", error);
+    }
   };
+
+  // const onDelete = (id: string) => {
+  //   console.log("Comment deleted successfully", id);
+
+  //   setComments((prevComments) =>
+  //     prevComments.filter((comment) => comment._id !== id)
+  //   );
+  //   onDeleteComment();
+  // };
 
   const handleClose = () => {
     onClose();
@@ -78,7 +100,7 @@ const CommentModal: React.FC<{
                   <OneComment
                     key={comment._id}
                     comment={comment}
-                    onDeleteSuccess={onDelete}
+                    onDeleteSuccess={() => handleDeleteComment(comment)}
                   />
                 ))
               )}
