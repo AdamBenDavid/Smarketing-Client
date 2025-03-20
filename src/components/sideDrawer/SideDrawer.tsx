@@ -16,11 +16,9 @@ import { AccountSettings } from "../../pages/userProfileScreen/AccountSettings";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useAuth } from "../../context/AuthContext";
 import MainFeed from "../../pages/feedPage/MainFeed";
-import { useNavigate } from "react-router-dom";
 import { User } from "../../types/user";
 
 export default function DashboardLayoutBasic(props: any) {
-  const navigate = useNavigate();
 
   const { window } = props;
   const { user, accessToken } = useAuth();

@@ -28,7 +28,7 @@ const RegisterForm: React.FC = () => {
       toast.error("הסיסמאות אינן תואמות");
     } else {
       try {
-        const userData = await registerUser(
+        await registerUser(
           data.email,
           data.password,
           data.fullName

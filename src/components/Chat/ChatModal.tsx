@@ -216,7 +216,7 @@ export const ChatModal = memo(
           setConnectionStatus("disconnected");
         });
 
-        socketRef.current?.on("connect_error", (error) => {
+        socketRef.current?.on("connect_error", () => {
           setConnectionStatus("disconnected");
         });
 

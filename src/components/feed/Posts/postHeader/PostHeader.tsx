@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./PostHeader.css";
+import {API_BASE_URL} from '../../../../services/api';
 
 const PostHeader: React.FC<{
   senderId?: string;
@@ -11,21 +12,21 @@ const PostHeader: React.FC<{
 
   const getProfilePictureUrl = (profilePicture: string | undefined) => {
     if (!profilePicture)
-      return "http://localhost:3000/images/default-profile.png";
+      return API_BASE_URL+"/images/default-profile.png";
     if (profilePicture.startsWith("http")) return profilePicture;
-    return `http://localhost:3000/${profilePicture}`;
+    return `${API_BASE_URL}http://localhost:3000/${profilePicture}`;
   };
 
   useEffect(() => {
     if (!senderId) return;
 
-    fetch(`http://localhost:3000/users/${senderId}`)
+    fetch(`${API_BASE_URL}/users/${senderId}`)
       .then((res) => {
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
         return res.json();
       })
       .then((data) => setSenderUser(data))
-      .catch((err) => console.error("Error fetching user"));
+      .catch(() => console.error("Error fetching user"));
   }, [senderId]);
   const displayUser = senderUser;
 
@@ -42,7 +43,7 @@ const PostHeader: React.FC<{
         onError={(e) => {
           console.log("needs to be default profile pic");
           e.currentTarget.src =
-            "http://localhost:3000/images/default-profile.png";
+            API_BASE_URL+"/images/default-profile.png";
         }}
       />
       <span className="username">{displayUser.fullName}</span>

@@ -2,9 +2,8 @@ import axios from "axios";
 import { User } from "../types/user";
 import { CredentialResponse } from "@react-oauth/google";
 import { AuthResponse } from "../types/user";
-import { useAuth } from "../context/AuthContext";
 
-const API_BASE_URL = "http://localhost:3000";
+export const API_BASE_URL = import.meta.env.BASE_URL;
 
 const api = axios.create({
   baseURL: API_BASE_URL,

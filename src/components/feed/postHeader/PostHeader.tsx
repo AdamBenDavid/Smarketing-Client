@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../../context/AuthContext";
 import "./PostHeader.css";
+import {API_BASE_URL} from '../../../services/api';
 
 const PostHeader: React.FC<{
   senderId?: string;
@@ -22,13 +23,13 @@ const PostHeader: React.FC<{
   const getProfilePictureUrl = (profilePicture: string | undefined) => {
     if (!profilePicture) return "/default-profile.png";
     if (profilePicture.startsWith("http")) return profilePicture;
-    return `http://localhost:3000/${profilePicture}`;
+    return `{API_BASE_URL}/${profilePicture}`;
   };
 
   useEffect(() => {
     if (!senderId) return;
 
-    fetch(`http://localhost:3000/auth/user/${senderId}`)
+    fetch(`${API_BASE_URL}/auth/user/${senderId}`)
       .then((res) => {
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
         return res.json();
@@ -63,4 +64,4 @@ const PostHeader: React.FC<{
   );
 };
 
-export default PostHeader; 
+export default PostHeader;  

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 import styles from "./CreatePostModal.module.css";
 import { useAuth } from "../../context/AuthContext";
 import {
@@ -6,6 +6,7 @@ import {
   cancelGeminiRequest,
 } from "../../services/gemini_service";
 import { IconButton } from "@mui/material";
+import {API_BASE_URL} from '../../services/api';
 
 interface CreatePostModalProps {
   isOpen: boolean;
@@ -81,7 +82,7 @@ export const CreatePostModal = ({
     }
 
     try {
-      const newPost = await createPost(postContent, selectedImage || undefined);
+      await createPost(postContent, selectedImage || undefined);
       fetchUserPosts();
       setPostContent("");
       setSelectedImage(null);
@@ -107,7 +108,7 @@ export const CreatePostModal = ({
         formData.append("image", image);
       }
 
-      const response = await fetch("http://localhost:3000/posts", {
+      const response = await fetch(API_BASE_URL, {
         method: "POST",
         body: formData,
         headers: {

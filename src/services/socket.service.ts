@@ -32,7 +32,7 @@ class SocketService {
       this._socket = null;
     }
 
-    this._socket = io('http://localhost:3000', {
+    this._socket = io(import.meta.env.BASE_URL, {
       auth: { token: cleanToken },
       transports: ['websocket', 'polling'],
       withCredentials: true,
@@ -52,7 +52,7 @@ class SocketService {
       return;
     }
 
-    this._socket.on('connect_error', (error) => {
+    this._socket.on('connect_error', () => {
       if (this.connectionAttempts < this.maxRetries) {
         this.connectionAttempts++;
         

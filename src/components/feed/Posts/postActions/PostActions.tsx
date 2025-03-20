@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./PostActions.css";
+import {API_BASE_URL} from '../../../../services/api';
 
 const PostActions: React.FC<{
   postId: string;
@@ -11,18 +12,18 @@ const PostActions: React.FC<{
   const [likes, setLikes] = useState(0);
 
   useEffect(() => {
-    fetch(`http://localhost:3000/posts/${postId}`)
+    fetch(`${API_BASE_URL}/posts/${postId}`)
       .then((res) => res.json())
       .then((data) => {
         setLikes(data.likes.length);
         setLiked(data.likes.includes(userId));
       })
-      .catch((error) => console.error("Error fetching post likes"));
+      .catch(() => console.error("Error fetching post likes"));
   }, [postId, userId]);
 
   const handleLike = async () => {
     const res = await fetch(
-      `http://localhost:3000/posts/${liked ? "unlike" : "like"}/${postId}`,
+      `${API_BASE_URL}/posts/${liked ? "unlike" : "like"}/${postId}`,
       {
         method: "PUT",
         headers: {

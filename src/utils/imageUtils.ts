@@ -9,5 +9,5 @@ export const getProfilePictureUrl = (profilePicture: string | undefined | null):
   }
 
   // If it's a relative path, prepend the API base URL
-  return `http://localhost:3000/${profilePicture}`;
+  return `${import.meta.env.BASE_URL}/${profilePicture}`;
 }; 

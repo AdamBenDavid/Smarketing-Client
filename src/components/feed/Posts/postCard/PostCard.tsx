@@ -11,16 +11,16 @@ import CommentModal from "../../Comments/commentModal/CommentModal";
 import { EditPostModal } from "../../../../pages/userProfileScreen/EditPostModal";
 import { fetchComments } from "../../api";
 import NoImagePlaceholder from "../../../../assets/No-Image-Placeholder.svg";
-import NoImagePlaceholderComponent from "../NoImage/NoImagePlaceHolder"; //flexible component for no image
+import {API_BASE_URL} from '../../../../services/api';
 
 const PostCard: React.FC<{
   post: Post;
   onDelete: (postId: string) => void;
 }> = ({ post, onDelete }) => {
   const [comments, setComments] = useState(post.comments ?? []);
-  const [commentCount, setCommentCount] = useState(post.comments.length);
+  const [_commentCount, setCommentCount] = useState(post.comments.length);
   const { user, accessToken } = useAuth();
-  const [localPosts, setLocalPosts] = useState<Post[]>([]);
+  const [_localPosts, setLocalPosts] = useState<Post[]>([]);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
   // Fix incorrect image URL format:
@@ -40,7 +40,7 @@ const PostCard: React.FC<{
         return;
       }
 
-      const response = await fetch(`http://localhost:3000/posts/${post._id}`, {
+      const response = await fetch(`${API_BASE_URL}/posts/${post._id}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -86,7 +86,7 @@ const PostCard: React.FC<{
 
     try {
       const response = await fetch(
-        `http://localhost:3000/posts/user/${user._id}`
+        `${API_BASE_URL}/posts/user/${user._id}`
       );
       if (!response.ok) throw new Error("Failed to fetch posts");
       const userPosts = await response.json();
@@ -134,14 +134,6 @@ const PostCard: React.FC<{
             />
           </div>
         )}
-
-        {/* {correctedImage ? (
-          <PostImage image={correctedImage} />
-        ) : (
-          <div className="post-image no-image">
-            <NoImagePlaceholderComponent commentText={post.postData || "אין תיאור"} />
-          </div>
-        )} */}
 
         <p className="post-description">
           {post.postData || "No description available."}

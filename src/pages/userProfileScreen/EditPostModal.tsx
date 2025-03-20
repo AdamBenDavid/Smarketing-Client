@@ -3,6 +3,7 @@ import styles from "./CreatePostModal.module.css";
 import { useAuth } from "../../context/AuthContext";
 import { IconButton } from "@mui/material";
 import { Post } from "../../components/feed";
+import {API_BASE_URL} from '../../services/api';
 
 interface EditPostModalProps {
   post: Post;
@@ -20,7 +21,7 @@ export const EditPostModal = ({
   const [postContent, setPostContent] = useState(post.postData);
   const [selectedImage, setSelectedImage] = useState<File | null>(null); //put here file
   const [imagePreview, setImagePreview] = useState<string | null>(
-    post.image ? `http://localhost:3000/${post.image}` : null
+    post.image ? `${API_BASE_URL}/${post.image}` : null
   );
 
   useEffect(() => {
@@ -33,7 +34,7 @@ export const EditPostModal = ({
     console.log("edit post close");
     setPostContent(post.postData);
     setSelectedImage(null); //change
-    setImagePreview(post.image ? `http://localhost:3000/${post.image}` : null);
+    setImagePreview(post.image ? `${API_BASE_URL}/${post.image}` : null);
     onClose();
   };
 
@@ -78,7 +79,7 @@ export const EditPostModal = ({
 
         setImagePreview(
           updatedPost.image
-            ? `http://localhost:3000/${updatedPost.image}`
+            ? `${API_BASE_URL}/${updatedPost.image}`
             : null
         );
 
@@ -111,7 +112,7 @@ export const EditPostModal = ({
         formData.append("image", image);
       }
 
-      const response = await fetch(`http://localhost:3000/posts/${postId}`, {
+      const response = await fetch(`${API_BASE_URL}/posts/${postId}`, {
         method: "PUT",
         body: formData,
         headers: {

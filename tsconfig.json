@@ -1,5 +1,8 @@
 {
   "compilerOptions": {
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    
     "baseUrl": ".", // נדרש לניווט קל בפרויקט
     "typeRoots": ["./src/types", "./node_modules/@types"], // להוסיף טיפוסים מותאמים אישית
     "paths": {

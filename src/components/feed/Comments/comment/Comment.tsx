@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { CommentType } from "../../types";
 import "./Comment.css";
+import {API_BASE_URL} from '../../../../services/api';
 
 const Comment: React.FC<{ comment: CommentType }> = ({ comment }) => {
   const [user, setUser] = useState<{
@@ -11,15 +12,15 @@ const Comment: React.FC<{ comment: CommentType }> = ({ comment }) => {
 
   const getProfilePictureUrl = (profilePicture: string | undefined) => {
     if (!profilePicture)
-      return "http://localhost:3000/images/default-profile.png";
+      return API_BASE_URL+"/images/default-profile.png";
     else if (profilePicture.startsWith("http")) return profilePicture;
-    else return `http://localhost:3000/${profilePicture}`;
+    else return `${API_BASE_URL}/${profilePicture}`;
   };
 
   useEffect(() => {
     if (!comment.userId) return;
 
-    fetch(`http://localhost:3000/users/${comment.userId}`)
+    fetch(`${API_BASE_URL}/users/${comment.userId}`)
       .then((res) => {
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
         return res.json();
@@ -45,7 +46,7 @@ const Comment: React.FC<{ comment: CommentType }> = ({ comment }) => {
         onError={(e) => {
           console.log("Needs to be default profile pic");
           e.currentTarget.src =
-            "http://localhost:3000/images/default-profile.png";
+            API_BASE_URL+"/images/default-profile.png";
         }}
       />
     </div>
