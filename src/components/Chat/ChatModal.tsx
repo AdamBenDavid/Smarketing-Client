@@ -187,38 +187,37 @@ export const ChatModal = memo(
 
     // Socket connection effect
     useEffect(() => {
-      if (!token || !selectedUser) {
-        setConnectionStatus("disconnected");
+      if (!token) {
+        console.error('No token available for socket connection');
         return;
       }
 
+      // Clean token if it has Bearer prefix
+      const cleanToken = token.replace('Bearer ', '');
+      
+      // Initialize socket connection
       try {
-        // Remove Bearer prefix if it exists
-        const cleanToken = token.replace("Bearer ", "");
         socketService.connect(cleanToken);
-        socketRef.current = socketService.socket;
+        const socket = socketService.socket;
 
-        // Set up connection status listeners
-        socketRef.current?.on("connect", () => {
-          console.log("[ChatModal] Socket connected");
-          setConnectionStatus("connected");
+        if (!socket) {
+          setError('Failed to establish chat connection');
+          return;
+        }
 
-          // Request chat history if we have a selected user
-          if (selectedUser) {
-            socketRef.current?.emit("getChatHistory", {
-              userId: currentUser._id,
-              partnerId: selectedUser._id,
-            });
-          }
+        socket.on('connect', () => {
+          setConnectionStatus('connected');
+          setError(null);
         });
 
-        socketRef.current?.on("disconnect", () => {
-          console.log("[ChatModal] Socket disconnected");
-          setConnectionStatus("disconnected");
+        socket.on('disconnect', () => {
+          setConnectionStatus('disconnected');
+          setError('Chat connection lost. Reconnecting...');
         });
 
-        socketRef.current?.on("connect_error", () => {
-          setConnectionStatus("disconnected");
+        socket.on('connect_error', (error) => {
+          console.error('Socket connection error:', error);
+          setError('Failed to connect to chat server');
         });
 
         // Set up event handlers
@@ -231,27 +230,28 @@ export const ChatModal = memo(
           socketService.onChatHistory(handleChatHistory);
 
         // Request initial chat history
-        if (socketRef.current?.connected && selectedUser) {
+        if (socket.connected && selectedUser) {
           console.log("[ChatModal] Requesting initial chat history");
-          socketRef.current.emit("getChatHistory", {
+          socket.emit("getChatHistory", {
             userId: currentUser._id,
             partnerId: selectedUser._id,
           });
         }
 
+        // Clean up on unmount
         return () => {
-          console.log("[ChatModal] Cleaning up socket listeners");
+          socket.off('connect');
+          socket.off('disconnect');
+          socket.off('connect_error');
+          socketService.disconnect();
           unsubscribeMessage();
           unsubscribeTyping();
           unsubscribeOnlineUsers();
           unsubscribeChatHistory();
-          socketRef.current?.off("connect");
-          socketRef.current?.off("disconnect");
-          socketRef.current?.off("connect_error");
         };
       } catch (error) {
-        console.error("[ChatModal] Error setting up socket connection:", error);
-        setConnectionStatus("disconnected");
+        console.error('Socket initialization error:', error);
+        setError('Failed to initialize chat connection');
       }
     }, [
       token,
@@ -314,13 +314,6 @@ export const ChatModal = memo(
         });
       }
     }, [selectedUser]);
-
-    useEffect(() => {
-      if (!socketService.socket?.connected) {
-        setError('Chat connection lost. Trying to reconnect...');
-        socketService.connect(token);
-      }
-    }, [token]);
 
     if (error) {
       return <div className={styles.error}>{error}</div>;

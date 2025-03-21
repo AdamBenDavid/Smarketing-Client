@@ -1,7 +1,13 @@
 import { io, Socket } from 'socket.io-client';
 import { ChatMessage } from '../components/Chat/types';
 import { User } from '../types/user';
-import { config } from '../config';
+
+// Add interface for Socket.IO error type
+interface SocketError extends Error {
+  description?: string;
+  type?: string;
+}
+
 class SocketService {
   private _socket: Socket | null = null;
   private messageHandlers: ((message: ChatMessage) => void)[] = [];
@@ -9,71 +15,88 @@ class SocketService {
   private readHandlers: ((userId: string) => void)[] = [];
   private onlineUsersHandlers: ((users: User[]) => void)[] = [];
   private chatHistoryHandlers: ((messages: ChatMessage[]) => void)[] = [];
-  private connectionAttempts: number = 0;
-  private maxRetries: number = 3;
-  private retryDelay: number = 2000;
   private isSettingUpListeners: boolean = false;
-
+ 
   get socket(): Socket | null {
     return this._socket;
   }
 
   connect(token: string): void {
-    const cleanToken = token.replace('Bearer ', '');
-    
+    console.log('[Socket] Connection attempt:', {
+      currentSocket: this._socket?.connected ? 'connected' : 'disconnected',
+      baseURL: import.meta.env.VITE_API_URL,
+      environment: import.meta.env.MODE
+    });
+
     if (this._socket?.connected) {
-      this._socket.emit('getOnlineUsers');
+      console.log('[Socket] Already connected, id:', this._socket.id);
       return;
     }
 
-    if (this._socket) {
-      this._socket.disconnect();
-      this._socket.removeAllListeners();
-      this._socket = null;
+    const baseURL = import.meta.env.VITE_API_URL;
+    const isProduction = import.meta.env.MODE === 'production';
+    
+    try {
+      console.log('[Socket] Initializing with config:', {
+        baseURL,
+        token: token ? 'present' : 'missing',
+        isProduction
+      });
+
+      this._socket = io(baseURL, {
+        auth: {
+          token: token
+        },
+        transports: ['polling', 'websocket'],
+        path: '/socket.io/',
+        reconnection: true,
+        reconnectionAttempts: 5,
+        reconnectionDelay: 1000,
+        reconnectionDelayMax: 5000,
+        timeout: 20000,
+        forceNew: true
+      });
+
+      // Monitor socket state changes
+      this._socket.on('connect_error', (error: SocketError) => {
+        console.error('[Socket] Connection error:', {
+          message: error.message,
+          description: error.description || 'No description',
+          type: error.type || 'Unknown'
+        });
+      });
+
+      this._socket.on('connect', () => {
+        console.log('[Socket] Connected successfully:', {
+          id: this._socket?.id,
+          transport: this._socket?.io?.engine?.transport?.name
+        });
+      });
+
+      this._socket.on('disconnect', (reason) => {
+        console.log('[Socket] Disconnected:', {
+          reason,
+          wasConnected: this._socket?.connected,
+          id: this._socket?.id
+        });
+      });
+
+      // Monitor engine state
+      this._socket.io.engine.on('error', (err: string | Error) => {
+        console.error('[Socket] Engine error:', 
+          typeof err === 'string' ? err : err.message
+        );
+      });
+
+      this._socket.io.engine.on('close', (reason: string) => {
+        console.log('[Socket] Engine closed:', reason);
+      });
+
+    } catch (error) {
+      console.error('[Socket] Initialization error:', error);
     }
- 
-    this._socket = io(config.apiUrl, {
-      auth: { token: cleanToken },
-      transports: ['websocket', 'polling'],
-      withCredentials: true,
-      reconnection: true,
-      reconnectionAttempts: 5,
-      reconnectionDelay: 1000,
-      reconnectionDelayMax: 5000,
-      timeout: 10000
-    });
 
     this.setupEventListeners();
-    this.handleReconnection(cleanToken);
-  }
-
-  private handleReconnection(token: string): void {
-    if (!this._socket) {
-      return;
-    }
-
-    this._socket.on('connect_error', () => {
-      if (this.connectionAttempts < this.maxRetries) {
-        this.connectionAttempts++;
-        
-        setTimeout(() => {
-          if (!this._socket?.connected) {
-            this.connect(token);
-          }
-        }, this.retryDelay);
-      }
-    });
-
-    this._socket.on('connect', () => {
-      this.connectionAttempts = 0;
-      this._socket?.emit('getOnlineUsers');
-    });
-
-    this._socket.on('disconnect', (reason) => {
-      if (reason === 'io server disconnect') {
-        setTimeout(() => this.connect(token), this.retryDelay);
-      }
-    });
   }
 
   private setupEventListeners() {
