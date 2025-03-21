@@ -26,7 +26,7 @@ const MultiStepForm: React.FC = () => {
 
   const handleNext = () => setActiveStep((prev) => prev + 1);
   const handleBack = () => setActiveStep((prev) => prev - 1);
-  const onSubmit = (data: any) => {
+  const onSubmit = () => {
   };
 
   return (

@@ -62,11 +62,11 @@ export const ChatList = ({
         requestOnlineUsers();
       });
 
-      socketRef.current?.on("disconnect", (reason) => {
+      socketRef.current?.on("disconnect", () => {
         setConnectionStatus("disconnected");
       });
 
-      socketRef.current?.on("connect_error", (error) => {
+      socketRef.current?.on("connect_error", () => {
         setConnectionStatus("disconnected");
       });
 

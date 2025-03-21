@@ -25,7 +25,7 @@ const PostHeader: React.FC<{
         return res.json();
       })
       .then((data) => setSenderUser(data))
-      .catch((err) => console.error("Error fetching user"));
+      .catch(() => console.error("Error fetching user"));
   }, [senderId]);
   const displayUser = senderUser;
 

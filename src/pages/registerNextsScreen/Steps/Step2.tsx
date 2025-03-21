@@ -8,7 +8,7 @@ const Step2: React.FC = () => {
     formState: { errors },
   } = useFormContext();
 
-  const onSubmit = (data: any) => {
+  const onSubmit = () => {
   };
 
   const ageRanges = [

@@ -1,8 +1,6 @@
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 import { Typography } from "@mui/material";
-import styles from "./UserProfile.module.css";
 import "./AccountSettings.css"; // ✅ Corrected import
-import { ChatModal } from "../../components/Chat/ChatModal";
 // import { ChatUser } from "../../components/Chat/ChatList";
 import { EditProfileModal } from "./EditProfileModal";
 import { usersService } from "../../services/api";
@@ -11,12 +9,10 @@ import { useAuth } from "../../context/AuthContext";
 
 export const AccountSettings = () => {
   const { user, setUser, accessToken } = useAuth();
-  const [isChatOpen, setIsChatOpen] = useState(false);
   // const [selectedChatUser, setSelectedChatUser] = useState<ChatUser | null>(
   //   null
   // );
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   console.log("User state in AccountSettings:", user);
 
@@ -42,10 +38,8 @@ export const AccountSettings = () => {
         profilePicture: updatedUser.profilePicture || user.profilePicture,
       });
       setIsEditModalOpen(false);
-      setError(null);
     } catch (err) {
       console.error("Error updating profile");
-      setError("Failed to update profile");
     }
   };
 

@@ -1,9 +1,12 @@
+import { useNavigate } from "react-router-dom";
 import MainButton from "../../../components/UI/MainButton";
 import SeconderyButton from "../../../components/UI/SeconderyButton";
 import MainAnimation from "./MainAnimation";
 import MainSentence from "./MainSentence";
 
 const SecondSection: React.FC = () => {
+  const navigate = useNavigate();
+  
   const scrollToSection = () => {
     const targetSection = document.getElementById("explanations");
     if (targetSection) {
@@ -15,7 +18,14 @@ const SecondSection: React.FC = () => {
     <div className="second-section" style={styles.section}>
       <div style={styles.rightSection}>
         <div style={styles.buttonsContainer}>
-          <MainButton text="התחל עכשיו" onClick={() => {}} />
+          <MainButton text="התחל עכשיו" onClick={() => {
+            const token = localStorage.getItem('token');
+            if (token) {
+              navigate('/profile');
+            } else {
+              navigate('/forms'); 
+            }
+          }} />
           <SeconderyButton text="גלה עוד" onClick={scrollToSection} />
         </div>
         <MainSentence />

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 import styles from "./CreatePostModal.module.css";
 import { useAuth } from "../../context/AuthContext";
 import {
@@ -81,7 +81,7 @@ export const CreatePostModal = ({
     }
 
     try {
-      const newPost = await createPost(postContent, selectedImage || undefined);
+      await createPost(postContent, selectedImage || undefined);
       fetchUserPosts();
       setPostContent("");
       setSelectedImage(null);

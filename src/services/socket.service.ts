@@ -52,7 +52,7 @@ class SocketService {
       return;
     }
 
-    this._socket.on('connect_error', (error) => {
+    this._socket.on('connect_error', () => {
       if (this.connectionAttempts < this.maxRetries) {
         this.connectionAttempts++;
         

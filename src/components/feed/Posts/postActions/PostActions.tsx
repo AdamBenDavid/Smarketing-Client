@@ -17,7 +17,7 @@ const PostActions: React.FC<{
         setLikes(data.likes.length);
         setLiked(data.likes.includes(userId));
       })
-      .catch((error) => console.error("Error fetching post likes"));
+      .catch(() => console.error("Error fetching post likes"));
   }, [postId, userId]);
 
   const handleLike = async () => {
@@ -27,7 +27,7 @@ const PostActions: React.FC<{
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         body: JSON.stringify({ userId }),
       }
