@@ -6,8 +6,7 @@ import {
   cancelGeminiRequest,
 } from "../../services/gemini_service";
 import { IconButton } from "@mui/material";
-import {API_BASE_URL} from '../../services/api';
-
+import { config } from "../../config";  
 interface CreatePostModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -108,7 +107,7 @@ export const CreatePostModal = ({
         formData.append("image", image);
       }
 
-      const response = await fetch(API_BASE_URL, {
+      const response = await fetch(`${config.apiUrl}/posts`, {
         method: "POST",
         body: formData,
         headers: {

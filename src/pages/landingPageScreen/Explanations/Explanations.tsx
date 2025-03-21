@@ -13,15 +13,6 @@ const Explainations: React.FC<ExplainsProps> = ({
   Header,
   text,
 }) => {
-  // let TextLeft: string, TextTop: string;
-
-  // if (direction === "row") {
-  //   TextLeft = "67.5px";
-  //   TextTop = "60px";
-  // } else {
-  //   TextLeft = "0px";
-  //   TextTop = "60px";
-  // }
 
   return (
     <div

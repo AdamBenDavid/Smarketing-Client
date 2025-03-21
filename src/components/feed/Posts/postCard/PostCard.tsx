@@ -11,16 +11,13 @@ import CommentModal from "../../Comments/commentModal/CommentModal";
 import { EditPostModal } from "../../../../pages/userProfileScreen/EditPostModal";
 import { fetchComments } from "../../api";
 import NoImagePlaceholder from "../../../../assets/No-Image-Placeholder.svg";
-import {API_BASE_URL} from '../../../../services/api';
-
+import { config } from "../../../../config";
 const PostCard: React.FC<{
   post: Post;
   onDelete: (postId: string) => void;
 }> = ({ post, onDelete }) => {
   const [comments, setComments] = useState(post.comments ?? []);
-  const [_commentCount, setCommentCount] = useState(post.comments.length);
   const { user, accessToken } = useAuth();
-  const [_localPosts, setLocalPosts] = useState<Post[]>([]);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
   // Fix incorrect image URL format:
@@ -29,7 +26,7 @@ const PostCard: React.FC<{
   useEffect(() => {
     fetchComments(post._id).then((comments) => {
       setComments(comments);
-      setCommentCount(comments.length);
+
     });
   }, [post._id]);
 
@@ -40,7 +37,7 @@ const PostCard: React.FC<{
         return;
       }
 
-      const response = await fetch(`${API_BASE_URL}/posts/${post._id}`, {
+      const response = await fetch(`${config.apiUrl}/posts/${post._id}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -60,14 +57,12 @@ const PostCard: React.FC<{
 
   const handleNewComment = (newComment: CommentType) => {
     setComments((prevComments) => [...prevComments, newComment]);
-    setCommentCount((prev) => prev + 1);
   };
 
   const handleDeleteComment = (newComment: CommentType) => {
     setComments((prevComments) =>
       prevComments.filter((comment) => comment._id !== newComment._id)
     );
-    setCommentCount((prev) => Math.max(prev - 1, 0));
   };
 
   const checkUser = () => {
@@ -86,19 +81,17 @@ const PostCard: React.FC<{
 
     try {
       const response = await fetch(
-        `${API_BASE_URL}/posts/user/${user._id}`
+        `${config.apiUrl}/posts/user/${user._id}`
       );
       if (!response.ok) throw new Error("Failed to fetch posts");
-      const userPosts = await response.json();
-      setLocalPosts(userPosts);
+      await response.json();
     } catch (error) {
       console.error("Error fetching user posts:", error);
     }
   };
 
   const handleModalClose = () => {
-    fetchComments(post._id).then((comments) => {
-      setCommentCount(comments.length);
+    fetchComments(post._id).then(() => {
     });
     setIsCommentModalOpen(false);
   };
@@ -162,8 +155,6 @@ const PostCard: React.FC<{
         onClose={handleModalClose}
         imageUrl={correctedImage || ""}
         postId={post?._id}
-        // onNewComment={() => setCommentCount((prev) => prev + 1)}
-        // onDeleteComment={() => setCommentCount((prev) => Math.max(prev - 1, 0))}
         onNewComment={handleNewComment}
         onDeleteComment={handleDeleteComment}
       />

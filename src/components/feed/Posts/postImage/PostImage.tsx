@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import "./PostImage.css";
-import {API_BASE_URL} from '../../../../services/api';
-
+import { config } from "../../../../config";
 const PostImage: React.FC<{ image?: string | null }> = ({ image }) => {
   const [error, setError] = useState(false);
 
@@ -16,7 +15,7 @@ const PostImage: React.FC<{ image?: string | null }> = ({ image }) => {
       ? noUploadPlaceholder
       : image.startsWith("http")
         ? image.replace("//", "/")
-        : `${API_BASE_URL}/${image.replace("//", "/")}`;
+        : `${config.apiUrl}/${image.replace("//", "/")}`;
 
   return (
     <img

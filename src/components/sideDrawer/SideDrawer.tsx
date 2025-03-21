@@ -19,7 +19,6 @@ import MainFeed from "../../pages/feedPage/MainFeed";
 import { User } from "../../types/user";
 
 export default function DashboardLayoutBasic(props: any) {
-
   const { window } = props;
   const { user, accessToken } = useAuth();
   const router = useDemoRouter("/landingPage");

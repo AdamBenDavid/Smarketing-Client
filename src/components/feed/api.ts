@@ -1,9 +1,11 @@
-export const API_URL = import.meta.env.BASE_URL;
+import { config } from "../../config";
+
+const API_URL = config.apiUrl;
 
 export const fetchComments = async (postId: string) => {
   try {
     const response = await fetch(
-      `${import.meta.env.BASE_URL}/comments?postId=${postId}`
+      `${API_URL}/comments?postId=${postId}`
     );
     if (!response.ok) throw new Error("Failed to fetch comments");
     return await response.json();
