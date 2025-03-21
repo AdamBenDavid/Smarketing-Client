@@ -1,3 +1,5 @@
+import smarketingLogo from '../../assets/Smarketing.png';
+
 interface LogoProps {
   size: string;
 }
@@ -7,8 +9,8 @@ const Logo: React.FC<LogoProps> = ({ size }) => {
     <div>
       <a href="#">
         <img
-          style={{ ...styles, width: size }} // עדכון הרוחב בהתאם ל-prop
-          src="src/assets/Smarketing.png"
+          style={{ ...styles, width: size }}
+          src={smarketingLogo}
           alt="Smarketing Logo"
           className="logo"
         />
@@ -18,7 +20,7 @@ const Logo: React.FC<LogoProps> = ({ size }) => {
 };
 
 const styles = {
-  flexShrink: "0" as const, // למנוע שינוי גודל בעת שימוש ב-flex
+  flexShrink: "0" as const,
 };
 
 export default Logo;

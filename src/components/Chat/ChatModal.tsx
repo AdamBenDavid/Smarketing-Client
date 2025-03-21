@@ -32,6 +32,7 @@ export const ChatModal = memo(
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const socketRef = useRef(socketService.socket);
     const typingTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
+    const [error, setError] = useState<string | null>(null);
 
     // Handle typing
     const handleTyping = useCallback(() => {
@@ -313,6 +314,17 @@ export const ChatModal = memo(
         });
       }
     }, [selectedUser]);
+
+    useEffect(() => {
+      if (!socketService.socket?.connected) {
+        setError('Chat connection lost. Trying to reconnect...');
+        socketService.connect(token);
+      }
+    }, [token]);
+
+    if (error) {
+      return <div className={styles.error}>{error}</div>;
+    }
 
     return (
       <div className={styles.chatModal}>

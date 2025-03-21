@@ -17,7 +17,7 @@ export const ChatList = ({
 }: ChatListProps) => {
   const [onlineUsers, setOnlineUsers] = useState<User[]>([]);
   const [connectionStatus, setConnectionStatus] = useState<
-    "connecting" | "connected" | "disconnected"
+    "connecting" | "connected" | "disconnected" | "error"
   >("connecting");
   const socketRef = useRef(socketService.socket);
 
@@ -58,6 +58,7 @@ export const ChatList = ({
 
       // Set up connection status listeners
       socketRef.current?.on("connect", () => {
+        console.log('Socket connected');
         setConnectionStatus("connected");
         requestOnlineUsers();
       });
@@ -66,8 +67,9 @@ export const ChatList = ({
         setConnectionStatus("disconnected");
       });
 
-      socketRef.current?.on("connect_error", () => {
-        setConnectionStatus("disconnected");
+      socketRef.current?.on("connect_error", (error) => {
+        console.error('Socket connection error:', error);
+        setConnectionStatus("error");
       });
 
       // Set up event handlers
@@ -87,6 +89,7 @@ export const ChatList = ({
         socketRef.current?.off("disconnect");
         socketRef.current?.off("connect_error");
         clearInterval(refreshInterval);
+        socketService.disconnect();
       };
     } catch (error) {
       setConnectionStatus("disconnected");
