@@ -11,7 +11,7 @@ import CommentModal from "../../Comments/commentModal/CommentModal";
 import { EditPostModal } from "../../../../pages/userProfileScreen/EditPostModal";
 import { fetchComments } from "../../api";
 import NoImagePlaceholder from "../../../../assets/No-Image-Placeholder.svg";
-
+import { config } from "../../../../config";
 const PostCard: React.FC<{
   post: Post;
   onDelete: (postId: string) => void;
@@ -37,7 +37,7 @@ const PostCard: React.FC<{
         return;
       }
 
-      const response = await fetch(`http://localhost:3000/posts/${post._id}`, {
+      const response = await fetch(`${config.apiUrl}/posts/${post._id}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -81,7 +81,7 @@ const PostCard: React.FC<{
 
     try {
       const response = await fetch(
-        `http://localhost:3000/posts/user/${user._id}`
+        `${config.apiUrl}/posts/user/${user._id}`
       );
       if (!response.ok) throw new Error("Failed to fetch posts");
       await response.json();

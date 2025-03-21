@@ -4,7 +4,7 @@ import { CreatePostModal } from "./CreatePostModal";
 import Feed from "../feedPage/components/Feed";
 import { Post } from "../../components/feed/types";
 import { useAuth } from "../../context/AuthContext";
-
+import { config } from "../../config";
 export const MyPosts = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [localPosts, setLocalPosts] = useState<Post[]>([]);
@@ -18,7 +18,7 @@ export const MyPosts = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/posts/user/${user._id}`
+        `${config.apiUrl}/posts/user/${user._id}`
       );
       if (!response.ok) throw new Error("Failed to fetch posts");
 

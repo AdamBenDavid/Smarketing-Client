@@ -1,9 +1,11 @@
-export const API_URL = "http://localhost:3000";
+import { config } from "../../config";
+
+const API_URL = config.apiUrl;
 
 export const fetchComments = async (postId: string) => {
   try {
     const response = await fetch(
-      `http://localhost:3000/comments?postId=${postId}`
+      `${API_URL}/comments?postId=${postId}`
     );
     if (!response.ok) throw new Error("Failed to fetch comments");
     return await response.json();

@@ -5,6 +5,7 @@ import { IconButton } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useAuth } from "../../../../context/AuthContext";
 import { deleteComment } from "../../api.ts";
+import { config } from "../../../../config";
 interface OneCommentProps {
   comment: CommentType;
   onDeleteSuccess: (id: string) => void;
@@ -41,9 +42,9 @@ const OneComment: React.FC<OneCommentProps> = ({
 
   const getProfilePictureUrl = (profilePicture: string | undefined) => {
     if (!profilePicture)
-      return "http://localhost:3000/images/default-profile.png";
+      return `${config.apiUrl}/images/default-profile.png`;
     if (profilePicture.startsWith("http")) return profilePicture;
-    return `http://localhost:3000/${profilePicture}`;
+    return `${config.apiUrl}/${profilePicture}`;
   };
 
   const canDelete = user?._id === comment.userId;
@@ -59,7 +60,7 @@ const OneComment: React.FC<OneCommentProps> = ({
           onError={(e) => {
             console.log("Needs to be default profil pic");
             e.currentTarget.src =
-              "http://localhost:3000/images/default-profile.png";
+              `${config.apiUrl}/images/default-profile.png`;
           }}
         />
         <div className="comment-content">

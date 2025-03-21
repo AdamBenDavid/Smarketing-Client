@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./PostImage.css";
-
+import { config } from "../../../../config";
 const PostImage: React.FC<{ image?: string | null }> = ({ image }) => {
   const [error, setError] = useState(false);
 
@@ -15,7 +15,7 @@ const PostImage: React.FC<{ image?: string | null }> = ({ image }) => {
       ? noUploadPlaceholder
       : image.startsWith("http")
         ? image.replace("//", "/")
-        : `http://localhost:3000/${image.replace("//", "/")}`;
+        : `${config.apiUrl}/${image.replace("//", "/")}`;
 
   return (
     <img

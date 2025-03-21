@@ -2,8 +2,9 @@ import axios from "axios";
 import { User } from "../types/user";
 import { CredentialResponse } from "@react-oauth/google";
 import { AuthResponse } from "../types/user";
+import { config } from "../config";
 
-const API_BASE_URL = "http://localhost:3000";
+const API_BASE_URL = config.apiUrl;
 
 const api = axios.create({
   baseURL: API_BASE_URL,

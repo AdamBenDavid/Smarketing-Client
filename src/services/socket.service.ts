@@ -1,7 +1,7 @@
 import { io, Socket } from 'socket.io-client';
 import { ChatMessage } from '../components/Chat/types';
 import { User } from '../types/user';
-
+import { config } from '../config';
 class SocketService {
   private _socket: Socket | null = null;
   private messageHandlers: ((message: ChatMessage) => void)[] = [];
@@ -31,8 +31,8 @@ class SocketService {
       this._socket.removeAllListeners();
       this._socket = null;
     }
-
-    this._socket = io('http://localhost:3000', {
+ 
+    this._socket = io(config.apiUrl, {
       auth: { token: cleanToken },
       transports: ['websocket', 'polling'],
       withCredentials: true,

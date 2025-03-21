@@ -1,8 +1,8 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
-
+import { config } from "../../../config";
 const fetchPosts = async ({ pageParam = 1 }) => {
   const res = await fetch(
-    `http://localhost:3000/posts?page=${pageParam}&limit=6`
+    `${config.apiUrl}/posts?page=${pageParam}&limit=6`
   );
 
   if (!res.ok) throw new Error("Failed to fetch posts");

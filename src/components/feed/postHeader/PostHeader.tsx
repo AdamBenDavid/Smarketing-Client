@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../../context/AuthContext";
 import "./PostHeader.css";
-
+import { config } from "../../../config"; 
 const PostHeader: React.FC<{
   senderId?: string;
 }> = ({ senderId }) => {
@@ -22,13 +22,13 @@ const PostHeader: React.FC<{
   const getProfilePictureUrl = (profilePicture: string | undefined) => {
     if (!profilePicture) return "/default-profile.png";
     if (profilePicture.startsWith("http")) return profilePicture;
-    return `http://localhost:3000/${profilePicture}`;
+    return `${config.apiUrl}/${profilePicture}`;
   };
 
   useEffect(() => {
     if (!senderId) return;
 
-    fetch(`http://localhost:3000/auth/user/${senderId}`)
+    fetch(`${config.apiUrl}/auth/user/${senderId}`)
       .then((res) => {
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
         return res.json();
@@ -55,7 +55,7 @@ const PostHeader: React.FC<{
         className="profile-picture"
         crossOrigin="anonymous"
         onError={(e) => {
-          e.currentTarget.src = "/default-profile.png";
+          e.currentTarget.src = `${config.apiUrl}/images/default-profile.png`;
         }}
       />
       <span className="username">{displayUser.fullName}</span>

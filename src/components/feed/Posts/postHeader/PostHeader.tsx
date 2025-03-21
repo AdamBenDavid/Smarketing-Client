@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./PostHeader.css";
-
+import { config } from "../../../../config";    
 const PostHeader: React.FC<{
   senderId?: string;
 }> = ({ senderId }) => {
@@ -11,15 +11,15 @@ const PostHeader: React.FC<{
 
   const getProfilePictureUrl = (profilePicture: string | undefined) => {
     if (!profilePicture)
-      return "http://localhost:3000/images/default-profile.png";
+      return `${config.apiUrl}/images/default-profile.png`;
     if (profilePicture.startsWith("http")) return profilePicture;
-    return `http://localhost:3000/${profilePicture}`;
+    return `${config.apiUrl}/${profilePicture}`;
   };
 
   useEffect(() => {
     if (!senderId) return;
 
-    fetch(`http://localhost:3000/users/${senderId}`)
+    fetch(`${config.apiUrl}/users/${senderId}`)
       .then((res) => {
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
         return res.json();
@@ -42,7 +42,7 @@ const PostHeader: React.FC<{
         onError={(e) => {
           console.log("needs to be default profile pic");
           e.currentTarget.src =
-            "http://localhost:3000/images/default-profile.png";
+            `${config.apiUrl}/images/default-profile.png`;
         }}
       />
       <span className="username">{displayUser.fullName}</span>

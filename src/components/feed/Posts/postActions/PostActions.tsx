@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./PostActions.css";
-
+import { config } from "../../../../config";  
 const PostActions: React.FC<{
   postId: string;
   commentCount: number;
@@ -11,7 +11,7 @@ const PostActions: React.FC<{
   const [likes, setLikes] = useState(0);
 
   useEffect(() => {
-    fetch(`http://localhost:3000/posts/${postId}`)
+    fetch(`${config.apiUrl}/posts/${postId}`)
       .then((res) => res.json())
       .then((data) => {
         setLikes(data.likes.length);
@@ -22,7 +22,7 @@ const PostActions: React.FC<{
 
   const handleLike = async () => {
     const res = await fetch(
-      `http://localhost:3000/posts/${liked ? "unlike" : "like"}/${postId}`,
+      `${config.apiUrl}/posts/${liked ? "unlike" : "like"}/${postId}`,
       {
         method: "PUT",
         headers: {

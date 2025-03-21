@@ -1,3 +1,5 @@
+import { config } from "../config";
+
 export const getProfilePictureUrl = (profilePicture: string | undefined | null): string => {
   if (!profilePicture) {
     return "https://placehold.co/50x50";
@@ -9,5 +11,5 @@ export const getProfilePictureUrl = (profilePicture: string | undefined | null):
   }
 
   // If it's a relative path, prepend the API base URL
-  return `http://localhost:3000/${profilePicture}`;
+  return `${config.apiUrl}/${profilePicture}`;
 }; 
