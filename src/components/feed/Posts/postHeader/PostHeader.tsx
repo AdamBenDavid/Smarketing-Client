@@ -40,7 +40,6 @@ const PostHeader: React.FC<{
         className="profile-picture"
         crossOrigin="anonymous"
         onError={(e) => {
-          console.log("needs to be default profile pic");
           e.currentTarget.src =
             `${config.apiUrl}/images/default-profile.png`;
         }}

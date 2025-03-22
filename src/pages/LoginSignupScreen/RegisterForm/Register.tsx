@@ -35,10 +35,8 @@ const RegisterForm: React.FC = () => {
         );
         toast.success("נרשמת בהצלחה! כעת תוכל להתחבר.");
       } catch (error: any) {
-        console.log("Register Error");
 
         const errorMessage = error.errorResponse.errmsg;
-        console.log("Error Message:", errorMessage);
         if (errorMessage?.includes("duplicate key error")) {
           if (errorMessage?.includes("email")) {
             toast.error("האימייל שהוזן כבר קיים במערכת");

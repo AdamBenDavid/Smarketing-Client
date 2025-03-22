@@ -51,7 +51,6 @@ const LoginForm: React.FC = () => {
         toast.error("יותר מדי ניסיונות כושלים. נסה שוב מאוחר יותר");
       } else {
         toast.error("שם משתמש או סיסמה שגויים");
-        console.log("Login Error:", error);
       }
     }
   };

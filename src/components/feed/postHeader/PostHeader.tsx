@@ -5,20 +5,13 @@ import { config } from "../../../config";
 const PostHeader: React.FC<{
   senderId?: string;
 }> = ({ senderId }) => {
-  const { user: loggedInUser, loading } = useAuth();
+  const { user: loggedInUser } = useAuth();
   const [senderUser, setSenderUser] = useState<{
     fullName?: string;
     profilePicture?: string;
   } | null>(null);
 
-  useEffect(() => {
-    console.log("PostHeader: Auth state:", { 
-      isLoggedIn: !!loggedInUser, 
-      loading,
-      user: loggedInUser 
-    });
-  }, [loggedInUser, loading]);
-
+ 
   const getProfilePictureUrl = (profilePicture: string | undefined) => {
     if (!profilePicture) return "/default-profile.png";
     if (profilePicture.startsWith("http")) return profilePicture;

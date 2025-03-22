@@ -26,7 +26,6 @@ export const CreatePostModal = ({
   const { user, accessToken } = useAuth();
 
   const aiGenerateText = async () => {
-    console.log("aiGenerateText");
     try {
       if (imagePreview) {
         setLoading(true);
@@ -43,7 +42,6 @@ export const CreatePostModal = ({
   };
 
   const handleClose = () => {
-    console.log("handle close");
     cancelGeminiRequest();
     setPostContent("");
     setSelectedImage(null);

@@ -14,7 +14,6 @@ export const AccountSettings = () => {
   // );
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
-  console.log("User state in AccountSettings:", user);
 
   const handleEditProfile = async (fullName: string, image?: File) => {
     if (!user) return;

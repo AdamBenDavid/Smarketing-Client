@@ -45,7 +45,6 @@ const PostCard: React.FC<{
         },
       });
       if (response.ok) {
-        console.log("Post deleted successfully");
         onDelete(post._id);
       } else {
         console.error("Failed to delete post");

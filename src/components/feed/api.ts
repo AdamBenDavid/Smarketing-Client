@@ -58,7 +58,6 @@ export const deleteComment = async (commentId: string) => {
 
     if (!response.ok) throw new Error("Failed to delete comment");
 
-    console.log("Comment deleted successfully");
     return true;
   } catch (error) {
     console.error("❌ Error deleting comment:", error);

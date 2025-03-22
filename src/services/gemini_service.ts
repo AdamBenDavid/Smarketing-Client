@@ -27,11 +27,9 @@ export const sendImageToGemini = async (
       { signal }
     );
 
-    console.log("response.data.response: " + response.data.response);
     return response.data.response;
   } catch (error) {
     if (axios.isCancel(error)) {
-      console.log("הבקשה ל-Gemini לא בוטלה");
     } else {
       console.error("שגיאה בשליחת התמונה ל-Gemini:", error);
     }
@@ -42,7 +40,6 @@ export const sendImageToGemini = async (
 export const cancelGeminiRequest = () => {
   if (abortController) {
     abortController.abort();
-    console.log("🔴 הבקשה ל-Gemini בוטלה בהצלחה!");
     abortController = null;
   }
 };

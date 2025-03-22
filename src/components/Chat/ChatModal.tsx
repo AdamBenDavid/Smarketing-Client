@@ -128,25 +128,19 @@ export const ChatModal = memo(
                 prev[existingMessageIndex]._id.startsWith("temp-") &&
                 message._id
               ) {
-                console.log(
-                  "[ChatModal] Replacing temporary message with confirmed message"
-                );
+              
                 const newMessages = [...prev];
                 newMessages[existingMessageIndex] = message;
                 return newMessages;
               }
 
-              console.log("[ChatModal] Message already exists, skipping");
               return prev;
             }
 
-            console.log("[ChatModal] Adding new message to conversation");
             return [...prev, message];
           });
         } else {
-          console.log(
-            "[ChatModal] Message not relevant to current conversation"
-          );
+         
         }
       },
       [currentUser._id, selectedUser]
@@ -231,7 +225,6 @@ export const ChatModal = memo(
 
         // Request initial chat history
         if (socket.connected && selectedUser) {
-          console.log("[ChatModal] Requesting initial chat history");
           socket.emit("getChatHistory", {
             userId: currentUser._id,
             partnerId: selectedUser._id,
@@ -303,17 +296,7 @@ export const ChatModal = memo(
       [handleTyping]
     );
 
-    useEffect(() => {
-      if (selectedUser) {
-        console.log("[ChatModal] Current chat user data:", {
-          id: selectedUser._id,
-          fullName: selectedUser.fullName,
-          email: selectedUser.email,
-          profilePicture: selectedUser.profilePicture,
-          resolvedPicture: getProfilePictureUrl(selectedUser.profilePicture),
-        });
-      }
-    }, [selectedUser]);
+
 
     if (error) {
       return <div className={styles.error}>{error}</div>;

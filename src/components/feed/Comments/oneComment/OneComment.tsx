@@ -32,7 +32,6 @@ const OneComment: React.FC<OneCommentProps> = ({
 
       const success = await deleteComment(comment._id);
       if (success) {
-        console.log("one comment deleted successfully");
         onDeleteSuccess(comment._id);
       }
     } catch (error) {
@@ -58,7 +57,6 @@ const OneComment: React.FC<OneCommentProps> = ({
           className="comment-avatar"
           crossOrigin="anonymous"
           onError={(e) => {
-            console.log("Needs to be default profil pic");
             e.currentTarget.src =
               `${config.apiUrl}/images/default-profile.png`;
           }}

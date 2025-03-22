@@ -23,7 +23,6 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   }
 
   if (!isAuthenticated || !user || !accessToken) {
-    console.log('Access denied:', { user, accessToken, isAuthenticated });
     return <Navigate to="/forms" replace />;
   }
 

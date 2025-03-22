@@ -30,7 +30,6 @@ export const EditPostModal = ({
   const { user, accessToken } = useAuth();
 
   const closeEditModal = () => {
-    console.log("edit post close");
     setPostContent(post.postData);
     setSelectedImage(null); //change
     setImagePreview(post.image ? `${config.apiUrl}/${post.image}` : null);
@@ -67,13 +66,10 @@ export const EditPostModal = ({
 
     try {
       const imageToSend = selectedImage !== null ? selectedImage : post.image;
-      console.log("image to send", post.image);
-      console.log("image to send", imageToSend);
 
       const updatedPost = await updatePost(post._id, postContent, imageToSend);
 
       if (updatedPost) {
-        console.log("Post updated successfully");
         setPostContent(updatedPost.postData);
 
         setImagePreview(
@@ -124,7 +120,6 @@ export const EditPostModal = ({
       }
 
       const data = await response.json();
-      console.log("client Updated post");
       return data;
     } catch (error) {
       console.error("Error updating post");

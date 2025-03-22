@@ -43,7 +43,6 @@ const CommentModal: React.FC<{
       const createdComment = await addComment(postId, user._id, newComment);
 
       if (createdComment) {
-        console.log("Comment added successfully!");
 
         setComments((prevComments) => [createdComment, ...prevComments]);
 
@@ -51,7 +50,6 @@ const CommentModal: React.FC<{
         onNewComment(createdComment);
       }
     } catch (error) {
-      console.log("Error adding comment:");
     } finally {
       setLoading(false);
     }

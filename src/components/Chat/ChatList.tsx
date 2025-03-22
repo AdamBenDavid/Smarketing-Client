@@ -26,7 +26,6 @@ export const ChatList = ({ onSelectUser, currentUser, token }: ChatListProps) =>
 
     // Set up online users listener
     const unsubscribe = socketService.onOnlineUsers((users: User[]) => {
-      console.log('Received online users:', users);
       // Filter out current user from the list
       const filteredUsers = users.filter(user => user._id !== currentUser._id);
       setOnlineUsers(filteredUsers);

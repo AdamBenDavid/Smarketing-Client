@@ -22,26 +22,16 @@ class SocketService {
   }
 
   connect(token: string): void {
-    console.log('[Socket] Connection attempt:', {
-      currentSocket: this._socket?.connected ? 'connected' : 'disconnected',
-      baseURL: import.meta.env.VITE_API_URL,
-      environment: import.meta.env.MODE
-    });
+
 
     if (this._socket?.connected) {
-      console.log('[Socket] Already connected, id:', this._socket.id);
       return;
     }
 
     const baseURL = import.meta.env.VITE_API_URL;
-    const isProduction = import.meta.env.MODE === 'production';
     
     try {
-      console.log('[Socket] Initializing with config:', {
-        baseURL,
-        token: token ? 'present' : 'missing',
-        isProduction
-      });
+  
 
       this._socket = io(baseURL, {
         auth: {
@@ -66,20 +56,9 @@ class SocketService {
         });
       });
 
-      this._socket.on('connect', () => {
-        console.log('[Socket] Connected successfully:', {
-          id: this._socket?.id,
-          transport: this._socket?.io?.engine?.transport?.name
-        });
-      });
 
-      this._socket.on('disconnect', (reason) => {
-        console.log('[Socket] Disconnected:', {
-          reason,
-          wasConnected: this._socket?.connected,
-          id: this._socket?.id
-        });
-      });
+
+    
 
       // Monitor engine state
       this._socket.io.engine.on('error', (err: string | Error) => {
@@ -88,9 +67,7 @@ class SocketService {
         );
       });
 
-      this._socket.io.engine.on('close', (reason: string) => {
-        console.log('[Socket] Engine closed:', reason);
-      });
+   
 
     } catch (error) {
       console.error('[Socket] Initialization error:', error);
