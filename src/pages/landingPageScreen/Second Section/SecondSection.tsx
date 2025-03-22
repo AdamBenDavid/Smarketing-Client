@@ -6,7 +6,7 @@ import MainSentence from "./MainSentence";
 
 const SecondSection: React.FC = () => {
   const navigate = useNavigate();
-  
+
   const scrollToSection = () => {
     const targetSection = document.getElementById("explanations");
     if (targetSection) {
@@ -18,14 +18,17 @@ const SecondSection: React.FC = () => {
     <div className="second-section" style={styles.section}>
       <div style={styles.rightSection}>
         <div style={styles.buttonsContainer}>
-          <MainButton text="התחל עכשיו" onClick={() => {
-            const token = localStorage.getItem('token');
-            if (token) {
-              navigate('/profile');
-            } else {
-              navigate('/forms'); 
-            }
-          }} />
+          <MainButton
+            text="התחל עכשיו"
+            onClick={() => {
+              const token = localStorage.getItem("token");
+              if (token) {
+                navigate("/profile");
+              } else {
+                navigate("/forms");
+              }
+            }}
+          />
           <SeconderyButton text="גלה עוד" onClick={scrollToSection} />
         </div>
         <MainSentence />
@@ -42,35 +45,37 @@ const styles = {
   section: {
     direction: "rtl" as const,
     display: "flex",
+    flexWrap: "wrap" as const,
     alignItems: "center",
     width: "100%",
-    padding: "50px",
-    paddingTop: "0px",
-    gap: "10px",
-    boxSizing: "border-box" as const,
-    margin: "0px",
+    padding: "30px",
+    gap: "30px",
     justifyContent: "center",
+    boxSizing: "border-box" as const,
   },
 
   rightSection: {
     display: "flex",
     flexDirection: "column" as const,
-    alignItems: "flex",
-    maxWidth: "60%",
+    width: "100%",
+    maxWidth: "600px",
+    flex: "1",
   },
 
   buttonsContainer: {
     display: "flex",
+    flexWrap: "wrap" as const,
     gap: "16px",
     width: "100%",
-    justifyContent: "flex",
+    justifyContent: "flex-start",
   },
 
   leftSection: {
     display: "flex",
-    justifyContent: "left",
+    justifyContent: "center",
     alignItems: "center",
-    width: "40%",
+    flex: "1",
+    minWidth: "280px",
     boxSizing: "border-box" as const,
   },
 };
