@@ -29,6 +29,12 @@ body {
 }
 
 /* Force Assistant font on all text elements */
-h1, h2, h3, h4, h5, h6, p, span, div, button, input, textarea, select {
+h1, h2, h3, h4, h5, h6, p, span, div, button, select {
   font-family: var(--font-family-base) !important;
+}
+.post-card{
+  color: black;
+}
+textarea{
+  color: black !important;
 }

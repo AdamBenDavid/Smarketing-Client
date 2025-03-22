@@ -6,7 +6,9 @@
   background-color: white;
   border-radius: 12px;
   overflow: hidden;
+  color: black;
 }
+
 
 .header {
   padding: 16px;

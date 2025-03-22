@@ -42,6 +42,9 @@
   resize: vertical;
   font-family: inherit;
 }
+h2{
+  color: black !important;
+}
 
 .imageUpload {
   margin: 15px 0;

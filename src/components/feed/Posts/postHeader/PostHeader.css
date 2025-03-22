@@ -21,3 +21,9 @@
   height: 20px;
   border-radius: 50%;
 }
+
+/* Add dark mode styles */
+[data-theme='dark'] .post-header {
+  color: black;
+  background-color: white;
+}
