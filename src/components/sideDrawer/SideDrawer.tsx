@@ -21,7 +21,7 @@ import { User } from "../../types/user";
 export default function DashboardLayoutBasic(props: any) {
   const { window } = props;
   const { user, accessToken } = useAuth();
-  const router = useDemoRouter("/landingPage");
+  const router = useDemoRouter("/feed");
   const demoWindow = window ? window() : undefined;
   const { logout } = useAuth();
   const [selectedChatUser, setSelectedChatUser] = useState<User | null>(null);

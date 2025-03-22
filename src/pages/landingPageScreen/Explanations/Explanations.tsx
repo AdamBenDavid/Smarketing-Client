@@ -13,7 +13,6 @@ const Explainations: React.FC<ExplainsProps> = ({
   Header,
   text,
 }) => {
-
   return (
     <div
       className="explain"
@@ -38,24 +37,26 @@ const Explainations: React.FC<ExplainsProps> = ({
 const styles = {
   container: {
     display: "flex",
+    flexWrap: "wrap" as const,
     alignItems: "center",
-    gap: "80px",
+    justifyContent: "center",
+    gap: "40px",
     margin: "20px",
-    marginRight: "50px",
-    marginLeft: "50px",
+    marginRight: "20px",
+    marginLeft: "20px",
   },
   text: {
-    flex: "1",
-    fontSize: "24px",
+    flex: "1 1 300px",
+    fontSize: "20px",
     color: "#333",
   },
   paragraph: {
     margin: 0,
     padding: 0,
-    lineHeight: "1.5",
+    lineHeight: "1.6",
     direction: "rtl" as const,
     textAlign: "justify" as const,
-    fontSize: "24px",
+    fontSize: "20px",
   },
 };
 

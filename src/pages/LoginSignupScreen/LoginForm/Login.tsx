@@ -47,7 +47,7 @@ const LoginForm: React.FC = () => {
       toast.success("ברוך הבא!");
       navigate("/profile", { replace: true });
     } catch (error: any) {
-      if ((error.message = "יותר מדי ניסיונות כושלים. נסה שוב מאוחר יותר")) {
+      if (error.message === "יותר מדי ניסיונות כושלים. נסה שוב מאוחר יותר") {
         toast.error("יותר מדי ניסיונות כושלים. נסה שוב מאוחר יותר");
       } else {
         toast.error("שם משתמש או סיסמה שגויים");
