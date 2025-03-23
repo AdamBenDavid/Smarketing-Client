@@ -1,20 +1,22 @@
-import {  useState } from "react";
+import { useState } from "react";
 import { Typography } from "@mui/material";
-import "./AccountSettings.css"; // ✅ Corrected import
-// import { ChatUser } from "../../components/Chat/ChatList";
+import "./AccountSettings.css";
 import { EditProfileModal } from "./EditProfileModal";
 import { usersService } from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
-//import { usertype } from "../../types/user";
+import { config } from "../../config";
 
 export const AccountSettings = () => {
   const { user, setUser, accessToken } = useAuth();
-  // const [selectedChatUser, setSelectedChatUser] = useState<ChatUser | null>(
-  //   null
-  // );
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   console.log("User state in AccountSettings:", user);
+
+  const getProfilePictureUrl = (profilePicture: string | undefined) => {
+    if (!profilePicture) return `${config.apiUrl}/images/default-profile.png`;
+    if (profilePicture.startsWith("http")) return profilePicture;
+    return `${config.apiUrl}/${profilePicture}`;
+  };
 
   const handleEditProfile = async (fullName: string, image?: File) => {
     if (!user) return;
@@ -52,7 +54,7 @@ export const AccountSettings = () => {
       <div className="profileContainer">
         <div className="userInfo">
           <img
-            src={user.profilePicture || "/default-profile.png"}
+            src={getProfilePictureUrl(user.profilePicture)}
             alt="Profile"
             className="profilePicture"
             crossOrigin="anonymous"
@@ -70,8 +72,6 @@ export const AccountSettings = () => {
             </div>
           </div>
         </div>
-
-
 
         <EditProfileModal
           isOpen={isEditModalOpen}
