@@ -2,6 +2,15 @@ import { io, Socket } from 'socket.io-client';
 import { ChatMessage } from '../components/Chat/types';
 import { User } from '../types/user';
 
+// Add Message interface
+interface Message {
+  _id: string;
+  sender: string;
+  receiver: string;
+  content: string;
+  timestamp: Date;
+}
+
 // Add interface for Socket.IO error type
 interface SocketError extends Error {
   description?: string;

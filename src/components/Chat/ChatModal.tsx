@@ -153,7 +153,7 @@ export const ChatModal = memo(
     // Handle chat history
     const handleChatHistory = useCallback(
       (history: ChatMessage[]) => {
-        if (!selectedUser) {
+        if (!selectedUser?._id) {
           console.warn("[ChatModal] No selected user, skipping chat history");
           return;
         }
@@ -180,7 +180,6 @@ export const ChatModal = memo(
           .filter((msg) => msg !== null) as Message[];
         
         setMessages(formattedHistory);
-        // Cache the messages
         socketService.cacheMessages(selectedUser._id, formattedHistory);
       },
       [selectedUser, currentUser._id]
@@ -221,13 +220,10 @@ export const ChatModal = memo(
         });
 
         // Set up event handlers
-        const unsubscribeMessage =
-          socketService.onMessage(handleReceiveMessage);
-        const unsubscribeTyping = socketService.onTyping(handleTypingEvent);
-        const unsubscribeOnlineUsers =
-          socketService.onOnlineUsers(handleOnlineUsers);
-        const unsubscribeChatHistory =
-          socketService.onChatHistory(handleChatHistory);
+        socketService.onMessage(handleReceiveMessage);
+        socketService.onTyping(handleTypingEvent);
+        socketService.onOnlineUsers(handleOnlineUsers);
+        socketService.onChatHistory(handleChatHistory);
 
         // Request chat history when component mounts or selectedUser changes
         if (socket.connected && selectedUser) {
@@ -245,13 +241,6 @@ export const ChatModal = memo(
           socket.off('chat_history');
           socket.off('new_message');
           socket.off('message_sent');
-          
-          // Remove these lines - don't disconnect or unsubscribe
-          // socketService.disconnect();
-          // unsubscribeMessage();
-          // unsubscribeTyping();
-          // unsubscribeOnlineUsers();
-          // unsubscribeChatHistory();
         };
       } catch (error) {
         console.error('[ChatModal] Socket setup error:', error);
