@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { User } from "../types/user";
+import { socketService } from "../services/socket.service";
 
 interface AuthContextType {
   user: User | null;
@@ -46,6 +47,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const logout = async () => {
+    if (socketService.socket?.connected) {
+      socketService.socket.disconnect();
+    }
+
     setUser(null);
     setAccessToken(null);
     localStorage.removeItem('accessToken');
