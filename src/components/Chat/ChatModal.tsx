@@ -22,7 +22,11 @@ interface Message {
 
 export const ChatModal = memo(
   ({ token, currentUser, selectedUser, onClose }: ChatModalProps) => {
-    const [messages, setMessages] = useState<Message[]>([]);
+    const [messages, setMessages] = useState<Message[]>(() => {
+      // Try to get cached messages from memory
+      const cachedMessages = socketService.getCachedMessages(selectedUser?._id);
+      return cachedMessages || [];
+    });
     const [newMessage, setNewMessage] = useState("");
     const [isTyping, setIsTyping] = useState(false);
     const [onlineUsers, setOnlineUsers] = useState<User[]>([]);
@@ -174,15 +178,17 @@ export const ChatModal = memo(
             return null;
           })
           .filter((msg) => msg !== null) as Message[];
+        
         setMessages(formattedHistory);
+        // Cache the messages
+        socketService.cacheMessages(selectedUser._id, formattedHistory);
       },
       [selectedUser, currentUser._id]
     );
 
     // Socket connection effect
     useEffect(() => {
-      if (!token) {
-        console.error('No token available for socket connection');
+      if (!token || !selectedUser) {
         return;
       }
 
@@ -223,7 +229,7 @@ export const ChatModal = memo(
         const unsubscribeChatHistory =
           socketService.onChatHistory(handleChatHistory);
 
-        // Request initial chat history
+        // Request chat history when component mounts or selectedUser changes
         if (socket.connected && selectedUser) {
           socket.emit("getChatHistory", {
             userId: currentUser._id,
@@ -231,30 +237,27 @@ export const ChatModal = memo(
           });
         }
 
-        // Clean up on unmount
+        // Clean up function
         return () => {
           socket.off('connect');
           socket.off('disconnect');
           socket.off('connect_error');
-          socketService.disconnect();
-          unsubscribeMessage();
-          unsubscribeTyping();
-          unsubscribeOnlineUsers();
-          unsubscribeChatHistory();
+          socket.off('chat_history');
+          socket.off('new_message');
+          socket.off('message_sent');
+          
+          // Remove these lines - don't disconnect or unsubscribe
+          // socketService.disconnect();
+          // unsubscribeMessage();
+          // unsubscribeTyping();
+          // unsubscribeOnlineUsers();
+          // unsubscribeChatHistory();
         };
       } catch (error) {
-        console.error('Socket initialization error:', error);
-        setError('Failed to initialize chat connection');
+        console.error('[ChatModal] Socket setup error:', error);
+        setError('Failed to setup chat connection');
       }
-    }, [
-      token,
-      selectedUser,
-      currentUser._id,
-      handleReceiveMessage,
-      handleTyping,
-      handleOnlineUsers,
-      handleChatHistory,
-    ]);
+    }, [token, selectedUser, currentUser._id]);
 
     // Scroll effect
     useEffect(() => {
@@ -296,7 +299,15 @@ export const ChatModal = memo(
       [handleTyping]
     );
 
-
+    // Add this effect to handle chat history fetching when user is selected
+    useEffect(() => {
+      if (selectedUser && socketRef.current?.connected) {
+        socketRef.current.emit("getChatHistory", {
+          userId: currentUser._id,
+          partnerId: selectedUser._id,
+        });
+      }
+    }, [selectedUser, currentUser._id]);
 
     if (error) {
       return <div className={styles.error}>{error}</div>;

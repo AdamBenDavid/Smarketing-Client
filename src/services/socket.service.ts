@@ -16,6 +16,7 @@ class SocketService {
   private onlineUsersHandlers: ((users: User[]) => void)[] = [];
   private chatHistoryHandlers: ((messages: ChatMessage[]) => void)[] = [];
   private isSettingUpListeners: boolean = false;
+  private messageCache: Map<string, Message[]> = new Map();
  
   get socket(): Socket | null {
     return this._socket;
@@ -184,6 +185,15 @@ class SocketService {
       this._socket.disconnect();
       this._socket = null;
     }
+  }
+
+  public cacheMessages(userId: string, messages: Message[]) {
+    this.messageCache.set(userId, messages);
+  }
+
+  public getCachedMessages(userId?: string): Message[] | null {
+    if (!userId) return null;
+    return this.messageCache.get(userId) || null;
   }
 }
 

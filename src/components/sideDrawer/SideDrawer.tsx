@@ -25,6 +25,7 @@ export default function DashboardLayoutBasic(props: any) {
   const demoWindow = window ? window() : undefined;
   const { logout } = useAuth();
   const [selectedChatUser, setSelectedChatUser] = useState<User | null>(null);
+  const [isChatVisible, setIsChatVisible] = useState(false);
 
   useEffect(() => {
     if (router.pathname === "/logout") {
@@ -109,6 +110,24 @@ export default function DashboardLayoutBasic(props: any) {
     return router;
   }
 
+  // Update the chat handling
+  const handleSelectUser = (user: User) => {
+    
+    // If selecting same user, just show chat
+    if (selectedChatUser?._id === user._id) {
+      setIsChatVisible(true);
+      return;
+    }
+    
+    // If selecting new user, update state and show chat
+    setSelectedChatUser(user);
+    setIsChatVisible(true);
+  };
+
+  const handleCloseChat = () => {
+    setIsChatVisible(false);
+  };
+
   // Update the route mapping
   const routeComponents: { [key: string]: React.ReactNode } = {
     "/settings/my-posts": <MyPosts />,
@@ -120,16 +139,14 @@ export default function DashboardLayoutBasic(props: any) {
           <ChatList
             currentUser={user}
             token={accessToken}
-            onSelectUser={(selectedUser) => {
-              setSelectedChatUser(selectedUser);
-            }}
+            onSelectUser={handleSelectUser}
           />
-          {selectedChatUser && (
+          {selectedChatUser && isChatVisible && (
             <ChatModal
               token={accessToken}
               currentUser={user}
               selectedUser={selectedChatUser}
-              onClose={() => setSelectedChatUser(null)}
+              onClose={handleCloseChat}
             />
           )}
         </div>
@@ -139,6 +156,8 @@ export default function DashboardLayoutBasic(props: any) {
   };
 
   const CurrentComponent = routeComponents[router.pathname];
+
+  // Add a log in the render to track state changes
 
   return (
     <AppProvider
