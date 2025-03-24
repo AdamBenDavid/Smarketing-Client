@@ -1,15 +1,7 @@
 import { io, Socket } from 'socket.io-client';
 import { ChatMessage } from '../components/Chat/types';
 import { User } from '../types/user';
-
-// Add Message interface
-interface Message {
-  _id: string;
-  sender: string;
-  receiver: string;
-  content: string;
-  timestamp: Date;
-}
+import { Message } from '../types/message';
 
 // Add interface for Socket.IO error type
 interface SocketError extends Error {
@@ -25,8 +17,10 @@ class SocketService {
   private onlineUsersHandlers: ((users: User[]) => void)[] = [];
   private chatHistoryHandlers: ((messages: ChatMessage[]) => void)[] = [];
   private isSettingUpListeners: boolean = false;
-  private messageCache: Map<string, Message[]> = new Map();
- 
+
+  // Add a static map to store chat messages
+  private chatMessages: Map<string, Message[]> = new Map();
+
   get socket(): Socket | null {
     return this._socket;
   }
@@ -196,13 +190,19 @@ class SocketService {
     }
   }
 
-  public cacheMessages(userId: string, messages: Message[]) {
-    this.messageCache.set(userId, messages);
+  // Add methods to manage chat messages
+  public setChatMessages(userId: string, messages: Message[]) {
+    this.chatMessages.set(userId, messages);
   }
 
-  public getCachedMessages(userId?: string): Message[] | null {
-    if (!userId) return null;
-    return this.messageCache.get(userId) || null;
+  public getChatMessages(userId: string): Message[] {
+    return this.chatMessages.get(userId) || [];
+  }
+
+  // Add method to add a single message
+  public addMessage(userId: string, message: Message) {
+    const messages = this.getChatMessages(userId);
+    this.chatMessages.set(userId, [...messages, message]);
   }
 }
 

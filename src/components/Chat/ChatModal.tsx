@@ -4,6 +4,7 @@ import { User } from "../../types/user";
 import { socketService } from "../../services/socket.service";
 import { ChatMessage } from "../../components/Chat/types";
 import { getProfilePictureUrl } from "../../utils/imageUtils";
+import { useNavigate } from 'react-router-dom';
 
 interface ChatModalProps {
   token: string;
@@ -22,10 +23,9 @@ interface Message {
 
 export const ChatModal = memo(
   ({ token, currentUser, selectedUser, onClose }: ChatModalProps) => {
+    // Initialize messages from socketService if available
     const [messages, setMessages] = useState<Message[]>(() => {
-      // Try to get cached messages from memory
-      const cachedMessages = socketService.getCachedMessages(selectedUser?._id);
-      return cachedMessages || [];
+      return selectedUser ? socketService.getChatMessages(selectedUser._id) : [];
     });
     const [newMessage, setNewMessage] = useState("");
     const [isTyping, setIsTyping] = useState(false);
@@ -37,6 +37,7 @@ export const ChatModal = memo(
     const socketRef = useRef(socketService.socket);
     const typingTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
     const [error, setError] = useState<string | null>(null);
+    const navigate = useNavigate();
 
     // Handle typing
     const handleTyping = useCallback(() => {
@@ -85,7 +86,6 @@ export const ChatModal = memo(
     // Handle receiving messages
     const handleReceiveMessage = useCallback(
       (chatMessage: ChatMessage) => {
-        // Only add message if it's part of the current conversation
         if (
           selectedUser &&
           ((chatMessage.senderId === currentUser._id &&
@@ -102,49 +102,27 @@ export const ChatModal = memo(
           };
 
           setMessages((prev) => {
-            // Find any matching messages (either by ID or content)
-            const existingMessageIndex = prev.findIndex((m) => {
-              // If the incoming message has an ID and it matches an existing message
-              if (message._id && m._id === message._id) {
-                return true;
-              }
+            // Check if message already exists (either by ID or as a temp message)
+            const isDuplicate = prev.some(m => 
+              // Check if IDs match
+              (message._id && m._id === message._id) ||
+              // Or if it's a temp message with matching content and timestamp
+              (m._id.startsWith('temp-') && 
+               m.content === message.content && 
+               m.sender === message.sender &&
+               Math.abs(new Date(m.timestamp).getTime() - new Date(message.timestamp).getTime()) < 1000)
+            );
 
-              // If the incoming message matches a temporary message
-              if (m._id.startsWith("temp-")) {
-                const timeDiff = Math.abs(
-                  new Date(m.timestamp).getTime() -
-                    new Date(message.timestamp).getTime()
-                );
-                return (
-                  m.content === message.content &&
-                  m.sender === message.sender &&
-                  timeDiff < 1000
-                );
-              }
-
-              return false;
-            });
-
-            // If we found a matching message
-            if (existingMessageIndex !== -1) {
-              // If the existing message is temporary and the new one has an ID, replace it
-              if (
-                prev[existingMessageIndex]._id.startsWith("temp-") &&
-                message._id
-              ) {
-              
-                const newMessages = [...prev];
-                newMessages[existingMessageIndex] = message;
-                return newMessages;
-              }
-
+            if (isDuplicate) {
               return prev;
             }
 
-            return [...prev, message];
+            const newMessages = [...prev, message];
+            if (selectedUser._id) {
+              socketService.setChatMessages(selectedUser._id, newMessages);
+            }
+            return newMessages;
           });
-        } else {
-         
         }
       },
       [currentUser._id, selectedUser]
@@ -180,7 +158,7 @@ export const ChatModal = memo(
           .filter((msg) => msg !== null) as Message[];
         
         setMessages(formattedHistory);
-        socketService.cacheMessages(selectedUser._id, formattedHistory);
+        socketService.setChatMessages(selectedUser._id, formattedHistory);
       },
       [selectedUser, currentUser._id]
     );
@@ -207,6 +185,14 @@ export const ChatModal = memo(
         socket.on('connect', () => {
           setConnectionStatus('connected');
           setError(null);
+          // Fetch chat history when socket connects
+          if (selectedUser) {
+            console.log("[ChatModal] Fetching chat history on connect");
+            socket.emit("getChatHistory", {
+              userId: currentUser._id,
+              partnerId: selectedUser._id,
+            });
+          }
         });
 
         socket.on('disconnect', () => {
@@ -225,14 +211,6 @@ export const ChatModal = memo(
         socketService.onOnlineUsers(handleOnlineUsers);
         socketService.onChatHistory(handleChatHistory);
 
-        // Request chat history when component mounts or selectedUser changes
-        if (socket.connected && selectedUser) {
-          socket.emit("getChatHistory", {
-            userId: currentUser._id,
-            partnerId: selectedUser._id,
-          });
-        }
-
         // Clean up function
         return () => {
           socket.off('connect');
@@ -241,6 +219,8 @@ export const ChatModal = memo(
           socket.off('chat_history');
           socket.off('new_message');
           socket.off('message_sent');
+          // Clear messages when unmounting
+          setMessages([]);
         };
       } catch (error) {
         console.error('[ChatModal] Socket setup error:', error);
@@ -288,15 +268,15 @@ export const ChatModal = memo(
       [handleTyping]
     );
 
-    // Add this effect to handle chat history fetching when user is selected
-    useEffect(() => {
-      if (selectedUser && socketRef.current?.connected) {
-        socketRef.current.emit("getChatHistory", {
-          userId: currentUser._id,
-          partnerId: selectedUser._id,
-        });
-      }
-    }, [selectedUser, currentUser._id]);
+    const handleCloseChat = useCallback(() => {
+      console.log("closing chat");
+      // Clear the messages when closing
+      setMessages([]);
+      // Call the parent's onClose handler
+      onClose();
+      // Navigate to /chats to remount the component
+      navigate('/profile');
+    }, [onClose, navigate]);
 
     if (error) {
       return <div className={styles.error}>{error}</div>;
@@ -325,7 +305,7 @@ export const ChatModal = memo(
               </span>
             </div>
           </div>
-          <button onClick={onClose} className={styles.closeButton}>
+          <button onClick={handleCloseChat} className={styles.closeButton}>
             ✕
           </button>
         </div>
