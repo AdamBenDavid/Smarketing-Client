@@ -23,9 +23,8 @@ interface Message {
 export const ChatModal = memo(
   ({ token, currentUser, selectedUser, onClose }: ChatModalProps) => {
     const [messages, setMessages] = useState<Message[]>(() => {
-      // Try to get cached messages from memory
-      const cachedMessages = socketService.getCachedMessages(selectedUser?._id);
-      return cachedMessages || [];
+      console.log('[ChatModal] Initializing messages state');
+      return [];
     });
     const [newMessage, setNewMessage] = useState("");
     const [isTyping, setIsTyping] = useState(false);
@@ -85,7 +84,6 @@ export const ChatModal = memo(
     // Handle receiving messages
     const handleReceiveMessage = useCallback(
       (chatMessage: ChatMessage) => {
-        // Only add message if it's part of the current conversation
         if (
           selectedUser &&
           ((chatMessage.senderId === currentUser._id &&
@@ -102,49 +100,30 @@ export const ChatModal = memo(
           };
 
           setMessages((prev) => {
-            // Find any matching messages (either by ID or content)
-            const existingMessageIndex = prev.findIndex((m) => {
-              // If the incoming message has an ID and it matches an existing message
-              if (message._id && m._id === message._id) {
-                return true;
+            // Check if message already exists (either by ID or as a temp message)
+            const isDuplicate = prev.some(m => {
+              // Check by ID if available
+              if (message._id && m._id === message._id) return true;
+              
+              // Check if this is a temp message that matches
+              if (m._id.startsWith('temp-')) {
+                return m.content === message.content && 
+                       m.sender === message.sender &&
+                       Math.abs(new Date(m.timestamp).getTime() - new Date(message.timestamp).getTime()) < 1000;
               }
-
-              // If the incoming message matches a temporary message
-              if (m._id.startsWith("temp-")) {
-                const timeDiff = Math.abs(
-                  new Date(m.timestamp).getTime() -
-                    new Date(message.timestamp).getTime()
-                );
-                return (
-                  m.content === message.content &&
-                  m.sender === message.sender &&
-                  timeDiff < 1000
-                );
-              }
-
               return false;
             });
 
-            // If we found a matching message
-            if (existingMessageIndex !== -1) {
-              // If the existing message is temporary and the new one has an ID, replace it
-              if (
-                prev[existingMessageIndex]._id.startsWith("temp-") &&
-                message._id
-              ) {
-              
-                const newMessages = [...prev];
-                newMessages[existingMessageIndex] = message;
-                return newMessages;
-              }
-
+            if (isDuplicate) {
+              console.log('[ChatModal] Skipping duplicate message:', message.content);
               return prev;
             }
 
-            return [...prev, message];
+            console.log('[ChatModal] Adding new message, total messages:', prev.length + 1);
+            const newMessages = [...prev, message];
+            socketService.cacheMessages(selectedUser._id, newMessages);
+            return newMessages;
           });
-        } else {
-         
         }
       },
       [currentUser._id, selectedUser]
@@ -158,6 +137,8 @@ export const ChatModal = memo(
           return;
         }
 
+        console.log('[ChatModal] Received chat history from server:', history.length, 'messages');
+        
         const formattedHistory = history
           .map((msg) => {
             const isRelevant =
@@ -179,11 +160,33 @@ export const ChatModal = memo(
           })
           .filter((msg) => msg !== null) as Message[];
         
+        console.log('[ChatModal] Formatted history:', formattedHistory.length, 'messages');
+        
+        // Always update both state and cache with server data
         setMessages(formattedHistory);
         socketService.cacheMessages(selectedUser._id, formattedHistory);
       },
       [selectedUser, currentUser._id]
     );
+
+    // Add a new function to fetch history
+    const fetchChatHistory = useCallback(async () => {
+      if (!selectedUser?._id || !currentUser._id) return;
+      
+      try {
+        console.log('[ChatModal] Fetching chat history...');
+        
+        // Always request fresh data from server
+        console.log('[ChatModal] Requesting fresh history from server...');
+        socketRef.current?.emit("getChatHistory", {
+          userId: currentUser._id,
+          partnerId: selectedUser._id,
+        });
+      } catch (error) {
+        console.error("[ChatModal] Failed to fetch chat history:", error);
+        setError("Failed to load chat history");
+      }
+    }, [selectedUser?._id, currentUser._id]);
 
     // Socket connection effect
     useEffect(() => {
@@ -191,10 +194,9 @@ export const ChatModal = memo(
         return;
       }
 
-      // Clean token if it has Bearer prefix
+      console.log('[ChatModal] Setting up socket connection...');
       const cleanToken = token.replace('Bearer ', '');
       
-      // Initialize socket connection
       try {
         socketService.connect(cleanToken);
         const socket = socketService.socket;
@@ -204,10 +206,33 @@ export const ChatModal = memo(
           return;
         }
 
+        // Remove any existing handlers first
+        socketService.removeAllHandlers();
+
+        // Set up event handlers
+        const messageCleanup = socketService.onMessage(handleReceiveMessage);
+        const typingCleanup = socketService.onTyping(handleTypingEvent);
+        const onlineUsersCleanup = socketService.onOnlineUsers(handleOnlineUsers);
+        const chatHistoryCleanup = socketService.onChatHistory(handleChatHistory);
+
         socket.on('connect', () => {
+          console.log('[ChatModal] Socket connected, fetching history...');
           setConnectionStatus('connected');
           setError(null);
+          socket.emit("getChatHistory", {
+            userId: currentUser._id,
+            partnerId: selectedUser._id,
+          });
         });
+
+        // If already connected, fetch immediately
+        if (socket.connected) {
+          console.log('[ChatModal] Socket already connected, fetching history...');
+          socket.emit("getChatHistory", {
+            userId: currentUser._id,
+            partnerId: selectedUser._id,
+          });
+        }
 
         socket.on('disconnect', () => {
           setConnectionStatus('disconnected');
@@ -219,34 +244,22 @@ export const ChatModal = memo(
           setError('Failed to connect to chat server');
         });
 
-        // Set up event handlers
-        socketService.onMessage(handleReceiveMessage);
-        socketService.onTyping(handleTypingEvent);
-        socketService.onOnlineUsers(handleOnlineUsers);
-        socketService.onChatHistory(handleChatHistory);
-
-        // Request chat history when component mounts or selectedUser changes
-        if (socket.connected && selectedUser) {
-          socket.emit("getChatHistory", {
-            userId: currentUser._id,
-            partnerId: selectedUser._id,
-          });
-        }
-
         // Clean up function
         return () => {
+          console.log('[ChatModal] Cleaning up socket listeners');
+          messageCleanup();
+          typingCleanup();
+          onlineUsersCleanup();
+          chatHistoryCleanup();
           socket.off('connect');
           socket.off('disconnect');
           socket.off('connect_error');
-          socket.off('chat_history');
-          socket.off('new_message');
-          socket.off('message_sent');
         };
       } catch (error) {
         console.error('[ChatModal] Socket setup error:', error);
         setError('Failed to setup chat connection');
       }
-    }, [token, selectedUser, currentUser._id]);
+    }, [token, selectedUser, currentUser._id, handleReceiveMessage, handleTypingEvent, handleOnlineUsers, handleChatHistory]);
 
     // Scroll effect
     useEffect(() => {
@@ -265,10 +278,10 @@ export const ChatModal = memo(
         timestamp: now,
       };
 
+      console.log('[ChatModal] Sending new message:', message);
       socketRef.current?.emit("private_message", message);
 
-      // Optimistically add message to state with a temporary ID
-      const localMessage: Message = {
+      const tempMessage: Message = {
         _id: `temp-${now.getTime()}`,
         sender: currentUser._id || "",
         receiver: selectedUser._id || "",
@@ -276,7 +289,10 @@ export const ChatModal = memo(
         timestamp: now,
       };
 
-      setMessages((prev) => [...prev, localMessage]);
+      setMessages((prev) => {
+        console.log('[ChatModal] Adding temp message, total messages:', prev.length + 1);
+        return [...prev, tempMessage];
+      });
       setNewMessage("");
     }, [newMessage, selectedUser, currentUser._id]);
 
@@ -288,15 +304,15 @@ export const ChatModal = memo(
       [handleTyping]
     );
 
-    // Add this effect to handle chat history fetching when user is selected
+    // Add cleanup of cache when closing chat
     useEffect(() => {
-      if (selectedUser && socketRef.current?.connected) {
-        socketRef.current.emit("getChatHistory", {
-          userId: currentUser._id,
-          partnerId: selectedUser._id,
-        });
-      }
-    }, [selectedUser, currentUser._id]);
+      return () => {
+        console.log('[ChatModal] Cleaning up and clearing cache');
+        if (selectedUser?._id) {
+          socketService.clearCache(selectedUser._id);
+        }
+      };
+    }, [selectedUser]);
 
     if (error) {
       return <div className={styles.error}>{error}</div>;

@@ -155,6 +155,7 @@ class SocketService {
   }
 
   onMessage(handler: (message: ChatMessage) => void) {
+    console.log('[SocketService] Registering message handler');
     this.messageHandlers.push(handler);
     return () => {
       this.messageHandlers = this.messageHandlers.filter(h => h !== handler);
@@ -203,6 +204,22 @@ class SocketService {
   public getCachedMessages(userId?: string): Message[] | null {
     if (!userId) return null;
     return this.messageCache.get(userId) || null;
+  }
+
+  // Add method to clear cache
+  clearCache(userId: string) {
+    console.log('[SocketService] Clearing cache for user:', userId);
+    // Clear the cache for this user
+    this.messageCache.delete(userId);
+  }
+
+  removeAllHandlers() {
+    console.log('[SocketService] Removing all handlers');
+    this.messageHandlers = [];
+    this.typingHandlers = [];
+    this.readHandlers = [];
+    this.onlineUsersHandlers = [];
+    this.chatHistoryHandlers = [];
   }
 }
 
