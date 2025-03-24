@@ -4,6 +4,7 @@ import { User } from "../../types/user";
 import { socketService } from "../../services/socket.service";
 import { ChatMessage } from "../../components/Chat/types";
 import { getProfilePictureUrl } from "../../utils/imageUtils";
+import { useNavigate } from 'react-router-dom';
 
 interface ChatModalProps {
   token: string;
@@ -22,9 +23,9 @@ interface Message {
 
 export const ChatModal = memo(
   ({ token, currentUser, selectedUser, onClose }: ChatModalProps) => {
+    // Initialize messages from socketService if available
     const [messages, setMessages] = useState<Message[]>(() => {
-      console.log('[ChatModal] Initializing messages state');
-      return [];
+      return (selectedUser && selectedUser._id) ? socketService.getChatMessages(selectedUser._id) : [];
     });
     const [newMessage, setNewMessage] = useState("");
     const [isTyping, setIsTyping] = useState(false);
@@ -36,6 +37,7 @@ export const ChatModal = memo(
     const socketRef = useRef(socketService.socket);
     const typingTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
     const [error, setError] = useState<string | null>(null);
+    const navigate = useNavigate();
 
     // Handle typing
     const handleTyping = useCallback(() => {
@@ -101,27 +103,24 @@ export const ChatModal = memo(
 
           setMessages((prev) => {
             // Check if message already exists (either by ID or as a temp message)
-            const isDuplicate = prev.some(m => {
-              // Check by ID if available
-              if (message._id && m._id === message._id) return true;
-              
-              // Check if this is a temp message that matches
-              if (m._id.startsWith('temp-')) {
-                return m.content === message.content && 
-                       m.sender === message.sender &&
-                       Math.abs(new Date(m.timestamp).getTime() - new Date(message.timestamp).getTime()) < 1000;
-              }
-              return false;
-            });
+            const isDuplicate = prev.some(m => 
+              // Check if IDs match
+              (message._id && m._id === message._id) ||
+              // Or if it's a temp message with matching content and timestamp
+              (m._id.startsWith('temp-') && 
+               m.content === message.content && 
+               m.sender === message.sender &&
+               Math.abs(new Date(m.timestamp).getTime() - new Date(message.timestamp).getTime()) < 1000)
+            );
 
             if (isDuplicate) {
-              console.log('[ChatModal] Skipping duplicate message:', message.content);
               return prev;
             }
 
-            console.log('[ChatModal] Adding new message, total messages:', prev.length + 1);
             const newMessages = [...prev, message];
-            socketService.cacheMessages(selectedUser._id, newMessages);
+            if (selectedUser._id) {
+              socketService.setChatMessages(selectedUser._id, newMessages);
+            }
             return newMessages;
           });
         }
@@ -164,7 +163,7 @@ export const ChatModal = memo(
         
         // Always update both state and cache with server data
         setMessages(formattedHistory);
-        socketService.cacheMessages(selectedUser._id, formattedHistory);
+        socketService.setChatMessages(selectedUser._id, formattedHistory);
       },
       [selectedUser, currentUser._id]
     );
@@ -234,16 +233,6 @@ export const ChatModal = memo(
           });
         }
 
-        socket.on('disconnect', () => {
-          setConnectionStatus('disconnected');
-          setError('Chat connection lost. Reconnecting...');
-        });
-
-        socket.on('connect_error', (error) => {
-          console.error('Socket connection error:', error);
-          setError('Failed to connect to chat server');
-        });
-
         // Clean up function
         return () => {
           console.log('[ChatModal] Cleaning up socket listeners');
@@ -304,15 +293,15 @@ export const ChatModal = memo(
       [handleTyping]
     );
 
-    // Add cleanup of cache when closing chat
-    useEffect(() => {
-      return () => {
-        console.log('[ChatModal] Cleaning up and clearing cache');
-        if (selectedUser?._id) {
-          socketService.clearCache(selectedUser._id);
-        }
-      };
-    }, [selectedUser]);
+    const handleCloseChat = useCallback(() => {
+      console.log("closing chat");
+      // Clear the messages when closing
+      setMessages([]);
+      // Call the parent's onClose handler
+      onClose();
+      // Navigate to /chats to remount the component
+      navigate('/profile');
+    }, [onClose, navigate]);
 
     if (error) {
       return <div className={styles.error}>{error}</div>;
@@ -341,7 +330,7 @@ export const ChatModal = memo(
               </span>
             </div>
           </div>
-          <button onClick={onClose} className={styles.closeButton}>
+          <button onClick={handleCloseChat} className={styles.closeButton}>
             ✕
           </button>
         </div>
