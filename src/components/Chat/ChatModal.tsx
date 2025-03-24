@@ -25,7 +25,7 @@ export const ChatModal = memo(
   ({ token, currentUser, selectedUser, onClose }: ChatModalProps) => {
     // Initialize messages from socketService if available
     const [messages, setMessages] = useState<Message[]>(() => {
-      return selectedUser ? socketService.getChatMessages(selectedUser._id) : [];
+      return (selectedUser && selectedUser._id) ? socketService.getChatMessages(selectedUser._id) : [];
     });
     const [newMessage, setNewMessage] = useState("");
     const [isTyping, setIsTyping] = useState(false);
