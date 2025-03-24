@@ -1,4 +1,4 @@
-import {  useState } from "react";
+import { useState } from "react";
 import styles from "./CreatePostModal.module.css";
 import { useAuth } from "../../context/AuthContext";
 import {
@@ -6,7 +6,7 @@ import {
   cancelGeminiRequest,
 } from "../../services/gemini_service";
 import { IconButton } from "@mui/material";
-import { config } from "../../config";  
+import { config } from "../../config";
 interface CreatePostModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -32,6 +32,7 @@ export const CreatePostModal = ({
         const response = await sendImageToGemini(imagePreview);
 
         if (response && isOpen) {
+          setPostContent("");
           setPostContent(response);
           setLoading(false);
         }
@@ -160,7 +161,6 @@ export const CreatePostModal = ({
                 className={styles.uploadButton}
                 loading={loading}
                 onClick={aiGenerateText}
-                disabled={!!postContent.trim() || loading}
               >
                 {/* buttonText */}
                 <label className={styles.buttonText}>
