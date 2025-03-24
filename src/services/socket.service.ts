@@ -210,7 +210,7 @@ class SocketService {
   clearCache(userId: string) {
     console.log('[SocketService] Clearing cache for user:', userId);
     // Clear the cache for this user
-    this.messageCache.delete(userId);
+    // this.messageCache.delete(userId);
   }
 
   removeAllHandlers() {

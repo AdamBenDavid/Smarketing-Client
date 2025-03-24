@@ -136,7 +136,6 @@ export const ChatModal = memo(
           return;
         }
 
-        console.log('[ChatModal] Received chat history from server:', history.length, 'messages');
         
         const formattedHistory = history
           .map((msg) => {
@@ -159,7 +158,6 @@ export const ChatModal = memo(
           })
           .filter((msg) => msg !== null) as Message[];
         
-        console.log('[ChatModal] Formatted history:', formattedHistory.length, 'messages');
         
         // Always update both state and cache with server data
         setMessages(formattedHistory);
@@ -173,10 +171,8 @@ export const ChatModal = memo(
       if (!selectedUser?._id || !currentUser._id) return;
       
       try {
-        console.log('[ChatModal] Fetching chat history...');
         
         // Always request fresh data from server
-        console.log('[ChatModal] Requesting fresh history from server...');
         socketRef.current?.emit("getChatHistory", {
           userId: currentUser._id,
           partnerId: selectedUser._id,
@@ -193,7 +189,6 @@ export const ChatModal = memo(
         return;
       }
 
-      console.log('[ChatModal] Setting up socket connection...');
       const cleanToken = token.replace('Bearer ', '');
       
       try {
@@ -215,7 +210,6 @@ export const ChatModal = memo(
         const chatHistoryCleanup = socketService.onChatHistory(handleChatHistory);
 
         socket.on('connect', () => {
-          console.log('[ChatModal] Socket connected, fetching history...');
           setConnectionStatus('connected');
           setError(null);
           socket.emit("getChatHistory", {
@@ -226,7 +220,6 @@ export const ChatModal = memo(
 
         // If already connected, fetch immediately
         if (socket.connected) {
-          console.log('[ChatModal] Socket already connected, fetching history...');
           socket.emit("getChatHistory", {
             userId: currentUser._id,
             partnerId: selectedUser._id,
@@ -235,7 +228,6 @@ export const ChatModal = memo(
 
         // Clean up function
         return () => {
-          console.log('[ChatModal] Cleaning up socket listeners');
           messageCleanup();
           typingCleanup();
           onlineUsersCleanup();
@@ -267,7 +259,6 @@ export const ChatModal = memo(
         timestamp: now,
       };
 
-      console.log('[ChatModal] Sending new message:', message);
       socketRef.current?.emit("private_message", message);
 
       const tempMessage: Message = {
@@ -279,7 +270,6 @@ export const ChatModal = memo(
       };
 
       setMessages((prev) => {
-        console.log('[ChatModal] Adding temp message, total messages:', prev.length + 1);
         return [...prev, tempMessage];
       });
       setNewMessage("");
@@ -294,7 +284,6 @@ export const ChatModal = memo(
     );
 
     const handleCloseChat = useCallback(() => {
-      console.log("closing chat");
       // Clear the messages when closing
       setMessages([]);
       // Call the parent's onClose handler

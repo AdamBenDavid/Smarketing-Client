@@ -23,6 +23,10 @@
   align-items: center;
 }
 
+.chatModal input{
+  color: black;
+}
+
 .selectedUserInfo {
   display: flex;
   align-items: center;
@@ -96,6 +100,11 @@
   cursor: pointer;
   transition: background-color 0.2s;
   margin-bottom: 8px;
+}
+.userItem img{
+  width: 60px;
+  margin-left: 20px;
+  border-radius: 100%;
 }
 
 .userItem:hover {
