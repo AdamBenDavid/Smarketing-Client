@@ -3,7 +3,7 @@ import { Routes, Route } from "react-router-dom";
 import DashboardLayoutBasic from "../components/sideDrawer/SideDrawer";
 import LandingPage from "../pages/landingPageScreen/LandingPage";
 import FormsPage from "../pages/LoginSignupScreen/LoginSignupPage/LoginSignupPage";
-import { ProtectedRoute } from "./ProtectedRoute";
+import { ProtectedRoute } from "../components/ProtectedRoute";
 
 const AppRouter: React.FC = () => {
   return (
